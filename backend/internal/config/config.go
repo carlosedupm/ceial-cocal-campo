@@ -10,6 +10,7 @@ type Config struct {
 	JWTSecret   string
 	Port        string
 	CORSOrigin  string
+	Production  bool
 	AccessTTL   time.Duration
 	RefreshTTL  time.Duration
 }
@@ -20,6 +21,7 @@ func Load() Config {
 		JWTSecret:   getenv("JWT_SECRET", "dev-secret-change-in-prod"),
 		Port:        getenv("PORT", "8080"),
 		CORSOrigin:  getenv("CORS_ORIGIN", "http://localhost:5173"),
+		Production:  getenv("APP_ENV", "") == "production",
 		AccessTTL:   30 * time.Minute,
 		RefreshTTL:  7 * 24 * time.Hour, // BR-ACESSO-004
 	}

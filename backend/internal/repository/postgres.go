@@ -11,7 +11,9 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func NewPool(ctx context.Context, databaseURL string) (*pgxpool.Pool, error) {
+const devSeedMigration = "002_seed.sql"
+
+func NewPool(ctx context.Context, databaseURL string, production bool) (*pgxpool.Pool, error) {
 	pool, err := pgxpool.New(ctx, databaseURL)
 	if err != nil {
 		return nil, fmt.Errorf("connect postgres: %w", err)
@@ -20,14 +22,14 @@ func NewPool(ctx context.Context, databaseURL string) (*pgxpool.Pool, error) {
 		pool.Close()
 		return nil, fmt.Errorf("ping postgres: %w", err)
 	}
-	if err := runMigrations(ctx, pool); err != nil {
+	if err := runMigrations(ctx, pool, production); err != nil {
 		pool.Close()
 		return nil, err
 	}
 	return pool, nil
 }
 
-func runMigrations(ctx context.Context, pool *pgxpool.Pool) error {
+func runMigrations(ctx context.Context, pool *pgxpool.Pool, production bool) error {
 	_, err := pool.Exec(ctx, `
 		CREATE TABLE IF NOT EXISTS schema_migrations (
 			filename TEXT PRIMARY KEY,
@@ -51,6 +53,9 @@ func runMigrations(ctx context.Context, pool *pgxpool.Pool) error {
 	sort.Strings(names)
 
 	for _, name := range names {
+		if production && name == devSeedMigration {
+			continue
+		}
 		var exists bool
 		if err := pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM schema_migrations WHERE filename = $1)`, name).Scan(&exists); err != nil {
 			return err

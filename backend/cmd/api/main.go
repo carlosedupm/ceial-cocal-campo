@@ -19,14 +19,16 @@ func main() {
 	cfg := config.Load()
 	ctx := context.Background()
 
-	pool, err := repository.NewPool(ctx, cfg.DatabaseURL)
+	pool, err := repository.NewPool(ctx, cfg.DatabaseURL, cfg.Production)
 	if err != nil {
 		log.Fatalf("database: %v", err)
 	}
 	defer pool.Close()
 
-	if err := seed.EnsureDevUsers(ctx, pool); err != nil {
-		log.Fatalf("seed: %v", err)
+	if !cfg.Production {
+		if err := seed.EnsureDevUsers(ctx, pool); err != nil {
+			log.Fatalf("seed: %v", err)
+		}
 	}
 
 	router := apphttp.NewRouter(cfg, pool)
