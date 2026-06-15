@@ -1,0 +1,25 @@
+{
+  "projectName": "Cocal Campo",
+  "projectSlug": "cocal-campo",
+  "stackDescription": "Stack a definir — ver docs/architecture/ADR-001-stack.md (proposta)",
+  "repoUrl": "https://github.com/carlosedupm/ceial-cocal-campo",
+  "codeScanPaths": [
+    "backend",
+    "frontend/src"
+  ],
+  "codeScanExtensions": {
+    "backend": [
+      ".go"
+    ],
+    "frontend/src": [
+      ".ts",
+      ".tsx"
+    ]
+  },
+  "idFamilies": {
+    "business": "BR-[A-Z]+-\\d{3}",
+    "temporal": "TMP-\\d{3}",
+    "integrity": "INT-\\d{3}"
+  },
+  "briefingPrefix": "BRF"
+}

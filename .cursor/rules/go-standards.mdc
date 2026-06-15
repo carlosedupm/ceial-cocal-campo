@@ -1,0 +1,30 @@
+---
+description: Padrões Go para backend API — stack proposta ADR-001 (ativar após aceite)
+globs: backend/**/*.go
+alwaysApply: false
+---
+
+# Go — Backend Cocal Campo
+
+> **ADR-001 em proposta.** Estas convenções aplicam-se quando `backend/` existir e `techContext.md` registrar a stack aceita. Ver [`docs/architecture/ADR-001-stack.md`](../../docs/architecture/ADR-001-stack.md).
+
+## Stack proposta
+
+- Go 1.22+
+- PostgreSQL 16
+- JWT + sessão offline 7 dias (`BR-ACESSO-004`)
+
+## Convenções
+
+- Camadas: handler → service → repository; regras de domínio no service
+- Validações de negócio espelham catálogo `docs/business/` — cite ID `BR-*` em comentários de constraint
+- Erros HTTP com códigos `ERR-*` do ADR-001 (ex.: `ERR-SYNC-CONFLICT` → 409)
+- Sync: `idempotency_key` no cliente; servidor first-sync-wins (`BR-SYNC-005`)
+- Migrations versionadas; constraints nomeadas e referenciadas nas regras `BR-*`
+- Testes: `*_test.go` no mesmo pacote; tabela de casos para invariantes `TMP-*` / `INT-*`
+
+## Referências
+
+- [`memory-bank/systemPatterns.md`](../../memory-bank/systemPatterns.md) — padrões vinculantes após ADR aceito
+- [`memory-bank/techContext.md`](../../memory-bank/techContext.md) — versões e dependências
+- [`.cursor/rules/domain-patterns.mdc`](domain-patterns.mdc) — vocabulário de domínio

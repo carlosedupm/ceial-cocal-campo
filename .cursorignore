@@ -1,0 +1,26 @@
+# Dependências e artefatos de build
+node_modules/
+dist/
+build/
+out/
+.next/
+coverage/
+
+# Arquivos minificados e gerados
+*.min.js
+*.min.css
+
+# Segredos e ambiente local
+.env
+.env.*
+
+# Controle de versão (reduz ruído na indexação)
+.git/
+
+# Go (futuro backend)
+backend/bin/
+backend/tmp/
+
+# Frontend (futuro)
+frontend/dist/
+frontend/.vite/

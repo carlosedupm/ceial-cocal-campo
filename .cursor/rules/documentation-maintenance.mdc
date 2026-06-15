@@ -1,0 +1,33 @@
+---
+description: Instruções para manter a documentação do projeto atualizada
+alwaysApply: true
+---
+
+# Manutenção de Documentação
+
+**A documentação é parte crítica do código.** Atualize-a sempre que houver mudanças significativas.
+
+## Guia detalhado
+
+Consulte **[`docs/ops/documentation-checklist.md`](../../docs/ops/documentation-checklist.md)** para critérios por arquivo (`memory-bank/*`, `docs/business/`).
+
+## Checklist rápido (após cada entrega)
+
+- [ ] `memory-bank/activeContext.md` — estado atual e foco
+- [ ] `memory-bank/progress.md` — marcos e percentuais
+- [ ] `memory-bank/techContext.md` — se mudou stack ou dependências
+- [ ] `memory-bank/systemPatterns.md` — se estabeleceu padrão novo
+- [ ] `memory-bank/deploy-notes.md` — se mudou deploy ou env
+- [ ] **`docs/business/`** — se mudou comportamento de produto ou regra `BR-*`
+- [ ] Data `**Última atualização**: YYYY-MM-DD` nos arquivos tocados
+
+## Regras de ouro
+
+1. **Comportamento de produto** → atualizar catálogo `docs/business/` no mesmo trabalho
+2. **Não duplicar** regras de domínio em memory-bank — link para o módulo
+3. **Documentação desatualizada é pior que ausente**
+
+## Referências
+
+- [`AGENTS.md`](../../AGENTS.md)
+- [`docs/business/README.md`](../../docs/business/README.md)

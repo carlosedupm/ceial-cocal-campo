@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+out/
+.next/
+coverage/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# OS and editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+!.vscode/extensions.json
+
+# Logs
+*.log
+npm-debug.log*
+
+# Go (futuro backend)
+backend/bin/
+backend/tmp/
+*.exe
+*.test
+
+# Frontend (futuro)
+frontend/dist/
+frontend/.vite/
+
+# Cursor local (user-specific; project rules/hooks ARE versioned)
+.cursor/plans/

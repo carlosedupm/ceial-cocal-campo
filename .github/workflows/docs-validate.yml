@@ -1,0 +1,27 @@
+name: Docs Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  docs-validate:
+    name: Docs - Validate BR references
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Validate project structure
+        run: node scripts/validate-project.mjs
+
+      - name: Validate business rule references
+        run: node scripts/validate-br-refs.mjs

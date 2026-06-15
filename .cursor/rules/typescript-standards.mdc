@@ -1,0 +1,29 @@
+---
+description: Padrões TypeScript/React para frontend PWA — stack proposta ADR-001 (ativar após aceite)
+globs: frontend/**/*.ts, frontend/**/*.tsx
+alwaysApply: false
+---
+
+# TypeScript / React — Cocal Campo
+
+> **ADR-001 em proposta.** Estas convenções aplicam-se quando `frontend/` existir e `techContext.md` registrar a stack aceita. Ver [`docs/architecture/ADR-001-stack.md`](../../docs/architecture/ADR-001-stack.md).
+
+## Stack proposta
+
+- React 18 + TypeScript + Vite 5
+- IndexedDB para store local offline
+- Service Worker (ex.: Vite PWA)
+
+## Convenções
+
+- Componentes funcionais com exports nomeados
+- Tipos de domínio alinhados a IDs `BR-*` — não duplicar regras de negócio no frontend sem espelhar catálogo
+- Erros de API: mapear códigos `ERR-*` documentados no ADR-001
+- Sync local: estados `pendente`, `sincronizado`, `erro` conforme `BR-SYNC-*`
+- Testes: colocalizar com módulo (`*.test.ts` / `*.test.tsx`)
+
+## Referências
+
+- [`memory-bank/systemPatterns.md`](../../memory-bank/systemPatterns.md) — padrões vinculantes após ADR aceito
+- [`memory-bank/techContext.md`](../../memory-bank/techContext.md) — versões e dependências
+- [`.cursor/rules/domain-patterns.mdc`](domain-patterns.mdc) — vocabulário de domínio

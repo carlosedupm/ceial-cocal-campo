@@ -1,0 +1,23 @@
+---
+description: Contexto do projeto Cocal Campo - sempre consulte o memory-bank antes de decisões
+alwaysApply: true
+---
+
+# Contexto Cocal Campo (Cursor)
+
+Antes de decisões técnicas ou mudanças significativas, consulte **`memory-bank/activeContext.md`**, **`systemPatterns.md`**, **`progress.md`** e **`techContext.md`**.
+
+Mapa completo, comandos e índice de docs: **[`AGENTS.md`](../../AGENTS.md)** na raiz.
+
+## Modo atual: negócio primeiro
+
+- Stack **a definir** — não prescrever tecnologias; consultar `AGENTS.md` seção «Modo atual»
+- **`systemPatterns.md`** e **`techContext.md`** são placeholders até decisão humana
+
+## Obrigatório
+
+- Regras de domínio: [`docs/business/`](../../docs/business/) — fonte de verdade; atualizar no mesmo PR se mudar comportamento de produto
+- Vocabulário: regra **`domain-patterns.mdc`**
+- Implementação só com briefing `Status: aprovado` — fundação: `BRF-001`
+- Manutenção de docs: **[`documentation-maintenance.mdc`](documentation-maintenance.mdc)**
+- Novo requisito: `BR-*` `planejado` + briefing `BRF-NNN` — ver [`docs/briefings/README.md`](../../docs/briefings/README.md)

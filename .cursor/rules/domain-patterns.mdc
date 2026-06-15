@@ -1,0 +1,71 @@
+---
+description: Vocabulário e invariantes do domínio Cocal Campo — consultar ao implementar regras BR-*
+globs: docs/business/**/*.md, docs/briefings/**/*.md, memory-bank/**/*.md
+alwaysApply: false
+---
+
+# Domínio — Cocal Campo
+
+PWA offline-first para frentes de trabalho no campo (colheita de cana-de-açúcar).
+
+## Quando consultar
+
+- Implementar ou alterar funcionalidades de negócio
+- Escrever briefings ou regras no catálogo
+- Validar invariantes transversais (`TMP-*`, `INT-*`)
+
+## Vocabulário central
+
+| Termo | Definição |
+|-------|-----------|
+| **Frente de trabalho** | Equipe + operação no campo (ex.: frente de colheita em talhão) |
+| **Unidade** | Planta/unidade operacional Cocal (ex.: Paraguaçu Paulista, Narandiba) |
+| **Turno** | Período de trabalho delimitado; container de todos os registros do profissional |
+| **Área / operação** | Contexto funcional: Colheita, Transporte, Qualidade, Segurança, Performance, Supervisão |
+| **Registro** | Entrada de dado operacional com autoria, timestamp e vínculo a turno/frente/unidade |
+| **Executado** | Valor real medido ou registrado no turno |
+| **Planejado** | Meta de referência (diário, semanal, safra) — exibida quando disponível |
+| **Pendência de sync** | Registro gravado localmente aguardando confirmação do servidor |
+| **Safra** | Período agrícola de referência para acumulados |
+| **Talhão** | Parcela de cana identificada para avaliações de qualidade |
+| **Transbordo** | Operação de transporte de cana da colheita ao destino |
+| **Dias sem acidentes** | Contador por unidade e/ou operação; zera por ocorrência validada |
+
+## Indicadores operacionais (referência)
+
+| Grupo | Indicadores | Unidade |
+|-------|-------------|---------|
+| Performance | Entrada de cana, densidade, ATR, horas de corte, consumo colhedora/transbordo | ton, ton/carga, kg/ton, h, L/t |
+| Qualidade | Impureza mineral/vegetal, perdas, pisoteio, abalo e arranquio | kg/ton, % |
+| Segurança | Dias sem acidentes, ocorrências | dias, evento |
+
+Horizontes de comparação: **diário**, **semanal**, **safra**.
+
+## Perfis
+
+| Perfil | Área principal |
+|--------|----------------|
+| Operador colheita | Colheita |
+| Operador transporte | Transporte |
+| Técnico qualidade | Qualidade |
+| Técnico segurança | Segurança |
+| Supervisor frente | Supervisão (+ leitura consolidada) |
+
+## Invariantes transversais
+
+Documentadas em `docs/business/_transversal.md`:
+
+- `TMP-001`: data/hora de evento não futura
+- `TMP-002`: registro válido apenas em turno aberto (exceto supervisor)
+- `INT-001`: fechamento de turno com registros obrigatórios ou justificativa
+- `INT-002`: contador de dias sem acidentes só muda por ocorrência validada
+
+## Fora do escopo MVP
+
+- Painel **Gestão à Vista** (dashboard TV/gestão) — Fase 4 futura
+
+## Referências
+
+- Catálogo: [`docs/business/README.md`](../../docs/business/README.md)
+- Doc transversal: [`docs/business/_transversal.md`](../../docs/business/_transversal.md)
+- Acesso: [`docs/business/acesso-perfis.md`](../../docs/business/acesso-perfis.md)
