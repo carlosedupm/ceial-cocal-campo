@@ -14,8 +14,7 @@ import type { Frente, Turno, Unidade } from "@/types/domain";
 
 async function applyFrentesForUnidade(
   unidadeId: string,
-  token: string | null,
-  preferFrenteId?: string
+  token: string | null
 ): Promise<Frente[]> {
   let frentes = await loadFrentesFromCache(unidadeId);
   if (token && navigator.onLine) {
@@ -95,11 +94,7 @@ export function ContextoPage() {
             ? defaults.unidadeId
             : list[0].id;
         setUnidadeId(nextUnidadeId);
-        const nextFrentes = await applyFrentesForUnidade(
-          nextUnidadeId,
-          token,
-          defaults?.frenteId
-        );
+        const nextFrentes = await applyFrentesForUnidade(nextUnidadeId, token);
         setFrentes(nextFrentes);
         setFrenteId(
           defaults?.frenteId && nextFrentes.some((f) => f.id === defaults.frenteId)
