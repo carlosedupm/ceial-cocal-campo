@@ -2,8 +2,26 @@ import { api, ApiClientError } from "@/lib/api/client";
 import { getValidAccessToken } from "@/lib/auth/session";
 import { buildIdempotencyKey, db, updatePendingCount } from "@/lib/db/schema";
 import type { RegistroLocal, SyncStatus } from "@/types/domain";
+import { ERR_CODES } from "@/types/domain";
 
 let syncing = false;
+
+export class RegistroImutavelError extends Error {
+  constructor(tipo: string) {
+    super(
+      `O indicador "${tipo}" já foi sincronizado e não pode ser alterado (BR-TRANS-004).`
+    );
+    this.name = "RegistroImutavelError";
+  }
+}
+
+export function idempotencyKeyTurno(turnoId: string, tipo: string): string {
+  return buildIdempotencyKey(turnoId, tipo, "unico");
+}
+
+export function isSyncConflictPermanent(code?: string): boolean {
+  return code === ERR_CODES.SYNC_CONFLICT;
+}
 
 export async function enqueueRegistro(
   turnoId: string,
@@ -37,11 +55,20 @@ export async function enqueueRegistroTurno(
   payload: Record<string, unknown>,
   deviceId: string
 ): Promise<RegistroLocal> {
-  const idempotencyKey = buildIdempotencyKey(turnoId, tipo, "unico");
+  const idempotencyKey = idempotencyKeyTurno(turnoId, tipo);
   const existing = await db.registros
     .where("idempotency_key")
     .equals(idempotencyKey)
     .first();
+
+  if (existing?.sync_status === "sincronizado") {
+    throw new RegistroImutavelError(tipo);
+  }
+  if (isSyncConflictPermanent(existing?.last_error_code)) {
+    throw new Error(
+      `Conflito de sync em "${tipo}": a versão no servidor prevaleceu (BR-SYNC-005). Use "Aceitar versão do servidor" na home.`
+    );
+  }
 
   const eventoAt = new Date().toISOString();
   const registro: RegistroLocal = {
@@ -60,6 +87,16 @@ export async function enqueueRegistroTurno(
   await updatePendingCount();
   void flushOutbox();
   return registro;
+}
+
+/** BR-SYNC-005: encerra conflito aceitando a versão já gravada no servidor. */
+export async function aceitarVersaoServidor(registroId: string): Promise<void> {
+  await db.registros.update(registroId, {
+    sync_status: "sincronizado",
+    synced_at: new Date().toISOString(),
+    last_error_code: undefined,
+  });
+  await updatePendingCount();
 }
 
 async function syncTurnoLocal(token: string): Promise<void> {
@@ -94,10 +131,11 @@ export async function flushOutbox(): Promise<void> {
 
     await syncTurnoLocal(token);
 
-    const pendentes = await db.registros
+    const pendentes = (await db.registros
       .where("sync_status")
       .anyOf(["pendente", "erro"])
-      .toArray();
+      .toArray()
+    ).filter((item) => !isSyncConflictPermanent(item.last_error_code));
 
     for (const item of pendentes) {
       try {

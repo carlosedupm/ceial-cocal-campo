@@ -10,9 +10,24 @@ import {
   validateHorasCorte,
 } from "@/lib/colheita/validation";
 import { db } from "@/lib/db/schema";
-import { enqueueRegistroTurno } from "@/lib/sync/engine";
+import {
+  enqueueRegistroTurno,
+  isSyncConflictPermanent,
+  RegistroImutavelError,
+} from "@/lib/sync/engine";
 import { SyncStatusBar } from "@/features/sync/SyncStatusBar";
-import type { Usuario } from "@/types/domain";
+import type { RegistroLocal, Usuario } from "@/types/domain";
+
+function statusIndicador(reg: RegistroLocal | undefined): string | null {
+  if (!reg) return null;
+  if (reg.sync_status === "sincronizado") return "Sincronizado — não pode alterar (BR-TRANS-004)";
+  if (isSyncConflictPermanent(reg.last_error_code)) {
+    return "Conflito: versão no servidor prevaleceu (BR-SYNC-005). Aceite na home.";
+  }
+  if (reg.sync_status === "pendente") return "Pendente de sync";
+  if (reg.sync_status === "erro") return `Erro de sync (${reg.last_error_code ?? "?"})`;
+  return null;
+}
 
 export function ColheitaPage() {
   const navigate = useNavigate();
@@ -29,6 +44,28 @@ export function ColheitaPage() {
     const list = await db.turno_atual.toArray();
     return list[0] ?? null;
   });
+
+  const registrosTurno = useLiveQuery(async () => {
+    if (!turno?.id) return [];
+    return db.registros.where("turno_id").equals(turno.id).toArray();
+  });
+
+  const regPorTipo = (tipo: string): RegistroLocal | undefined =>
+    registrosTurno?.find((r) => r.tipo === tipo);
+
+  const horasSync = regPorTipo(COLHEITA_TIPOS.horasCorte);
+  const consumoSync = regPorTipo(COLHEITA_TIPOS.consumoDensidade);
+  const entradaSync = regPorTipo(COLHEITA_TIPOS.entradaCana);
+
+  const horasBloqueado =
+    horasSync?.sync_status === "sincronizado" ||
+    isSyncConflictPermanent(horasSync?.last_error_code);
+  const consumoBloqueado =
+    consumoSync?.sync_status === "sincronizado" ||
+    isSyncConflictPermanent(consumoSync?.last_error_code);
+  const entradaBloqueado =
+    entradaSync?.sync_status === "sincronizado" ||
+    isSyncConflictPermanent(entradaSync?.last_error_code);
 
   useEffect(() => {
     void (async () => {
@@ -82,6 +119,10 @@ export function ColheitaPage() {
       await enqueueRegistroTurno(turno!.id, tipo, payload, getDeviceId());
       setSucesso(`${label} registrado`);
     } catch (e) {
+      if (e instanceof RegistroImutavelError) {
+        setErro(e.message);
+        return;
+      }
       setErro(e instanceof Error ? e.message : "Erro ao registrar");
     }
   }
@@ -145,6 +186,9 @@ export function ColheitaPage() {
       <section className="card" data-testid="form-horas-corte">
         <h2>Horas de corte</h2>
         <p className="hint">Obrigatório para fechar o turno (INT-001)</p>
+        {statusIndicador(horasSync) && (
+          <p className="hint" data-testid="status-horas-corte">{statusIndicador(horasSync)}</p>
+        )}
         <form onSubmit={(e) => void onHorasCorte(e)}>
           <label>
             Horas
@@ -155,6 +199,7 @@ export function ColheitaPage() {
               value={horas}
               onChange={(e) => setHoras(e.target.value)}
               required
+              disabled={horasBloqueado}
             />
           </label>
           <label>
@@ -166,15 +211,21 @@ export function ColheitaPage() {
               value={minutos}
               onChange={(e) => setMinutos(e.target.value)}
               required
+              disabled={horasBloqueado}
             />
           </label>
-          <button type="submit">Registrar horas de corte</button>
+          <button type="submit" disabled={horasBloqueado}>
+            Registrar horas de corte
+          </button>
         </form>
       </section>
 
       <section className="card" data-testid="form-consumo-densidade">
         <h2>Consumo e densidade</h2>
         <p className="hint">Por turno — opcional no fechamento</p>
+        {statusIndicador(consumoSync) && (
+          <p className="hint">{statusIndicador(consumoSync)}</p>
+        )}
         <form onSubmit={(e) => void onConsumoDensidade(e)}>
           <label>
             Consumo colhedora (L/t)
@@ -186,6 +237,7 @@ export function ColheitaPage() {
               value={consumo}
               onChange={(e) => setConsumo(e.target.value)}
               required
+              disabled={consumoBloqueado}
             />
           </label>
           <label>
@@ -198,15 +250,21 @@ export function ColheitaPage() {
               value={densidade}
               onChange={(e) => setDensidade(e.target.value)}
               required
+              disabled={consumoBloqueado}
             />
           </label>
-          <button type="submit">Registrar consumo e densidade</button>
+          <button type="submit" disabled={consumoBloqueado}>
+            Registrar consumo e densidade
+          </button>
         </form>
       </section>
 
       <section className="card" data-testid="form-entrada-cana">
         <h2>Entrada de cana</h2>
         <p className="hint">Opcional no fechamento</p>
+        {statusIndicador(entradaSync) && (
+          <p className="hint">{statusIndicador(entradaSync)}</p>
+        )}
         <form onSubmit={(e) => void onEntradaCana(e)}>
           <label>
             Toneladas
@@ -217,9 +275,12 @@ export function ColheitaPage() {
               value={toneladas}
               onChange={(e) => setToneladas(e.target.value)}
               required
+              disabled={entradaBloqueado}
             />
           </label>
-          <button type="submit">Registrar entrada de cana</button>
+          <button type="submit" disabled={entradaBloqueado}>
+            Registrar entrada de cana
+          </button>
         </form>
       </section>
     </main>

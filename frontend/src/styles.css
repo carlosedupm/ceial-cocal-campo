@@ -103,6 +103,14 @@ a.button-link {
   line-height: 2;
 }
 
+button.conflict-btn {
+  display: block;
+  margin-top: 0.35rem;
+  min-height: 36px;
+  font-size: 0.85rem;
+  padding: 0.35rem 0.5rem;
+}
+
 .sync-bar {
   display: flex;
   flex-wrap: wrap;

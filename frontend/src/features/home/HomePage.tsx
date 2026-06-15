@@ -11,7 +11,7 @@ import {
 } from "@/lib/auth/session";
 import { OBRIGATORIOS_COLHEITA } from "@/lib/colheita/validation";
 import { db } from "@/lib/db/schema";
-import { enqueueRegistro, flushOutbox } from "@/lib/sync/engine";
+import { enqueueRegistro, flushOutbox, aceitarVersaoServidor, isSyncConflictPermanent } from "@/lib/sync/engine";
 import { SyncStatusBar } from "@/features/sync/SyncStatusBar";
 import type { RegistroLocal, Usuario } from "@/types/domain";
 
@@ -183,6 +183,15 @@ export function HomePage() {
             <li key={r.id}>
               {r.tipo} — {r.sync_status}
               {r.last_error_code ? ` (${r.last_error_code})` : ""}
+              {isSyncConflictPermanent(r.last_error_code) && (
+                <button
+                  type="button"
+                  className="secondary conflict-btn"
+                  onClick={() => void aceitarVersaoServidor(r.id)}
+                >
+                  Aceitar versão do servidor
+                </button>
+              )}
             </li>
           ))}
         </ul>
