@@ -1,0 +1,68 @@
+# Stack local — Postgres + API Go + PWA (dev)
+# Dev Container: sobe postgres + devcontainer; app via F5 (launch.json)
+# Stack completa em containers: docker compose --profile stack up -d
+
+services:
+  postgres:
+    image: postgres:16-bookworm
+    environment:
+      POSTGRES_USER: cocal
+      POSTGRES_PASSWORD: cocal
+      POSTGRES_DB: cocal_campo
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cocal -d cocal_campo"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    profiles: ["stack"]
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/app
+    environment:
+      DATABASE_URL: postgres://cocal:cocal@postgres:5432/cocal_campo?sslmode=disable
+      JWT_SECRET: dev-secret-change-in-prod
+      PORT: "8080"
+      CORS_ORIGIN: http://localhost:5173
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    profiles: ["stack"]
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    environment:
+      VITE_API_PROXY_TARGET: http://api:8080
+    depends_on:
+      - api
+
+  devcontainer:
+    build:
+      context: ./.devcontainer
+      dockerfile: Dockerfile
+    volumes:
+      - .:/workspaces/cocal-campo:cached
+    command: sleep infinity
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://cocal:cocal@postgres:5432/cocal_campo?sslmode=disable
+
+volumes:
+  pgdata:
+  frontend_node_modules:

@@ -2,6 +2,12 @@
 
 Runbook mínimo, code review (G2), manutenção de documentação e snippet de CI.
 
+## Guias
+
+| Guia | Uso |
+|------|-----|
+| [fluxo-usuario-brf-001.md](./fluxo-usuario-brf-001.md) | Jornada do usuário, telas e dados da fundação |
+
 ## Manutenção de documentação
 
 Checklist detalhado: [`documentation-checklist.md`](./documentation-checklist.md)
@@ -31,4 +37,4 @@ Documente procedimentos específicos do projeto aqui conforme a stack evoluir.
 
 ---
 
-**Última atualização**: 2026-06-14
+**Última atualização**: 2026-06-15

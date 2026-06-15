@@ -2,11 +2,18 @@
   "name": "cocal-campo",
   "version": "0.1.0",
   "private": true,
-  "description": "Cocal Campo — documentação viva, catálogo BR-* e briefings BRF-*",
+  "description": "Cocal Campo — PWA offline-first + documentação viva",
   "type": "module",
   "scripts": {
     "validate:docs": "node scripts/validate-br-refs.mjs",
     "validate:project": "node scripts/validate-project.mjs",
-    "validate": "npm run validate:project && npm run validate:docs"
+    "validate": "npm run validate:project && npm run validate:docs",
+    "dev": "docker compose --profile stack up -d",
+    "dev:down": "docker compose --profile stack down",
+    "dev:logs": "docker compose --profile stack logs -f api frontend",
+    "test": "docker compose up -d postgres && docker compose --profile stack run --rm api go test ./... && docker compose --profile stack run --rm --no-deps frontend npm test",
+    "test:backend": "docker compose --profile stack run --rm --no-deps api go test ./...",
+    "test:frontend": "docker compose --profile stack run --rm --no-deps frontend npm test",
+    "build": "docker compose --profile stack run --rm --no-deps frontend npm run build && docker compose --profile stack run --rm --no-deps api go build -o /tmp/api ./cmd/api"
   }
 }

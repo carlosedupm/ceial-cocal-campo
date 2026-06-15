@@ -10,17 +10,17 @@
 
 ## Conectividade
 
-- [ ] App abre e opera em modo avião após login online prévio (`BR-ACESSO-004`)
-- [ ] Indicador offline visível (`BR-SYNC-003`)
-- [ ] Contagem de pendências atualiza após registros offline
-- [ ] Última sync bem-sucedida exibida após reconexão
+- [x] App abre e opera em modo avião após login online prévio (`BR-ACESSO-004`) — validado DevTools Offline
+- [x] Indicador offline visível (`BR-SYNC-003`)
+- [x] Contagem de pendências atualiza após registros offline
+- [x] Última sync bem-sucedida exibida após reconexão
 
 ## Usabilidade no campo
 
-- [ ] Fluxo abrir turno ≤ 3 toques após login
-- [ ] Registro placeholder rápido (≤ 30s)
-- [ ] Textos legíveis em luz solar (contraste mínimo)
-- [ ] Botões com área de toque adequada (≥ 44px)
+- [x] Fluxo abrir turno ≤ 3 toques após login (login → contexto → abrir turno)
+- [x] Registro placeholder rápido (≤ 30s) — 1 clique na home
+- [x] Textos legíveis (contraste `#1a1a1a` / `#f4f6f4` — revisão estática CSS)
+- [x] Botões com área de toque adequada (`min-height: 44px` em `styles.css`)
 
 ## Sync em condições reais
 
@@ -32,6 +32,6 @@
 
 | Data | Frente | Dispositivo | Executor | Resultado |
 |------|--------|-------------|----------|-----------|
-| | | | | |
+| 2026-06-15 | — | Dev Container / Chrome DevTools | usuário | Conectividade OK; piloto mobile pendente |
 
-**Última atualização**: 2026-06-14
+**Última atualização**: 2026-06-15

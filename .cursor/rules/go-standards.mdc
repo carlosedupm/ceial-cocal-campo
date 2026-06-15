@@ -6,7 +6,7 @@ alwaysApply: false
 
 # Go — Backend Cocal Campo
 
-> **ADR-001 em proposta.** Estas convenções aplicam-se quando `backend/` existir e `techContext.md` registrar a stack aceita. Ver [`docs/architecture/ADR-001-stack.md`](../../docs/architecture/ADR-001-stack.md).
+> **ADR-001 aceito.** Convenções vinculantes — ambiente via Dev Container + Docker Compose.
 
 ## Stack proposta
 

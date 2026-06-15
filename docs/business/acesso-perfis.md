@@ -6,8 +6,8 @@
 
 | Camada | Caminho |
 |--------|---------|
-| Backend | _(planejado)_ |
-| Frontend | _(planejado)_ |
+| Backend | `backend/internal/service/services.go` (AuthService), `backend/internal/http/middleware/auth.go` |
+| Frontend | `frontend/src/lib/auth/session.ts`, `frontend/src/features/auth/LoginPage.tsx` |
 
 ---
 
@@ -19,8 +19,8 @@
 | **Escopo** | Navegação e menus do PWA após identificação. |
 | **Perfis** | Operador colheita, operador transporte, técnico qualidade, técnico segurança, supervisor frente. |
 | **Efeito** | Bloqueio de acesso a formulários de área não autorizada. |
-| **Implementação** | _(planejado)_ |
-| **Estado** | planejado |
+| **Implementação** | `frontend/src/features/home/HomePage.tsx` (menus por `area`), escopo unidade/frente no backend |
+| **Estado** | implementado |
 
 ---
 
@@ -45,8 +45,8 @@
 | **Escopo** | Identificação inicial e renovação de credencial no dispositivo. |
 | **Perfis** | Todos. |
 | **Efeito** | Bloqueio de operação sem sessão; logout explícito invalida sessão local imediatamente. |
-| **Implementação** | _(planejado)_ |
-| **Estado** | planejado |
+| **Implementação** | `frontend/src/lib/auth/session.ts`, `backend/internal/service/services.go` (refresh 7d) |
+| **Estado** | implementado |
 
 ---
 

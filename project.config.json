@@ -1,7 +1,7 @@
 {
   "projectName": "Cocal Campo",
   "projectSlug": "cocal-campo",
-  "stackDescription": "Stack a definir — ver docs/architecture/ADR-001-stack.md (proposta)",
+  "stackDescription": "React 18 + Vite 5 PWA + Go 1.22 + PostgreSQL 16 — ADR-001 aceito",
   "repoUrl": "https://github.com/carlosedupm/ceial-cocal-campo",
   "codeScanPaths": [
     "backend",

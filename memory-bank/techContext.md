@@ -1,42 +1,64 @@
 # ⚙️ Tech Context — Cocal Campo
 
-> **Stack a definir.** Este arquivo será preenchido quando frontend, backend, banco e infraestrutura forem escolhidos **e aprovados pela equipe** (gate após ADR).
+> Stack ratificada em ADR-001. **Ambiente via Dev Container + Docker Compose** — sem dependências no host.
 
 ## Status
 
 | Camada | Tecnologia | Versão |
 |--------|------------|--------|
-| Frontend (PWA) | _a definir_ | — |
-| Backend / API | _a definir_ | — |
-| Banco de dados | _a definir_ | — |
-| Sync offline | _a definir_ | — |
+| Frontend PWA | React + TypeScript + Vite | React 18, Vite 5 |
+| Store local | IndexedDB (Dexie.js) | 4.x |
+| PWA / SW | vite-plugin-pwa (Workbox) | — |
+| Backend / API | Go (chi) | 1.22+ |
+| Banco de dados | PostgreSQL | 16 |
+| Sync offline | Outbox + idempotency (ADR-002) | — |
+| Auth | JWT access (30 min) + refresh (7 dias) | `BR-ACESSO-004` |
+| Dev | Dev Container + Docker Compose | `.devcontainer/` |
+| CI | GitHub Actions | docs + Go + frontend |
 
-**Descrição resumida:** Stack a definir
+## Desenvolvimento local (containerizado)
 
-## Proposta em discussão (não vinculante)
+```bash
+# Opção A — Dev Container (recomendado)
+# Cursor → Reopen in Container (sobe Postgres)
+# Run and Debug → "Cocal Campo (API + PWA)" → F5
 
-Há uma **proposta** de stack em [`docs/architecture/ADR-001-stack.md`](../docs/architecture/ADR-001-stack.md) (`Status: proposta`). **Não implementar** até ratificação humana e atualização deste arquivo.
+# Opção B — Docker Compose no host (stack completa em containers)
+docker compose --profile stack up -d
 
-## Requisitos de produto (não prescrevem tecnologia)
+# Validação docs (Node no Dev Container ou host com Node)
+npm run validate
 
-Estes requisitos orientam a escolha futura de stack; detalhe operacional em `docs/business/`:
+# Testes (containers)
+npm run test
 
-- **PWA instalável** no dispositivo móvel do profissional de campo
-- **Offline-first**: leitura e escrita completas sem Internet (`BR-TRANS-001`)
-- **Sincronização automática** ao retorno da conexão (`BR-TRANS-002`, `BR-SYNC-*`)
-- **Multi-área** com perfis distintos (`BR-ACESSO-*`)
-- **Tempo real** para supervisão quando online (`BR-SUPERVISAO-002`)
+# Lockfiles (primeira vez ou após mudar deps)
+bash scripts/bootstrap-lockfiles.sh
+```
 
-## Desenvolvimento local
+### Serviços Docker Compose
 
-_Comandos serão adicionados após criação do repositório de código e aprovação da stack._
+| Serviço | Porta | Imagem / build |
+|---------|-------|----------------|
+| `postgres` | 5432 | postgres:16-alpine |
+| `api` | 8080 | `backend/Dockerfile.dev` |
+| `frontend` | 5173 | `frontend/Dockerfile.dev` |
+| `devcontainer` | — | `.devcontainer/Dockerfile` |
 
-## Decisões técnicas documentadas
+### Variáveis de ambiente (serviço `api`)
 
-| Decisão | Motivo | Data |
-|---------|--------|------|
-| Documentação viva antes de stack | Negócio primeiro; evitar decisões prematuras | 2026-06-14 |
-| Gestão à Vista fora do MVP | Escopo Fase 0–3 = PWA de campo | 2026-06-14 |
-| Código removido (scaffold prematuro) | Arquitetura não ratificada; aguardar ADR aceito | 2026-06-14 |
+| Variável | Valor dev | Descrição |
+|----------|-----------|-----------|
+| `DATABASE_URL` | `postgres://cocal:cocal@postgres:5432/cocal_campo?sslmode=disable` | PostgreSQL |
+| `JWT_SECRET` | `dev-secret-change-in-prod` | Assinatura JWT |
+| `CORS_ORIGIN` | `http://localhost:5173` | Origem PWA |
 
-**Última atualização**: 2026-06-14
+### Credenciais de teste
+
+| E-mail | Senha | Perfil |
+|--------|-------|--------|
+| `colheita@cocal.dev` | `campo123` | Operador colheita |
+| `transporte@cocal.dev` | `campo123` | Operador transporte |
+| `supervisor@cocal.dev` | `campo123` | Supervisor |
+
+**Última atualização**: 2026-06-15

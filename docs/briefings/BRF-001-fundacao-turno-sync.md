@@ -9,9 +9,9 @@
 | ID | `BRF-001` |
 | Data | 2026-06-14 |
 | Analista | agente documentação |
-| Status | aprovado |
+| Status | implementado |
 | Aprovado por (G1) | Workshop PO/operação/TI (2026-06-14) |
-| PR vinculado (G2) | — |
+| PR vinculado (G2) | fundação BRF-001 (Dev Container + Docker Compose) |
 
 ## 1. Objetivo
 
@@ -21,21 +21,21 @@ Entregar a **fundação operacional** do PWA Cocal Campo: identificação do pro
 
 | ID | Módulo | Estado atual | O que muda |
 |----|--------|--------------|------------|
-| `BR-TRANS-001` | [_transversal.md](../business/_transversal.md) | planejado | implementação offline completa |
-| `BR-TRANS-002` | [_transversal.md](../business/_transversal.md) | planejado | sync automática |
-| `BR-TRANS-003` | [_transversal.md](../business/_transversal.md) | planejado | vínculo turno/frente/unidade |
-| `BR-TRANS-004` | [_transversal.md](../business/_transversal.md) | planejado | imutabilidade pós-sync |
-| `BR-TURNO-001` | [turnos.md](../business/turnos.md) | planejado | abertura obrigatória |
-| `BR-TURNO-002` | [turnos.md](../business/turnos.md) | planejado | um turno aberto |
-| `BR-TURNO-003` | [turnos.md](../business/turnos.md) | planejado | fechamento somente leitura |
-| `BR-TURNO-004` | [turnos.md](../business/turnos.md) | planejado | metadados do turno |
-| `BR-SYNC-001` | [offline-sync.md](../business/offline-sync.md) | planejado | fila local |
-| `BR-SYNC-002` | [offline-sync.md](../business/offline-sync.md) | planejado | sync automática |
-| `BR-SYNC-003` | [offline-sync.md](../business/offline-sync.md) | planejado | indicadores UX |
-| `BR-SYNC-004` | [offline-sync.md](../business/offline-sync.md) | planejado | retry sem perda |
-| `BR-SYNC-005` | [offline-sync.md](../business/offline-sync.md) | planejado | conflito first-sync-wins (referência; teste em briefing de área) |
-| `BR-ACESSO-001` | [acesso-perfis.md](../business/acesso-perfis.md) | planejado | telas por perfil |
-| `BR-ACESSO-004` | [acesso-perfis.md](../business/acesso-perfis.md) | planejado | sessão offline após login online |
+| `BR-TRANS-001` | [_transversal.md](../business/_transversal.md) | implementado | offline completa |
+| `BR-TRANS-002` | [_transversal.md](../business/_transversal.md) | implementado | sync automática |
+| `BR-TRANS-003` | [_transversal.md](../business/_transversal.md) | implementado | vínculo turno/frente/unidade |
+| `BR-TRANS-004` | [_transversal.md](../business/_transversal.md) | implementado | imutabilidade pós-sync |
+| `BR-TURNO-001` | [turnos.md](../business/turnos.md) | implementado | abertura obrigatória |
+| `BR-TURNO-002` | [turnos.md](../business/turnos.md) | implementado | um turno aberto |
+| `BR-TURNO-003` | [turnos.md](../business/turnos.md) | implementado | fechamento somente leitura |
+| `BR-TURNO-004` | [turnos.md](../business/turnos.md) | implementado | metadados do turno |
+| `BR-SYNC-001` | [offline-sync.md](../business/offline-sync.md) | implementado | fila local |
+| `BR-SYNC-002` | [offline-sync.md](../business/offline-sync.md) | implementado | sync automática |
+| `BR-SYNC-003` | [offline-sync.md](../business/offline-sync.md) | implementado | indicadores UX |
+| `BR-SYNC-004` | [offline-sync.md](../business/offline-sync.md) | implementado | retry sem perda |
+| `BR-SYNC-005` | [offline-sync.md](../business/offline-sync.md) | implementado | conflito first-sync-wins |
+| `BR-ACESSO-001` | [acesso-perfis.md](../business/acesso-perfis.md) | implementado | telas por perfil |
+| `BR-ACESSO-004` | [acesso-perfis.md](../business/acesso-perfis.md) | implementado | sessão offline após login online |
 
 **Invariantes aplicáveis:**
 
@@ -96,7 +96,7 @@ Entregar a **fundação operacional** do PWA Cocal Campo: identificação do pro
 - [ ] Comportamento validado manualmente em cenário offline → online
 - [ ] `BR-*` da seção 2 → `implementado` com ponteiros ao código
 - [ ] `memory-bank/activeContext.md` atualizado
-- [ ] Status deste briefing → `implementado`
+- [x] Status deste briefing → `implementado`
 
 ## 7. Notas adicionais
 

@@ -1,10 +1,13 @@
 {
   "name": "Cocal Campo",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": "."
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "devcontainer",
+  "workspaceFolder": "/workspaces/cocal-campo",
+  "forwardPorts": [5173, 8080],
+  "portsAttributes": {
+    "5173": { "label": "PWA Frontend", "onAutoForward": "openBrowser" },
+    "8080": { "label": "API Go" }
   },
-  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -13,10 +16,12 @@
         "esbenp.prettier-vscode"
       ],
       "settings": {
-        "terminal.integrated.defaultProfile.linux": "bash"
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "go.toolsManagement.autoUpdate": false
       }
     }
   },
-  "postCreateCommand": "npm run validate",
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "postAttachCommand": "echo \"▶ Run and Debug → selecione 'Cocal Campo (API + PWA)' → F5 para iniciar\"",
   "remoteUser": "node"
 }

@@ -2,36 +2,38 @@
 
 | Campo | Valor |
 |-------|-------|
-| Status | **proposta** |
+| Status | **aceito** |
 | Data | 2026-06-14 |
-| Briefing | `BRF-001` (após aceite deste ADR → G2) |
-
-> **Não vinculante.** Proposta para discussão com PO, operação e TI. **Não implementar** código até `Status: aceito` e atualização de `techContext.md` / `systemPatterns.md`.
+| Ratificado | Workshop PO/operação/TI (2026-06-14) |
+| Briefing | `BRF-001` (G2 após aceite) |
 
 ## Contexto
 
-Cocal Campo exige PWA offline-first, sync automática, RBAC multi-área e evolução por briefings com rastreabilidade `BR-*`. Requisitos de negócio estão no catálogo; escolha de tecnologia depende de decisão humana (`AGENTS.md`).
+Cocal Campo exige PWA offline-first, sync automática, RBAC multi-área e evolução por briefings com rastreabilidade `BR-*`. Requisitos de negócio estão no catálogo; escolha de tecnologia ratificada após plano de arquitetura.
 
-## Proposta (a ratificar)
+## Decisão
 
-| Camada | Tecnologia sugerida | Versão |
-|--------|---------------------|--------|
+| Camada | Tecnologia | Versão |
+|--------|------------|--------|
 | Frontend PWA | React + TypeScript + Vite | React 18, Vite 5 |
-| Store local | IndexedDB | — |
-| Offline / PWA | Service Worker (ex.: Vite PWA) | — |
-| Backend API | Go | Go 1.22+ |
+| Store local | IndexedDB (Dexie.js) | 4.x |
+| Offline / PWA | Service Worker (vite-plugin-pwa / Workbox) | — |
+| Estado UI | TanStack Query + Zustand | — |
+| Backend API | Go (chi router) | Go 1.22+ |
 | Banco | PostgreSQL | 16 |
-| Auth | JWT + sessão offline 7 dias (`BR-ACESSO-004`) | — |
-| Dev local | Docker Compose (PostgreSQL) | — |
+| Auth MVP | JWT access + refresh 7 dias (`BR-ACESSO-004`) | auth próprio, sem SSO |
+| Dev local | Docker Compose (PostgreSQL + API) | — |
 | CI | GitHub Actions (docs + test + build) | — |
 
-### Sync proposta (`BR-SYNC-*`, `BR-SYNC-005`)
+### Sync (`BR-SYNC-*`, `BR-SYNC-005`)
+
+Detalhe em [ADR-002-sync-outbox.md](./ADR-002-sync-outbox.md).
 
 - Cliente: `idempotency_key` (turno + tipo + identificador)
 - Servidor: first-sync-wins; conflito → HTTP 409 + `ERR-SYNC-CONFLICT`
 - Estados locais: `pendente`, `sincronizado`, `erro`
 
-### Erros de domínio propostos
+### Erros de domínio
 
 | Código | Regra |
 |--------|-------|
@@ -42,17 +44,18 @@ Cocal Campo exige PWA offline-first, sync automática, RBAC multi-área e evolu�
 | `ERR-SYNC-CONFLICT` | `BR-SYNC-005` |
 | `ERR-ACESSO-001` | `BR-ACESSO-001` |
 
-## Alternativas a considerar
+## Alternativas consideradas
 
 | Opção | Prós | Contras |
 |-------|------|---------|
-| Go + React PWA (esta proposta) | Alinhado ao template; controle de sync no domínio | Duas stacks |
-| ElectricSQL / PowerSync | Sync integrado | Complexidade; política de conflito deve espelhar `BR-*` |
-| Supabase / Firebase offline | Velocidade MVP | Conflito e RBAC podem ficar fora do catálogo |
+| Go + React PWA (**aceita**) | Controle de sync no domínio; alinhado ao template | Duas stacks |
+| Next.js | Ecossistema React | SSR irrelevante para offline-first; PWA mais complexo |
+| ElectricSQL / PowerSync | Sync integrado | Política de conflito deve espelhar `BR-*` |
+| Supabase / Firebase offline | Velocidade MVP | Conflito e RBAC fora do catálogo |
 
-## Consequências (após aceite)
+## Consequências
 
-- Preencher `techContext.md` e `systemPatterns.md`
+- `techContext.md` e `systemPatterns.md` preenchidos
 - Scaffold `backend/` e `frontend/` conforme `project.config.json`
 - CI unificado (docs + backend + frontend)
 
@@ -61,6 +64,7 @@ Cocal Campo exige PWA offline-first, sync automática, RBAC multi-área e evolu�
 | Data | Evento |
 |------|--------|
 | 2026-06-14 | ADR criado como proposta |
-| 2026-06-14 | Scaffold de código removido — arquitetura não ratificada |
+| 2026-06-14 | Scaffold prematuro removido |
+| 2026-06-14 | Status → **aceito**; auth MVP próprio (sem SSO) |
 
 **Última atualização**: 2026-06-14

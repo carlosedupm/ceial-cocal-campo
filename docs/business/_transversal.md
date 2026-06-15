@@ -47,8 +47,8 @@ flowchart LR
 | **Escopo** | PWA Cocal Campo; todos os módulos de registro e consulta. |
 | **Perfis** | Todos. |
 | **Efeito** | Bloqueio de dependência de rede para operações locais; UI nunca impede registro por falta de conexão. |
-| **Implementação** | _(planejado)_ |
-| **Estado** | planejado |
+| **Implementação** | `frontend/src/lib/db/schema.ts`, `frontend/src/lib/sync/engine.ts`, `frontend/src/features/turno/ContextoPage.tsx` (turno offline) |
+| **Estado** | implementado |
 
 ---
 
@@ -60,8 +60,8 @@ flowchart LR
 | **Escopo** | Fila de registros pendentes; retorno de conectividade. |
 | **Perfis** | Todos. |
 | **Efeito** | Sync em background; usuário informado do progresso (ver `BR-SYNC-003`). |
-| **Implementação** | _(planejado)_ — ver [offline-sync.md](./offline-sync.md) |
-| **Estado** | planejado |
+| **Implementação** | `frontend/src/lib/sync/engine.ts` — ver [offline-sync.md](./offline-sync.md) |
+| **Estado** | implementado |
 
 ---
 
@@ -73,8 +73,8 @@ flowchart LR
 | **Escopo** | Criação de qualquer registro de indicador ou ocorrência. |
 | **Perfis** | Todos (exceto consultas de leitura histórica conforme `BR-ACESSO-*`). |
 | **Efeito** | Bloqueio se turno não estiver aberto (`TMP-002`). |
-| **Implementação** | _(planejado)_ — ver [turnos.md](./turnos.md) |
-| **Estado** | planejado |
+| **Implementação** | `frontend/src/features/turno/ContextoPage.tsx`, `backend/internal/service/services.go` — ver [turnos.md](./turnos.md) |
+| **Estado** | implementado |
 
 ---
 
@@ -86,8 +86,8 @@ flowchart LR
 | **Escopo** | Todos os registros sincronizados. |
 | **Perfis** | Operadores: somente leitura pós-sync; supervisor conforme `BR-SUPERVISAO-*`. |
 | **Efeito** | Bloqueio de edição direta pós-sync para operadores. |
-| **Implementação** | _(planejado)_ |
-| **Estado** | planejado |
+| **Implementação** | `backend/migrations/001_init.sql` (`synced_at`, sem UPDATE para operadores na fundação), status local `sincronizado` |
+| **Estado** | implementado |
 
 ---
 

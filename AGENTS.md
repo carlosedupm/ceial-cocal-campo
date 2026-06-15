@@ -4,18 +4,19 @@ Instruções **portáveis** para agentes de IA (Cursor, CLI, etc.). Regras Curso
 
 ## Visão Geral
 
-**Cocal Campo** — PWA offline-first para frentes de trabalho no campo (colheita de cana Cocal). Stack: **a definir**.
+**Cocal Campo** — PWA offline-first para frentes de trabalho no campo (colheita de cana Cocal). Stack: **Go + React PWA + PostgreSQL** (ADR-001 aceito). Dev via **Dev Container + Docker Compose**.
 
 Requisitos versionados em `docs/business/` (IDs `BR-*`). Estado vivo em `memory-bank/`.
 
-## Modo atual: negócio primeiro
+## Modo atual: fundação implementada (BRF-001)
 
-1. **Não escolher stack** — `techContext.md` e `systemPatterns.md` estão pendentes de definição humana.
-2. **Fonte de verdade** = `docs/business/`; implementação de código só via briefing `Status: aprovado` (gate G1).
-3. **Requisitos não-funcionais como negócio**: offline-first, PWA instalável, sync automática e multi-área estão em `BR-TRANS-*` e `BR-SYNC-*` — **não** prescreva React, IndexedDB, Service Worker, etc. sem decisão registrada em `techContext.md`.
-4. **Gestão à Vista** (dashboard de gestão) está **fora do escopo** até Fase 4 — não implementar nem especificar integração sem novo briefing.
-5. **Dúvidas de domínio** → seção «Perguntas em aberto» do briefing; nunca assumir política de conflito offline, validação de segurança ou origem de metas planejadas (ver lacunas em `_transversal.md`).
-6. **Proibido** criar ou alterar regras `BR-*` durante implementação — devolver ao analista funcional / gate G1.
+1. **Stack definida** — ver `techContext.md`, `systemPatterns.md`, ADR-001/002.
+2. **Fonte de verdade** = `docs/business/`; implementação via briefing `Status: aprovado` (G1) → G2/G3.
+3. **Ambiente de dev** = Dev Container + `docker compose up -d` — **não** depender de Go/Node/Postgres instalados no host.
+4. **Requisitos não-funcionais como negócio**: offline-first, PWA instalável, sync automática e multi-área estão em `BR-TRANS-*` e `BR-SYNC-*` — implementação em `backend/` + `frontend/` conforme ADR-001 aceito.
+5. **Gestão à Vista** (dashboard de gestão) está **fora do escopo** até Fase 4 — não implementar nem especificar integração sem novo briefing.
+6. **Dúvidas de domínio** → seção «Perguntas em aberto» do briefing; nunca assumir política de conflito offline, validação de segurança ou origem de metas planejadas (ver lacunas em `_transversal.md`).
+7. **Proibido** criar ou alterar regras `BR-*` durante implementação — devolver ao analista funcional / gate G1.
 
 ## Documentação — onde consultar
 
@@ -40,6 +41,7 @@ Requisitos versionados em `docs/business/` (IDs `BR-*`). Estado vivo em `memory-
 - **Fluxo transversal**: [`docs/business/_transversal.md`](docs/business/_transversal.md)
 - **Fluxo de briefings**: [`docs/briefings/README.md`](docs/briefings/README.md) — gates G1–G3
 - **Operações**: [`docs/ops/README.md`](docs/ops/README.md)
+- **Fluxo do usuário (BRF-001)**: [`docs/ops/fluxo-usuario-brf-001.md`](docs/ops/fluxo-usuario-brf-001.md)
 
 ## Fluxo de requisitos
 
@@ -76,4 +78,4 @@ Comandos de build/teste serão adicionados após definição de stack em `techCo
 - Não contradizer `docs/business/` — `systemPatterns.md` ainda não contém padrões técnicos vinculantes
 - Manutenção de docs: `.cursor/rules/documentation-maintenance.mdc`
 
-**Última atualização**: 2026-06-14
+**Última atualização**: 2026-06-15

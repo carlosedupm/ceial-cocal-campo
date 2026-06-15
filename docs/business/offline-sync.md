@@ -1,13 +1,13 @@
 # Módulo — Offline e sincronização
 
-> Fila local, sync automática, status visível e retry. Requisitos de negócio — implementação técnica a definir.
+> Fila local, sync automática, status visível e retry.
 
 ## Implementação principal
 
 | Camada | Caminho |
 |--------|---------|
-| Backend | _(planejado)_ |
-| Frontend | _(planejado)_ |
+| Backend | `backend/internal/service/services.go` (SyncService), `backend/internal/http/handlers/sync.go` |
+| Frontend | `frontend/src/lib/sync/engine.ts`, `frontend/src/lib/db/schema.ts`, `frontend/src/features/sync/SyncStatusBar.tsx` |
 
 ---
 
@@ -19,8 +19,8 @@
 | **Escopo** | Todo registro após gravação local sem confirmação do servidor. |
 | **Perfis** | Todos. |
 | **Efeito** | UI exibe status por registro ou contagem agregada. |
-| **Implementação** | _(planejado)_ |
-| **Estado** | planejado |
+| **Implementação** | `frontend/src/lib/db/schema.ts` (`sync_status`), `frontend/src/features/home/HomePage.tsx` |
+| **Estado** | implementado |
 
 ---
 
@@ -32,8 +32,8 @@
 | **Escopo** | Transição offline → online; periodicidade quando online com pendências. |
 | **Perfis** | Todos (transparente). |
 | **Efeito** | Nenhuma ação manual obrigatória; ver `BR-TRANS-002`. |
-| **Implementação** | _(planejado)_ |
-| **Estado** | planejado |
+| **Implementação** | `frontend/src/lib/sync/engine.ts` (`startSyncEngine`, evento `online`) |
+| **Estado** | implementado |
 
 ---
 
@@ -45,8 +45,8 @@
 | **Escopo** | Cabeçalho ou área persistente do PWA. |
 | **Perfis** | Todos. |
 | **Efeito** | Informativo; não bloqueia operação offline. |
-| **Implementação** | _(planejado)_ |
-| **Estado** | planejado |
+| **Implementação** | `frontend/src/features/sync/SyncStatusBar.tsx`, tabela `sync_meta` em Dexie |
+| **Estado** | implementado |
 
 ---
 
@@ -58,8 +58,8 @@
 | **Escopo** | Erros de rede, timeout, rejeição temporária do servidor. |
 | **Perfis** | Todos. |
 | **Efeito** | Registro permanece pendente ou em erro com opção de retry manual. |
-| **Implementação** | _(planejado)_ |
-| **Estado** | planejado |
+| **Implementação** | `frontend/src/lib/sync/engine.ts` (retry em intervalo + evento online) |
+| **Estado** | implementado |
 
 ---
 
@@ -71,8 +71,8 @@
 | **Escopo** | Sync de registros com chave de idempotência duplicada e payload divergente. |
 | **Perfis** | Todos (efeito automático); supervisor resolve conflitos. |
 | **Efeito** | Bloqueio de overwrite silencioso; trilha de auditoria preservada. |
-| **Implementação** | _(planejado)_ |
-| **Estado** | planejado |
+| **Implementação** | `backend/internal/service/services.go` (SyncService.Push), `UNIQUE(idempotency_key)` em `backend/migrations/001_init.sql`, ADR-002 |
+| **Estado** | implementado |
 
 ---
 

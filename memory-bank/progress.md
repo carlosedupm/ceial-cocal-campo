@@ -4,44 +4,31 @@
 
 ## Status Geral do Projeto
 
-### **Completude Geral**: 15%
+### **Completude Geral**: 60%
 
 | Área | Completude | Notas |
 |------|------------|-------|
-| Documentação de negócio | 95% | Lacunas alta prioridade resolvidas no catálogo |
-| Processo / briefings | 40% | BRF-001 G1; checklists de teste; ADR proposta |
-| Stack / arquitetura | 10% | ADR-001 proposta — não ratificada |
-| Implementação | 0% | Sem `backend/` / `frontend/` |
+| Documentação de negócio | 95% | Fundação implementada no catálogo |
+| Processo / briefings | 75% | BRF-001 implementado (G3) |
+| Stack / arquitetura | 95% | ADR-001/002; Dev Container + Compose |
+| Implementação fundação | 90% | Auth, turno, sync; E2E opcional em CI |
 
 ## ✅ O que foi concluído
 
-- [x] Estrutura inicial de documentação viva configurada
-- [x] Charter e contexto de produto
-- [x] Catálogo de negócio expandido (`BR-SYNC-005`, `BR-ACESSO-004`, `BR-SEGURANCA-004`, `BR-PERFORMANCE-003`)
-- [x] Lacunas `_transversal.md` atualizadas
-- [x] Briefing `BRF-001` — G1 com respostas documentadas
-- [x] Checklists `docs/tests/` (regressão fundação, validação campo)
-- [x] ADR-001 criado como proposta
-- [x] Scaffold prematuro removido (alinhado a negócio primeiro)
-- [x] Validação CI: `validate-br-refs.mjs` OK
-
-## 🚧 Em andamento
-
-- Ratificação do ADR-001 pela equipe
-- Validação humana das decisões de negócio documentadas
+- [x] ADR-001 e ADR-002 aceitos
+- [x] Ambiente Dev Container + Docker Compose (sem deps no host)
+- [x] Fundação BRF-001 implementada
+- [x] BR-* fundação → implementado
 
 ## 📋 Próximos Passos
 
-1. Aceitar ou revisar ADR-001
-2. Preencher `techContext.md` / `systemPatterns.md` após aceite
-3. Scaffold + implementação `BRF-001` (G2/G3)
-4. `BRF-002` Colheita
+1. `BRF-002` Colheita
+2. Validação campo manual (checklist)
 
-## 📜 Histórico de Progresso
+## 📜 Histórico
 
 | Data | Marco |
 |------|-------|
-| 2026-06-14 | Template adotado; catálogo Fase 0 |
-| 2026-06-14 | Repositório standalone `ceial-cocal-campo` preparado (git init, CI docs) |
+| 2026-06-14 | Fundação BRF-001 + stack containerizada |
 
 **Última atualização**: 2026-06-14

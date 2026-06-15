@@ -6,48 +6,31 @@
 
 ### **Status Geral**
 
-**Fase 0 — Documentação de negócio e processo.** Stack e arquitetura **a definir** (ADR-001 em **proposta**). **Sem código de aplicação** — scaffold prematuro removido. MVP = PWA de campo; Gestão à Vista fora do escopo inicial.
+**Fase 1 concluída — fundação `BRF-001` (G3).** Stack containerizada via **Dev Container + Docker Compose**. Próximo: `BRF-002` Colheita.
 
-### ✅ Concluído desde a última atualização:
+### ✅ Concluído:
 
-1. ✅ Lacunas de negócio documentadas (`_transversal.md`, `BR-SYNC-005`, `BR-ACESSO-004`, etc.)
-2. ✅ `BRF-001` com perguntas respondidas e gate G1 (revisar validação humana)
-3. ✅ Checklists em `docs/tests/` para fundação
-4. ✅ ADR-001 como **proposta** (não aceita)
-5. ✅ Remoção de `backend/` e `frontend/` criados sem ratificação de arquitetura
-6. ✅ Repositório Git standalone preparado (`ceial-cocal-campo`, validação CI docs)
+1. ✅ ADR-001 e ADR-002 aceitos
+2. ✅ Scaffold `backend/` + `frontend/` + Docker Compose + Dev Container
+3. ✅ Fundação: auth JWT, turno, sync Outbox, RBAC básico
+4. ✅ Testes unitários (Go + Vitest) via containers
+5. ✅ `BR-*` da fundação → `implementado` com ponteiros ao código
+6. ✅ Fix tela em branco na HomePage — índice Dexie `created_at` em `registros` (schema v2)
+7. ✅ Guia de fluxo do usuário — [`docs/ops/fluxo-usuario-brf-001.md`](../docs/ops/fluxo-usuario-brf-001.md)
+8. ✅ Cache local de unidades/frentes no IndexedDB (schema v3) — contexto operacional offline após fechar turno
+9. ✅ Validação offline browser (caso 2 regressão BRF-001) — sync automática após reconexão
 
-### ✅ O que está funcionando:
+### ✅ Stack de desenvolvimento:
 
-- Infraestrutura de documentação viva (memory-bank, `BR-*`, briefings, validação CI)
-- Vocabulário de domínio em `domain-patterns.mdc`
+| Serviço | Como subir |
+|---------|------------|
+| Dev Container | Cursor → Reopen in Container (Postgres) |
+| API + PWA | F5 — *Cocal Campo (API + PWA)* em `.vscode/launch.json` |
+| Stack em containers | `docker compose --profile stack up -d` |
 
-### 🚧 Em andamento:
+### 📋 Próximos passos:
 
-- Ratificação humana do ADR-001 (stack e arquitetura)
-- Validação humana das decisões de negócio do workshop documentado
+1. Regressão pendente: RBAC visual (caso 6), falha sync API (caso 8), piloto mobile
+2. Briefing `BRF-002` Colheita
 
-### 📋 Próximos passos imediatos:
-
-1. **Revisar ADR-001** — aceitar, alterar ou substituir proposta de stack
-2. Após ADR aceito: preencher `techContext.md` / `systemPatterns.md`
-3. Gate G2 do `BRF-001` — scaffold e implementação da fundação
-4. Briefing `BRF-002` Colheita (rascunho)
-
-### 🔧 Decisões Técnicas Ativas
-
-| Decisão | Status | Notas |
-|---------|--------|-------|
-| Stack (frontend, backend, banco, sync) | **proposta (ADR-001)** | Aguardando aceite humano |
-| Gestão à Vista no ecossistema | adiado | Fase 4 — fora do MVP |
-| Política de conflito offline | documentada | `BR-SYNC-005` — validar com operação |
-
-### ⚠️ Problemas Conhecidos
-
-- Decisões de workshop documentadas pelo processo de análise — **confirmar** com PO/operação/TI
-
-### 🎯 Foco Atual
-
-Fechar arquitetura (ADR aceito) antes de qualquer novo código.
-
-**Última atualização**: 2026-06-14
+**Última atualização**: 2026-06-15

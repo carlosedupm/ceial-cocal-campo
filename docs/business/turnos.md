@@ -6,8 +6,8 @@
 
 | Camada | Caminho |
 |--------|---------|
-| Backend | _(planejado)_ |
-| Frontend | _(planejado)_ |
+| Backend | `backend/internal/service/services.go` (TurnoService), `backend/internal/http/handlers/turno.go` |
+| Frontend | `frontend/src/features/turno/ContextoPage.tsx`, `frontend/src/features/home/HomePage.tsx` |
 
 ---
 
@@ -19,8 +19,8 @@
 | **Escopo** | Fluxo inicial após identificação e seleção de unidade/frente. |
 | **Perfis** | Todos os perfis operacionais. |
 | **Efeito** | Bloqueio de criação de registro sem turno aberto (`TMP-002`). |
-| **Implementação** | _(planejado)_ |
-| **Estado** | planejado |
+| **Implementação** | `frontend/src/features/home/HomePage.tsx`, `backend/internal/service/services.go` (SyncService — TMP-002) |
+| **Estado** | implementado |
 
 ---
 
@@ -32,8 +32,8 @@
 | **Escopo** | Abertura de novo turno; tentativa com turno já aberto. |
 | **Perfis** | Todos. |
 | **Efeito** | Bloqueio até fechamento ou cancelamento do turno anterior. |
-| **Implementação** | _(planejado)_ |
-| **Estado** | planejado |
+| **Implementação** | `backend/migrations/001_init.sql` (`idx_turno_usuario_aberto`), `ERR-TURNO-002` |
+| **Estado** | implementado |
 
 ---
 
@@ -45,8 +45,8 @@
 | **Escopo** | Pós-fechamento; edição de registros do turno. |
 | **Perfis** | Operadores: leitura; supervisor: ações conforme `BR-SUPERVISAO-003`. |
 | **Efeito** | Bloqueio de edição para operadores; sync de estado final (`INT-001`). |
-| **Implementação** | _(planejado)_ |
-| **Estado** | planejado |
+| **Implementação** | `frontend/src/features/home/HomePage.tsx` (UI oculta ações), `ERR-TURNO-003` no sync |
+| **Estado** | implementado |
 
 ---
 
@@ -58,8 +58,8 @@
 | **Escopo** | Entidade turno; relatórios e agregações. |
 | **Perfis** | Todos. |
 | **Efeito** | Bloqueio de abertura sem unidade e frente selecionadas. |
-| **Implementação** | _(planejado)_ |
-| **Estado** | planejado |
+| **Implementação** | `backend/migrations/001_init.sql` (tabela `turnos`), `frontend/src/features/turno/ContextoPage.tsx` |
+| **Estado** | implementado |
 
 ---
 
