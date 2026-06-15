@@ -40,6 +40,7 @@ Requisitos versionados em `docs/business/` (IDs `BR-*`). Estado vivo em `memory-
 - **Regras de domínio**: [`docs/business/README.md`](docs/business/README.md)
 - **Fluxo transversal**: [`docs/business/_transversal.md`](docs/business/_transversal.md)
 - **Fluxo de briefings**: [`docs/briefings/README.md`](docs/briefings/README.md) — gates G1–G3
+- **Perfil analista funcional** (Cursor): `.cursor/rules/functional-analyst.mdc`
 - **Operações**: [`docs/ops/README.md`](docs/ops/README.md)
 - **Fluxo do usuário (BRF-001)**: [`docs/ops/fluxo-usuario-brf-001.md`](docs/ops/fluxo-usuario-brf-001.md)
 

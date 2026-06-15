@@ -20,4 +20,4 @@ Mapa completo, comandos e índice de docs: **[`AGENTS.md`](../../AGENTS.md)** na
 - Vocabulário: regra **`domain-patterns.mdc`**
 - Implementação só com briefing `Status: aprovado` — fundação: `BRF-001`
 - Manutenção de docs: **[`documentation-maintenance.mdc`](documentation-maintenance.mdc)**
-- Novo requisito: `BR-*` `planejado` + briefing `BRF-NNN` — ver [`docs/briefings/README.md`](../../docs/briefings/README.md)
+- Novo requisito: `BR-*` `planejado` + briefing `BRF-NNN` — ver [`docs/briefings/README.md`](../../docs/briefings/README.md); perfil analista: **`functional-analyst.mdc`**

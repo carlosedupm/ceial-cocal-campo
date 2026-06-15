@@ -16,6 +16,8 @@ Fluxo **agnóstico de ferramenta e de agente**: os papéis abaixo podem ser exer
 
 ### Regras do Analista Funcional
 
+> Checklist operacional para agentes: [`.cursor/rules/functional-analyst.mdc`](../../.cursor/rules/functional-analyst.mdc)
+
 1. Consultar `docs/business/README.md` e módulo afetado antes de escrever.
 2. Citar fonte em toda afirmação (`BR-*`, `TMP-*`, `INT-*` ou caminho de arquivo).
 3. Regra nova nasce no catálogo com estado `planejado` **no mesmo trabalho** que o briefing.
@@ -58,4 +60,4 @@ Falha se código ou briefing referenciar ID inexistente no catálogo, ou briefin
 
 ---
 
-**Última atualização**: 2026-06-14
+**Última atualização**: 2026-06-15
