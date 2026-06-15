@@ -120,12 +120,13 @@ func hashToken(token string) string {
 }
 
 type TurnoService struct {
-	turnos *repository.TurnoRepository
-	users  *repository.UserRepository
+	turnos    *repository.TurnoRepository
+	registros *repository.RegistroRepository
+	users     *repository.UserRepository
 }
 
-func NewTurnoService(turnos *repository.TurnoRepository, users *repository.UserRepository) *TurnoService {
-	return &TurnoService{turnos: turnos, users: users}
+func NewTurnoService(turnos *repository.TurnoRepository, registros *repository.RegistroRepository, users *repository.UserRepository) *TurnoService {
+	return &TurnoService{turnos: turnos, registros: registros, users: users}
 }
 
 type AbrirTurnoInput struct {
@@ -202,6 +203,9 @@ func (s *TurnoService) Fechar(ctx context.Context, user *domain.Usuario, turnoID
 	if t.Status == domain.TurnoFechado {
 		return nil, domain.NewDomainError(domain.ErrTurno003, "turno ja fechado")
 	}
+	if err := s.validateObrigatoriosFechamento(ctx, t); err != nil {
+		return nil, err
+	}
 	fim := time.Now().UTC().Format(time.RFC3339)
 	closed, err := s.turnos.Close(ctx, turnoID, fim)
 	if err != nil {
@@ -211,6 +215,22 @@ func (s *TurnoService) Fechar(ctx context.Context, user *domain.Usuario, turnoID
 		return nil, domain.NewDomainError(domain.ErrInvalidRequest, "turno nao encontrado")
 	}
 	return closed, nil
+}
+
+func (s *TurnoService) validateObrigatoriosFechamento(ctx context.Context, t *domain.Turno) error {
+	if t.Area != AreaColheita {
+		return nil
+	}
+	for _, tipo := range ObrigatoriosColheitaFechamento {
+		ok, err := s.registros.HasTipoForTurno(ctx, t.ID, tipo)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			return domain.NewDomainError(domain.ErrINT001, "registro obrigatorio ausente: "+tipo)
+		}
+	}
+	return nil
 }
 
 type SyncService struct {
@@ -242,6 +262,9 @@ func (s *SyncService) Push(ctx context.Context, user *domain.Usuario, item domai
 	// TMP-002 / BR-TURNO-001
 	if turno.Status != domain.TurnoAberto {
 		return nil, domain.NewDomainError(domain.ErrTurno003, "turno fechado")
+	}
+	if err := ValidateColheitaRegistro(user, item.Tipo, item.Payload); err != nil {
+		return nil, err
 	}
 
 	payloadHash, err := hashPayload(item.Payload)

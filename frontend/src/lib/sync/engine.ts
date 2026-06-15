@@ -30,6 +30,38 @@ export async function enqueueRegistro(
   return registro;
 }
 
+/** Um registro por indicador por turno (BRF-002 idempotência). */
+export async function enqueueRegistroTurno(
+  turnoId: string,
+  tipo: string,
+  payload: Record<string, unknown>,
+  deviceId: string
+): Promise<RegistroLocal> {
+  const idempotencyKey = buildIdempotencyKey(turnoId, tipo, "unico");
+  const existing = await db.registros
+    .where("idempotency_key")
+    .equals(idempotencyKey)
+    .first();
+
+  const eventoAt = new Date().toISOString();
+  const registro: RegistroLocal = {
+    id: existing?.id ?? crypto.randomUUID(),
+    turno_id: turnoId,
+    tipo,
+    idempotency_key: idempotencyKey,
+    payload,
+    device_id: deviceId,
+    evento_at: eventoAt,
+    sync_status: "pendente",
+    created_at: existing?.created_at ?? eventoAt,
+    last_error_code: undefined,
+  };
+  await db.registros.put(registro);
+  await updatePendingCount();
+  void flushOutbox();
+  return registro;
+}
+
 async function syncTurnoLocal(token: string): Promise<void> {
   const turno = await db.turno_atual.toCollection().first();
   if (!turno || turno.status !== "aberto") return;

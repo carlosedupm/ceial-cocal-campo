@@ -79,6 +79,30 @@ button:disabled {
   margin: 0;
 }
 
+.success {
+  color: #1b5e20;
+  margin: 0;
+}
+
+.hint {
+  color: #666;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+a.button-link {
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+  background: #1b5e20;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+  min-height: 44px;
+  line-height: 2;
+}
+
 .sync-bar {
   display: flex;
   flex-wrap: wrap;

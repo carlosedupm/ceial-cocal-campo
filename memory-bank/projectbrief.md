@@ -34,7 +34,7 @@ O painel **Gestão à Vista** (dashboard de gestão) fica **fora do escopo do MV
 | Fase | Foco | Estado |
 |------|------|--------|
 | Fase 0 | Catálogo de negócio + vocabulário | em andamento |
-| Fase 1 | Turno + sync + acesso + Colheita (primeiro briefing implementável) | planejado |
+| Fase 1 | Turno + sync + acesso + Colheita | em andamento (fundação G3; colheita G3) |
 | Fase 2 | Transporte, Qualidade, Segurança, Performance | planejado |
 | Fase 3 | Supervisão + tempo real entre equipe | planejado |
 | Fase 4 | Integração futura com Gestão à Vista | fora do MVP |
@@ -54,4 +54,4 @@ O painel **Gestão à Vista** (dashboard de gestão) fica **fora do escopo do MV
 - [ ] `memory-bank/activeContext.md` e `progress.md` atualizados
 - [ ] `node scripts/validate-br-refs.mjs` OK
 
-**Última atualização**: 2026-06-14
+**Última atualização**: 2026-06-15

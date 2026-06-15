@@ -38,7 +38,7 @@ Ver também [AGENTS.md](../../AGENTS.md) e `.cursor/rules/documentation-maintena
 | **Acesso e perfis** | [acesso-perfis.md](./acesso-perfis.md) | `BR-ACESSO-001`–`003` | planejado |
 | **Turnos** | [turnos.md](./turnos.md) | `BR-TURNO-001`–`004` | planejado |
 | **Offline e sync** | [offline-sync.md](./offline-sync.md) | `BR-SYNC-001`–`004` | planejado |
-| **Colheita** | [colheita.md](./colheita.md) | `BR-COLHEITA-001`–`003` | planejado |
+| **Colheita** | [colheita.md](./colheita.md) | `BR-COLHEITA-001`–`003` | parcial (BRF-002) |
 | **Transporte** | [transporte.md](./transporte.md) | `BR-TRANSPORTE-001`–`002` | planejado |
 | **Qualidade** | [qualidade.md](./qualidade.md) | `BR-QUALIDADE-001`–`003` | planejado |
 | **Segurança** | [seguranca.md](./seguranca.md) | `BR-SEGURANCA-001`–`003` | planejado |
@@ -47,4 +47,4 @@ Ver também [AGENTS.md](../../AGENTS.md) e `.cursor/rules/documentation-maintena
 
 ---
 
-**Última atualização**: 2026-06-14
+**Última atualização**: 2026-06-15

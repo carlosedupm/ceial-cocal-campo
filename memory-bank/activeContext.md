@@ -6,7 +6,7 @@
 
 ### **Status Geral**
 
-**Fase 1 concluída — fundação `BRF-001` (G3).** Stack containerizada via **Dev Container + Docker Compose**. Próximo: `BRF-002` Colheita.
+**Fase 1 em andamento — `BRF-002` Colheita implementado (G3).** Próximo: briefing de Transporte ou regressões BRF-001 pendentes.
 
 ### ✅ Concluído:
 
@@ -19,6 +19,7 @@
 7. ✅ Guia de fluxo do usuário — [`docs/ops/fluxo-usuario-brf-001.md`](../docs/ops/fluxo-usuario-brf-001.md)
 8. ✅ Cache local de unidades/frentes no IndexedDB (schema v3) — contexto operacional offline após fechar turno
 9. ✅ Validação offline browser (caso 2 regressão BRF-001) — sync automática após reconexão
+10. ✅ **BRF-002 Colheita** — formulários horas de corte, consumo/densidade, entrada de cana; `INT-001` no fechamento
 
 ### ✅ Stack de desenvolvimento:
 
@@ -31,6 +32,6 @@
 ### 📋 Próximos passos:
 
 1. Regressão pendente: RBAC visual (caso 6), falha sync API (caso 8), piloto mobile
-2. Briefing `BRF-002` Colheita
+2. Briefing `BRF-003` Transporte (ou consolidar supervisor em `BR-COLHEITA-003`)
 
 **Última atualização**: 2026-06-15

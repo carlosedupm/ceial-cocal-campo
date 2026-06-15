@@ -20,7 +20,7 @@ func NewRouter(cfg config.Config, pool *pgxpool.Pool) http.Handler {
 	regRepo := repository.NewRegistroRepository(pool)
 
 	authSvc := service.NewAuthService(cfg, userRepo)
-	turnoSvc := service.NewTurnoService(turnoRepo, userRepo)
+	turnoSvc := service.NewTurnoService(turnoRepo, regRepo, userRepo)
 	syncSvc := service.NewSyncService(turnoRepo, regRepo)
 
 	authH := handlers.NewAuthHandler(authSvc)

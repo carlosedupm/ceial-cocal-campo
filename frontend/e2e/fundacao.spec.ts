@@ -13,7 +13,9 @@ test.describe("BRF-001 fundacao", () => {
     await expect(page.getByTestId("turno-info")).toBeVisible();
     await expect(page.getByTestId("sync-status")).toBeVisible();
 
-    await page.getByRole("button", { name: "Registrar placeholder" }).click();
-    await expect(page.getByTestId("registros-list")).toContainText("placeholder");
+    await page.getByRole("link", { name: /Registrar indicadores/ }).click();
+    await page.getByRole("button", { name: "Registrar horas de corte" }).click();
+    await page.getByRole("link", { name: "← Voltar" }).click();
+    await expect(page.getByTestId("registros-list")).toContainText("horas_corte");
   });
 });

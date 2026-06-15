@@ -42,6 +42,14 @@ func (r *RegistroRepository) Create(ctx context.Context, reg *domain.Registro, p
 		reg.DeviceID, reg.EventoAt).Scan(&reg.SyncedAt)
 }
 
+func (r *RegistroRepository) HasTipoForTurno(ctx context.Context, turnoID, tipo string) (bool, error) {
+	var exists bool
+	err := r.pool.QueryRow(ctx, `
+		SELECT EXISTS(SELECT 1 FROM registros WHERE turno_id = $1::uuid AND tipo = $2)
+	`, turnoID, tipo).Scan(&exists)
+	return exists, err
+}
+
 func (r *RegistroRepository) GetPayloadHash(ctx context.Context, key string) (string, error) {
 	var hash string
 	err := r.pool.QueryRow(ctx, `SELECT payload_hash FROM registros WHERE idempotency_key = $1`, key).Scan(&hash)
