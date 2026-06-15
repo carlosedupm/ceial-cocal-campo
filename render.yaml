@@ -1,0 +1,23 @@
+# Blueprint Render — Web Service da API Go
+# Aplicar em: Dashboard → Blueprints → New Blueprint Instance
+# Variáveis sensíveis (DATABASE_URL, JWT_SECRET, CORS_ORIGIN) devem ser
+# preenchidas no painel ou via sync: false abaixo.
+
+services:
+  - type: web
+    name: cocal-campo-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: starter
+    region: ohio
+    healthCheckPath: /health
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        sync: false
