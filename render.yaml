@@ -5,7 +5,7 @@
 
 services:
   - type: web
-    name: cocal-campo-api
+    name: ceial-cocal-campo
     runtime: docker
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend

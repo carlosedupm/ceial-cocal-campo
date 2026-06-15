@@ -20,8 +20,8 @@ flowchart LR
 
 1. **Supabase** — validar connection string (Direct ou Session pooler; evitar Transaction pooler para migrations no boot).
 2. **Render** — criar Web Service (passos abaixo); primeiro deploy aplica `001_init.sql` (`002_seed.sql` é ignorado com `APP_ENV=production`).
-3. **Validar API** — `curl https://<api>.onrender.com/health` → 200.
-4. **Vercel** — deploy do `frontend/` com `VITE_API_URL=https://<api>.onrender.com`.
+3. **Validar API** — `curl https://ceial-cocal-campo.onrender.com/health` → 200.
+4. **Vercel** — deploy do `frontend/` com `VITE_API_URL=https://ceial-cocal-campo.onrender.com`.
 5. **CORS** — no Render, definir `CORS_ORIGIN` = URL exata do PWA (ex. `https://cocal-campo.vercel.app`); redeploy manual.
 6. **Dados** — executar SQL de produção no Supabase ([`scripts/prod-seed-template.sql`](../scripts/prod-seed-template.sql)).
 
@@ -30,6 +30,19 @@ flowchart LR
 ### Opção A: Blueprint
 
 Dashboard → **Blueprints** → **New Blueprint Instance** → repositório `ceial-cocal-campo` → [`render.yaml`](../render.yaml).
+
+**Nome do serviço (hostname):** `ceial-cocal-campo` → `https://ceial-cocal-campo.onrender.com`
+
+### Renomear serviço existente
+
+Se o serviço ainda se chama `cocal-campo-api`:
+
+1. Render Dashboard → serviço → **Settings** → renomear para `ceial-cocal-campo`
+2. Confirmar `GET https://ceial-cocal-campo.onrender.com/health` → 200
+3. Sincronizar Blueprint com [`render.yaml`](../render.yaml) atualizado
+4. Vercel: `VITE_API_URL=https://ceial-cocal-campo.onrender.com` + redeploy do frontend
+
+Se o sync do Blueprint criar serviço duplicado, copiar env vars para o novo e remover `cocal-campo-api`.
 
 Preencher variáveis `sync: false`:
 
@@ -73,7 +86,7 @@ Preencher variáveis `sync: false`:
 
 | Variável | Valor |
 |----------|-------|
-| `VITE_API_URL` | `https://<seu-servico>.onrender.com` |
+| `VITE_API_URL` | `https://ceial-cocal-campo.onrender.com` |
 
 `VITE_API_URL` é embutida em build time — alterações exigem redeploy do frontend.
 
@@ -128,7 +141,7 @@ Ver [`techContext.md`](techContext.md) — Dev Container + F5 (`launch.json`) ou
 
 ## Checklist pós-deploy
 
-- [ ] `GET https://<api>/health` → 200
+- [ ] `GET https://ceial-cocal-campo.onrender.com/health` → 200
 - [ ] Login com usuário real (não `@cocal.dev`)
 - [ ] PWA em HTTPS com Service Worker ativo
 - [ ] Abrir turno e sync push online
