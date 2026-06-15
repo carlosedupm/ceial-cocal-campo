@@ -1,12 +1,11 @@
 # 🚀 Active Context — Cocal Campo
-
 > Estado vivo do projeto. Atualize a cada entrega significativa ou mudança de foco.
 
 ## 📋 Estado Atual do Projeto
 
 ### **Status Geral**
 
-**Fase 1 em andamento — `BRF-002` Colheita implementado (G3).** Próximo: briefing de Transporte ou regressões BRF-001 pendentes.
+**Fase 1 em andamento — `BRF-002` Colheita implementado (G3). `BRF-003` Transporte aprovado (G1).** Próximo: implementação G2 do BRF-003 ou regressões BRF-001 pendentes.
 
 ### ✅ Concluído:
 
@@ -20,6 +19,7 @@
 8. ✅ Cache local de unidades/frentes no IndexedDB (schema v3) — contexto operacional offline após fechar turno
 9. ✅ Validação offline browser (caso 2 regressão BRF-001) — sync automática após reconexão
 10. ✅ **BRF-002 Colheita** — formulários horas de corte, consumo/densidade, entrada de cana; `INT-001` no fechamento
+11. ✅ **BRF-003 Transporte** — briefing **aprovado (G1)** (`docs/briefings/BRF-003-transporte.md`); `validate-br-refs` OK
 
 ### ✅ Stack de desenvolvimento:
 
@@ -31,7 +31,8 @@
 
 ### 📋 Próximos passos:
 
-1. Regressão pendente: RBAC visual (caso 6), falha sync API (caso 8), piloto mobile
-2. Briefing `BRF-003` Transporte (ou consolidar supervisor em `BR-COLHEITA-003`)
+1. **G2**: Implementação do `BRF-003` Transporte (dev)
+2. Regressão pendente: RBAC visual (caso 6), falha sync API (caso 8), piloto mobile
+3. Briefing de Supervisão (Fase 3)
 
 **Última atualização**: 2026-06-15
