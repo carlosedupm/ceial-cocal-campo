@@ -48,6 +48,27 @@ Em seguida **F5** novamente (a task instala as deps automaticamente). Após **Re
 
 Se a HomePage (`http://localhost:5173/`) abrir em branco **após login e abertura de turno**, verifique o console do browser (F12). Causa comum: erro no IndexedDB/Dexie — confirme que API e Vite estão no ar (**Shift+F5** → **F5**) e que `npm test` passa no frontend. Se persistir após atualizar o código, limpe dados do site em DevTools → Application → IndexedDB → `cocal-campo`.
 
+### Git push (Dev Container — SSH)
+
+Para conseguir fazer `git push` via SSH *dentro* do Dev Container, use as chaves SSH do host (WSL2). Antes de abrir/reabrir o container:
+
+1. Confirme que o SSH funciona no host:
+   ```bash
+   ssh -T git@github.com
+   ```
+2. Garanta que uma chave está carregada no `ssh-agent` do host:
+   ```bash
+   eval "$(ssh-agent -s)"
+   ssh-add ~/.ssh/id_ed25519 2>/dev/null || ssh-add ~/.ssh/id_rsa
+   ```
+3. Reabra o Dev Container (*Rebuild* se necessário) e valide dentro dele:
+   ```bash
+   ssh -T git@github.com
+   git push --dry-run origin HEAD
+   ```
+
+Se ainda falhar com `Permission denied (publickey)`, verifique se existe arquivo de chave em `/home/node/.ssh/` dentro do container e a variável `SSH_AUTH_SOCK`.
+
 ## Comandos (dentro do Dev Container ou com Docker no host)
 
 ```bash
@@ -67,4 +88,4 @@ BR-* planejado → BRF-NNN aprovado (G1) → implementação (G2) → aceite (G3
 
 **Fundação:** [`BRF-001`](docs/briefings/BRF-001-fundacao-turno-sync.md) — implementado.
 
-**Última atualização**: 2026-06-15
+**Última atualização**: 2026-06-16

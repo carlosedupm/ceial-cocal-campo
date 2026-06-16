@@ -28,3 +28,8 @@ echo "  PWA:  http://localhost:5173"
 echo "  API:  http://localhost:8080/health"
 echo ""
 echo "Usuário de teste: colheita@cocal.dev / campo123"
+
+if [ ! -f /home/node/.ssh/id_ed25519 ] && [ ! -f /home/node/.ssh/id_rsa ]; then
+  echo ""
+  echo "AVISO: nenhuma chave SSH em ~/.ssh — git push pode falhar. Ver README."
+fi

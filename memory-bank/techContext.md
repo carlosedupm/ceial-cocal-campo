@@ -41,6 +41,18 @@ docker compose --profile stack run --rm --no-deps api \
 bash scripts/bootstrap-lockfiles.sh
 ```
 
+### Git push (Dev Container — SSH)
+
+O Dev Container usa as chaves SSH do host (WSL2). Pré-requisitos antes de *Reopen in Container*:
+
+1. `ssh -T git@github.com` funciona no host.
+2. Uma chave está carregada no `ssh-agent` do host (por exemplo `ssh-add ~/.ssh/id_ed25519`).
+3. Dentro do container, valide:
+   ```bash
+   ssh -T git@github.com
+   git push --dry-run origin HEAD
+   ```
+
 ### Serviços Docker Compose
 
 | Serviço | Porta | Imagem / build |
@@ -66,4 +78,4 @@ bash scripts/bootstrap-lockfiles.sh
 | `transporte@cocal.dev` | `campo123` | Operador transporte |
 | `supervisor@cocal.dev` | `campo123` | Supervisor |
 
-**Última atualização**: 2026-06-15
+**Última atualização**: 2026-06-16
