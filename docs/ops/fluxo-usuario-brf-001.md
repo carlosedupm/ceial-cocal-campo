@@ -1,10 +1,12 @@
 # Fluxo do usuário e informações — Cocal Campo (fundação BRF-001)
 
-> Guia do que a aplicação oferece hoje: jornada nas 3 telas, informações exibidas, origem dos dados (API vs IndexedDB) e regras de negócio da fundação. Briefing: [`BRF-001`](../briefings/BRF-001-fundacao-turno-sync.md).
+> **Atualização:** jornadas de visualização (colheita, supervisor, simulador) estão em [`fluxo-usuario-visualizacao.md`](./fluxo-usuario-visualizacao.md). Este documento cobre a **fundação** turno/sync.
+
+> Guia do que a aplicação oferece na fundação: login, seleção de contexto, ciclo de turno, sync offline. Briefing: [`BRF-001`](../briefings/BRF-001-fundacao-turno-sync.md).
 
 ## Contexto
 
-A aplicação em desenvolvimento (`http://localhost:5173` + API `:8080`) implementa apenas a **fundação operacional**: login, seleção de contexto, ciclo de turno, registro placeholder e sync offline. **Não há ainda** formulários reais de Colheita, Transporte, Qualidade etc. — os itens de menu são rótulos estáticos.
+A aplicação em desenvolvimento (`http://localhost:5173` + API `:8080`) implementa a **fundação operacional** (login, contexto, turno, sync) e, desde BRF-005/006/007, **consulta read-only** de indicadores. Formulários de registro pelo operador foram substituídos por visualização — ver [`fluxo-usuario-visualizacao.md`](./fluxo-usuario-visualizacao.md).
 
 ---
 
@@ -236,11 +238,11 @@ Estados de sync: `pendente` → `sincronizado` | `erro` (`BR-SYNC-*`).
 
 ## O que ainda NÃO existe (fora do escopo BRF-001)
 
-- Formulários reais de indicadores (colheita, transporte, qualidade, segurança)
-- Navegação nos itens do menu (são placeholders visuais)
-- Painel supervisor em tempo real
-- Consulta detalhada de turno como tela separada
-- Gestão à Vista / metas planejadas
+- Integração real com sistema central (Fase 3)
+- Consulta transporte/qualidade/segurança para operadores (menus placeholder)
+- Gestão à Vista / metas planejadas completas
+
+Consulta colheita, painel supervisor e simulador: ver [`fluxo-usuario-visualizacao.md`](./fluxo-usuario-visualizacao.md).
 
 ---
 
@@ -260,4 +262,4 @@ Checklists relacionados: [regressao-fundacao-turno-sync.md](../tests/regressao-f
 
 ---
 
-**Última atualização**: 2026-06-15
+**Última atualização**: 2026-06-16

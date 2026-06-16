@@ -47,6 +47,12 @@ export function ContextoPage() {
         return;
       }
 
+      const usuario = await getUsuario();
+      if (usuario?.perfil === "supervisor_frente") {
+        navigate("/supervisao");
+        return;
+      }
+
       const cached = await loadUnidadesFromCache();
       if (cached.length > 0) {
         setUnidades(cached);
@@ -67,7 +73,6 @@ export function ContextoPage() {
       }
 
       await clearTurnoIfUsuarioMismatch();
-      const usuario = await getUsuario();
       const local = await db.turno_atual.toCollection().first();
       if (local?.status === "aberto" && turnoMatchesUsuario(local, usuario)) {
         navigate("/");

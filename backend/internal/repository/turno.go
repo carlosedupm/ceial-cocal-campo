@@ -71,6 +71,35 @@ func (r *TurnoRepository) Close(ctx context.Context, id string, fim string) (*do
 	return &t, err
 }
 
+func (r *TurnoRepository) ListOpenByFrente(ctx context.Context, frenteID string) ([]domain.TurnoComUsuario, error) {
+	rows, err := r.pool.Query(ctx, `
+		SELECT t.id::text, t.usuario_id::text, t.unidade_id::text, t.frente_id::text, t.area, t.status,
+		       t.inicio::text, t.fim::text, t.device_id, u.nome, u.area
+		FROM turnos t
+		JOIN usuarios u ON u.id = t.usuario_id
+		WHERE t.frente_id = $1::uuid AND t.status = 'aberto'
+		ORDER BY t.inicio DESC
+	`, frenteID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var list []domain.TurnoComUsuario
+	for rows.Next() {
+		var tu domain.TurnoComUsuario
+		var deviceID *string
+		if err := rows.Scan(
+			&tu.ID, &tu.UsuarioID, &tu.UnidadeID, &tu.FrenteID, &tu.Area, &tu.Status,
+			&tu.Inicio, &tu.Fim, &deviceID, &tu.UsuarioNome, &tu.UsuarioArea,
+		); err != nil {
+			return nil, err
+		}
+		tu.DeviceID = deviceID
+		list = append(list, tu)
+	}
+	return list, rows.Err()
+}
+
 func (r *TurnoRepository) HasOpenTurno(ctx context.Context, userID string) (bool, error) {
 	var exists bool
 	err := r.pool.QueryRow(ctx, `

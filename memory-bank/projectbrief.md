@@ -1,57 +1,60 @@
 # 📋 Project Brief — Cocal Campo
 
-> Charter do projeto: PWA offline-first para frentes de trabalho no campo.
+> Charter do projeto: PWA offline-first para consulta de desempenho no campo.
 
 ## 🎯 Objetivo Principal
 
-Profissionais da Cocal nas frentes de trabalho (colheita, transporte, qualidade, segurança e supervisão) precisam registrar informações operacionais do turno de trabalho em locais onde **frequentemente não há sinal de Internet**. O **Cocal Campo** é um PWA instalável no dispositivo móvel que permite registrar, consultar e sincronizar dados do turno **offline**, com **sincronização automática** quando a conexão retornar, adaptando formulários e visualizações à **área de atuação** de cada profissional.
+Profissionais da Cocal nas frentes de trabalho (colheita, transporte, qualidade, segurança e supervisão) precisam **consultar** indicadores de **performance** e **qualidade** do turno em locais onde **frequentemente não há sinal de Internet**. O **Cocal Campo** é um PWA instalável que exibe dados originados no **sistema central do cliente**, com **cache local** para leitura offline e **atualização automática** quando a conexão retornar. O operador **não registra** indicadores operacionais — apenas visualiza o desempenho do seu turno; o supervisor visualiza turnos da equipe na frente.
 
-O painel **Gestão à Vista** (dashboard de gestão) fica **fora do escopo do MVP**; este produto foca exclusivamente na operação de campo.
+O painel **Gestão à Vista** (dashboard de gestão) fica **fora do escopo do MVP**; este produto foca na consulta operacional de campo.
+
+**MVP sem contrato central:** perfil `simulador_central` ingere dados na base simulando o central até integração real (ver `BR-INTEG-005`).
 
 ## 🧭 Norte do produto
 
 | Princípio | Significado |
 |-----------|-------------|
-| **Offline-first** | Toda leitura e escrita de registros funciona sem Internet |
-| **Sync automática** | Pendências sobem ao servidor quando houver conexão, sem ação manual obrigatória |
-| **Multi-área** | Formulários e telas conforme perfil e área (Colheita, Transporte, Qualidade, Segurança, Performance, Supervisão) |
-| **Turno como unidade** | Registros organizados por turno de trabalho vinculado a frente e unidade |
-| **Tempo real online** | Quando conectado, equipe da mesma frente vê atualizações sem recarregar manualmente |
-| **Sincronização tripla** | Código, comportamento em produção e **`docs/business/`** (requisitos `BR-*`) evoluem **no mesmo ciclo de entrega** |
+| **Consulta offline** | Último snapshot de indicadores consultável sem Internet |
+| **Pull automático** | Indicadores atualizam em background quando houver conexão |
+| **Multi-área** | Telas de consulta conforme perfil e área |
+| **Turno como unidade** | Indicadores organizados por turno vinculado a frente e unidade |
+| **Tempo real online** | Supervisor vê atualizações da equipe (polling no MVP) |
+| **Sincronização tripla** | Código, produção e **`docs/business/`** evoluem no mesmo ciclo |
 
-**Referência de requisitos transversais:** [docs/business/_transversal.md](../docs/business/_transversal.md).
+**Referência:** [docs/business/_transversal.md](../docs/business/_transversal.md), [integracao-central.md](../docs/business/integracao-central.md).
 
 ## 🎯 Objetivos Específicos
 
-### Fase atual (Fase 1)
+### Fase atual
 
-- Fundação `BRF-001`, Colheita `BRF-002` e Transporte `BRF-003` implementados (G3)
-- Stack Go + React PWA + PostgreSQL em produção (Render + Vercel + Supabase)
-- Próximo: regressões BRF-001 pendentes ou módulo Qualidade/Segurança
+- Reposicionamento: visualização + simulador central (`BRF-005`–`007`)
+- Colheita consulta + Supervisão leitura (prioridade)
+- Stack Go + React PWA + PostgreSQL em produção
 
 ### Roadmap (fases)
 
 | Fase | Foco | Estado |
 |------|------|--------|
 | Fase 0 | Catálogo de negócio + vocabulário | concluído |
-| Fase 1 | Turno + sync + acesso + Colheita + Transporte | em andamento (BRF-001/002/003 G3) |
-| Fase 2 | Qualidade, Segurança, Performance | planejado |
-| Fase 3 | Supervisão + tempo real entre equipe | planejado |
-| Fase 4 | Integração futura com Gestão à Vista | fora do MVP |
+| Fase 1 | Turno + auth + sync fundação | concluído |
+| Fase 1b | **Consulta colheita + simulador + supervisão** | em andamento |
+| Fase 2 | Demais áreas (transporte, qualidade leitura, segurança) | planejado |
+| Fase 3 | Integração real sistema central | planejado |
+| Fase 4 | Gestão à Vista | fora do MVP |
 
 ## 📊 Métricas de Sucesso
 
-- **Cobertura de sync**: ≥ 95% dos registros sincronizados em até 24h após criação
-- **Tempo de registro**: redução do tempo médio de lançamento por turno vs. planilhas/papel
-- **Adoção por frente**: ≥ 80% das frentes ativas registrando pelo menos um indicador obrigatório por turno
-- **Integridade offline**: zero perda de registros locais em cenários de queda de conexão durante o turno
+- **Disponibilidade de indicadores**: ≥ 95% dos turnos com snapshot consultável em até 24h após início
+- **Tempo até visualização**: redução do tempo para o operador ver desempenho vs. canais atuais
+- **Adoção por frente**: ≥ 80% das frentes com consulta ativa por turno
+- **Integridade offline**: último snapshot sempre disponível após primeira sync bem-sucedida
 
 ## ✅ Definição de Pronto (DoD)
 
 - [ ] Regra `BR-*` implementada com ponteiros ao código e estado `implementado`
 - [ ] Briefing `BRF-NNN` aceito no gate G3
-- [ ] Casos de teste de negócio da seção 4 do briefing validados
+- [ ] Casos de teste da seção 4 do briefing validados
 - [ ] `memory-bank/activeContext.md` e `progress.md` atualizados
 - [ ] `node scripts/validate-br-refs.mjs` OK
 
-**Última atualização**: 2026-06-15
+**Última atualização**: 2026-06-16

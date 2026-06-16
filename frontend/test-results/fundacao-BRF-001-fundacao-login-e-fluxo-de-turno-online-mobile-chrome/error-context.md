@@ -12,7 +12,7 @@
 # Error details
 
 ```
-Error: browserType.launch: Executable doesn't exist at /tmp/cursor-sandbox-cache/464fed3807e7ff3feba24cebb0e4e7a2/playwright/chromium_headless_shell-1223/chrome-headless-shell-linux64/chrome-headless-shell
+Error: browserType.launch: Executable doesn't exist at /tmp/cursor-sandbox-cache/9c861d82d8742f96b89120af5864c8bb/playwright/chromium_headless_shell-1223/chrome-headless-shell-linux64/chrome-headless-shell
 ╔════════════════════════════════════════════════════════════╗
 ║ Looks like Playwright was just installed or updated.       ║
 ║ Please run the following command to download new browsers: ║

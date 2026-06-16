@@ -15,9 +15,9 @@
 
 | Campo | Valor |
 |-------|-------|
-| **Enunciado** | Formulários e telas disponíveis são filtrados pelo **perfil + área** atribuídos ao profissional. |
+| **Enunciado** | Telas de **consulta** e menus são filtrados pelo **perfil + área** atribuídos ao profissional. Operadores de campo **não** acessam telas de ingestão. |
 | **Escopo** | Navegação e menus do PWA após identificação. |
-| **Perfis** | Operador colheita, operador transporte, técnico qualidade, técnico segurança, supervisor frente. |
+| **Perfis** | Operador colheita, operador transporte, técnico qualidade, técnico segurança, supervisor frente, simulador central. |
 | **Efeito** | Bloqueio de acesso a formulários de área não autorizada. |
 | **Implementação** | `frontend/src/features/home/HomePage.tsx` (menus por `area`), escopo unidade/frente no backend |
 | **Estado** | implementado |
@@ -32,8 +32,21 @@
 | **Escopo** | Consulta e ações de supervisão (`BR-SUPERVISAO-*`). |
 | **Perfis** | Supervisor de frente. |
 | **Efeito** | Bloqueio de acesso a frentes/unidades não atribuídas. |
-| **Implementação** | _(planejado)_ — ver [supervisao.md](./supervisao.md) |
-| **Estado** | planejado |
+| **Implementação** | `GET /frentes/{id}/turnos`, `SupervisaoPage` |
+| **Estado** | implementado |
+
+---
+
+## BR-ACESSO-005 — Perfil simulador central (ingestão MVP)
+
+| Campo | Valor |
+|-------|-------|
+| **Enunciado** | Perfil **`simulador_central`** acessa telas de **ingestão** de indicadores (`/simulador`) simulando o sistema central; **bloqueado** para operadores de campo e supervisores. |
+| **Escopo** | MVP sem contrato de integração; ver `BR-INTEG-005`. |
+| **Perfis** | `simulador_central` apenas. |
+| **Efeito** | RBAC no backend (`SyncService.Push`) e menus na Home. |
+| **Implementação** | `SimuladorPage`, `backend/internal/service/services.go` |
+| **Estado** | implementado |
 
 ---
 

@@ -74,6 +74,17 @@
 | **Implementação** | `backend/internal/service/services.go` (SyncService.Push), `UNIQUE(idempotency_key)` em `backend/migrations/001_init.sql`, ADR-002 |
 | **Estado** | implementado |
 
+## BR-SYNC-PULL-001 — Pull automático de indicadores
+
+| Campo | Valor |
+|-------|-------|
+| **Enunciado** | Indicadores do turno **baixam automaticamente** quando online; último snapshot persiste em IndexedDB para leitura offline. |
+| **Escopo** | Consulta colheita; detalhe supervisor. |
+| **Perfis** | Operador colheita; supervisor frente. |
+| **Efeito** | Complementa `BR-INTEG-004`; polling em foreground e ao evento `online`. |
+| **Implementação** | `frontend/src/lib/indicadores/pull.ts` |
+| **Estado** | implementado |
+
 ---
 
-**Última atualização**: 2026-06-14
+**Última atualização**: 2026-06-16

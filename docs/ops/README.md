@@ -6,7 +6,8 @@ Runbook mínimo, code review (G2), manutenção de documentação e snippet de C
 
 | Guia | Uso |
 |------|-----|
-| [fluxo-usuario-brf-001.md](./fluxo-usuario-brf-001.md) | Jornada do usuário, telas e dados da fundação |
+| [fluxo-usuario-brf-001.md](./fluxo-usuario-brf-001.md) | Jornada fundação: login, contexto, turno, sync |
+| [fluxo-usuario-visualizacao.md](./fluxo-usuario-visualizacao.md) | Jornadas BRF-005/006/007: colheita, supervisor, simulador |
 
 ## Manutenção de documentação
 

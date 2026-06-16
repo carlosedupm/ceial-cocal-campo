@@ -105,4 +105,28 @@ export const api = {
       { method: "POST", body: JSON.stringify({ items }) },
       token
     ),
+  indicadoresAtual: (token: string) =>
+    request<import("@/types/indicadores").IndicadoresTurno>(
+      "/api/v1/turnos/atual/indicadores",
+      {},
+      token
+    ),
+  indicadoresTurno: (token: string, turnoId: string) =>
+    request<import("@/types/indicadores").IndicadoresTurno>(
+      `/api/v1/turnos/${turnoId}/indicadores`,
+      {},
+      token
+    ),
+  turnosFrente: (token: string, frenteId: string) =>
+    request<import("@/types/indicadores").TurnoComUsuario[]>(
+      `/api/v1/frentes/${frenteId}/turnos`,
+      {},
+      token
+    ),
+  resumoFrente: (token: string, frenteId: string) =>
+    request<import("@/types/indicadores").FrenteResumo>(
+      `/api/v1/frentes/${frenteId}/indicadores-resumo`,
+      {},
+      token
+    ),
 };

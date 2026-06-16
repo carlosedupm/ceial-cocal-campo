@@ -1,8 +1,9 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { ColheitaPage } from "@/features/colheita/ColheitaPage";
-import { TransportePage } from "@/features/transporte/TransportePage";
-import { QualidadePage } from "@/features/qualidade/QualidadePage";
+import { ColheitaConsultaPage } from "@/features/colheita/ColheitaConsultaPage";
+import { SimuladorPage } from "@/features/simulador/SimuladorPage";
+import { SupervisaoPage } from "@/features/supervisao/SupervisaoPage";
+import { TurnoDetalhePage } from "@/features/supervisao/TurnoDetalhePage";
 import { LoginPage } from "@/features/auth/LoginPage";
 import { HomePage } from "@/features/home/HomePage";
 import { ContextoPage } from "@/features/turno/ContextoPage";
@@ -43,9 +44,10 @@ export function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/contexto" element={<ContextoPage />} />
-        <Route path="/colheita" element={<ColheitaPage />} />
-        <Route path="/transporte" element={<TransportePage />} />
-        <Route path="/qualidade" element={<QualidadePage />} />
+        <Route path="/colheita" element={<ColheitaConsultaPage />} />
+        <Route path="/simulador" element={<SimuladorPage />} />
+        <Route path="/supervisao" element={<SupervisaoPage />} />
+        <Route path="/supervisao/turnos/:id" element={<TurnoDetalhePage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

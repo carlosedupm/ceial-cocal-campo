@@ -4,46 +4,37 @@
 
 ## Status Geral do Projeto
 
-### **Completude Geral**: 88%
+### **Completude Geral**: 90%
 
 | Área | Completude | Notas |
 |------|------------|-------|
-| Documentação de negócio | 99% | Qualidade implementada no catálogo |
-| Processo / briefings | 92% | BRF-001 a BRF-004 implementados (G3) |
-| Stack / arquitetura | 95% | ADR-001/002; Dev Container + Compose; deploy Render/Vercel/Supabase |
-| Implementação fundação | 97% | Auth, turno, sync; regressões E2E |
-| Implementação colheita | 85% | 3 formulários; supervisor entrada cana Fase 3 |
-| Implementação transporte | 95% | G3 completo |
-| Implementação qualidade | 95% | G3 completo — validação manual OK |
+| Documentação de negócio | 99% | Integração central + consulta colheita |
+| Processo / briefings | 95% | BRF-005/006/007 aprovados e implementados |
+| Stack / arquitetura | 95% | `indicadores_turno`, simulador central |
+| Implementação consulta colheita | 90% | Read-only + cache offline |
+| Implementação supervisão | 90% | Painel + detalhe + UX piloto |
+| UX jornadas piloto | 85% | Rótulos, navegação supervisor, docs ops |
+| Integração central real | 0% | Aguarda contrato cliente |
 
 ## ✅ O que foi concluído
 
-- [x] ADR-001 e ADR-002 aceitos
-- [x] Ambiente Dev Container + Docker Compose (sem deps no host)
-- [x] Fundação BRF-001 implementada
-- [x] BR-* fundação → implementado
-- [x] BRF-002 Colheita — formulários e validações
-- [x] BRF-003 Transporte — consumo transbordo, cargas/viagens, INT-001; validação manual G3
-- [x] Sync hardening — logging de push, `GetByID`, payload JSON no repositório
-- [x] Teste de integração `entrada_cana` (build tag `integration`)
-- [x] Regressões BRF-001 pendentes (caso 6/8 + piloto mobile) cobertas em Playwright
-- [x] CI lean — integração backend em `main`/manual; E2E local sob demanda
-
-- [x] BRF-004 Qualidade — impurezas, perdas por talhão, INT-001 OR; validação manual G3
+- [x] Reposicionamento escopo visualização (docs + código)
+- [x] BRF-005 Colheita consulta
+- [x] BRF-006 Supervisão leitura
+- [x] BRF-007 Simulador central
+- [x] Clareza UX jornadas (rótulos, supervisor, frente dinâmica, docs ops)
 
 ## 📋 Próximos Passos
 
-1. Coletar feedback de uso em produção e corrigir bugs críticos
-2. Iniciar módulo de Segurança (Fase 2) após briefing aprovado (G1)
+1. Workshop contrato sistema central
+2. Adapter real substituindo simulador
+3. Leitura transporte/qualidade para operadores
 
 ## 📜 Histórico
 
 | Data | Marco |
 |------|-------|
-| 2026-06-14 | Fundação BRF-001 + stack containerizada |
-| 2026-06-15 | BRF-002 Colheita — indicadores do turno |
-| 2026-06-15 | BRF-003 Transporte — indicadores do turno |
-| 2026-06-15 | Sync hardening + teste integração `RegistroRepository` |
-| 2026-06-16 | BRF-004 Qualidade — G3 + aceite manual |
+| 2026-06-16 | Clareza UX jornadas colheita/supervisor/simulador |
+| 2026-06-16 | Escopo visualização — BRF-005/006/007 |
 
 **Última atualização**: 2026-06-16

@@ -8,14 +8,15 @@
 flowchart LR
   Login[Identificacao] --> Contexto[Selecionar unidade e frente]
   Contexto --> TurnoAberto[Abrir turno]
-  TurnoAberto --> Registrar[Registrar dados da area]
-  Registrar --> Visualizar[Visualizar conforme perfil]
-  Visualizar --> Sync{Conexao?}
-  Sync -->|Nao| FilaLocal[Fila local offline]
-  Sync -->|Sim| Enviar[Sincronizar pendencias]
-  Enviar --> TempoReal[Atualizacoes da equipe online]
+  TurnoAberto --> Consultar[Consultar indicadores do turno]
+  Consultar --> PullCache{Conexao?}
+  PullCache -->|Nao| CacheLocal[Cache IndexedDB ultimo snapshot]
+  PullCache -->|Sim| Atualizar[Pull indicadores do servidor]
+  Atualizar --> CacheLocal
+  Simulador[Simulador_central_MVP] -.->|ingestao| Servidor[(indicadores_turno)]
+  Central[Sistema_central_futuro] -.-> Servidor
+  Sup[Supervisor] --> Painel[Consultar turnos da frente]
   TurnoAberto --> Fechar[Fechar turno]
-  Fechar --> Sync
 ```
 
 ## Lacunas e backlog conhecidos
@@ -26,6 +27,7 @@ flowchart LR
 | Quem valida ocorrência de segurança (supervisor, central, ambos?) | seguranca, supervisao | alta | **Resolvida** — ver `BR-SEGURANCA-004` |
 | Origem dos valores **planejados** no MVP (cadastro manual, importação, integração futura) | performance, colheita, transporte, qualidade | média | **Resolvida** — ver `BR-PERFORMANCE-003` |
 | Integração futura com painel Gestão à Vista | performance, supervisao | baixa (Fase 4) | Aberta |
+| Contrato API sistema central do cliente | integracao-central | alta | **Aberta** — MVP usa `BR-INTEG-005` simulador |
 
 ### Decisões do workshop (2026-06-14)
 
@@ -39,28 +41,28 @@ flowchart LR
 
 ## Regras transversais
 
-### BR-TRANS-001 — Operação offline completa
+### BR-TRANS-001 — Consulta offline do último snapshot
 
 | Campo | Valor |
 |-------|-------|
-| **Enunciado** | Toda operação de leitura e escrita de registros do turno deve funcionar **sem conexão com Internet**. |
-| **Escopo** | PWA Cocal Campo; todos os módulos de registro e consulta. |
-| **Perfis** | Todos. |
-| **Efeito** | Bloqueio de dependência de rede para operações locais; UI nunca impede registro por falta de conexão. |
-| **Implementação** | `frontend/src/lib/db/schema.ts`, `frontend/src/lib/sync/engine.ts`, `frontend/src/features/turno/ContextoPage.tsx` (turno offline) |
+| **Enunciado** | A **consulta de indicadores** do turno deve funcionar **sem conexão** usando o **último snapshot** sincronizado localmente. |
+| **Escopo** | Telas de consulta colheita e supervisão. |
+| **Perfis** | Operadores e supervisores. |
+| **Efeito** | UI exibe cache local quando offline; mensagem se nunca houve sync. |
+| **Implementação** | `frontend/src/lib/indicadores/cache.ts`, `BR-INTEG-004` |
 | **Estado** | implementado |
 
 ---
 
-### BR-TRANS-002 — Sincronização automática
+### BR-TRANS-002 — Atualização automática de indicadores
 
 | Campo | Valor |
 |-------|-------|
-| **Enunciado** | Quando houver conexão, pendências locais **sincronizam automaticamente** com o servidor, sem ação manual obrigatória do usuário. |
-| **Escopo** | Fila de registros pendentes; retorno de conectividade. |
-| **Perfis** | Todos. |
-| **Efeito** | Sync em background; usuário informado do progresso (ver `BR-SYNC-003`). |
-| **Implementação** | `frontend/src/lib/sync/engine.ts` — ver [offline-sync.md](./offline-sync.md) |
+| **Enunciado** | Quando houver conexão, indicadores **atualizam automaticamente** em background, sem ação manual obrigatória. |
+| **Escopo** | Pull de `GET /turnos/atual/indicadores`; painel supervisor. |
+| **Perfis** | Todos com telas de consulta. |
+| **Efeito** | Refresh periódico e ao retorno online; ver `BR-SYNC-PULL-001`. |
+| **Implementação** | `frontend/src/lib/indicadores/pull.ts` |
 | **Estado** | implementado |
 
 ---
@@ -113,7 +115,7 @@ flowchart LR
 
 | ID | Enunciado |
 |----|-----------|
-| **INT-001** | Fechamento de turno exige que todos os registros **obrigatórios da área** estejam presentes ou **justificados** pelo supervisor. **Fundação (`BRF-001`):** sem registros obrigatórios por área. **Colheita (`BRF-002`):** `horas_corte` obrigatório para área colheita. **Transporte (`BRF-003`):** `consumo_transbordo` obrigatório para área transporte. **Qualidade (`BRF-004`):** pelo menos um entre `impurezas` ou `perdas_campo` |
+| **INT-001** | Fechamento de turno exige registros obrigatórios **somente quando o perfil registra dados no app**. **Modelo consulta (BRF-005+):** operadores de campo **não** registram indicadores — fechamento **sem** obrigatoriedade de indicadores. Ingestão via simulador não bloqueia fechamento do operador. |
 | `INT-002` | Contador de dias sem acidentes só muda por **ocorrência registrada e validada** — nunca por edição manual livre do contador |
 
 ---

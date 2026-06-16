@@ -9,7 +9,7 @@
 | ID | `BRF-002` |
 | Data | 2026-06-15 |
 | Analista | agente documentação |
-| Status | implementado |
+| Status | arquivado |
 | Aprovado por (G1) | Decisões MVP documentadas na seção 5 (2026-06-15) |
 | PR vinculado (G2) | BRF-002 Colheita |
 

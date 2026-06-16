@@ -32,9 +32,16 @@ func ValidateTransporteRegistro(user *domain.Usuario, tipo string, payload map[s
 	if !IsTransporteTipo(tipo) {
 		return nil
 	}
+	if IsSimuladorCentral(user) {
+		return ValidateTransportePayload(tipo, payload)
+	}
 	if user.Area != AreaTransporte {
 		return domain.NewDomainError(domain.ErrAcesso001, "tipo transporte nao permitido para esta area")
 	}
+	return ValidateTransportePayload(tipo, payload)
+}
+
+func ValidateTransportePayload(tipo string, payload map[string]any) error {
 	switch tipo {
 	case TipoConsumoTransbordo:
 		return validateConsumoTransbordo(payload)

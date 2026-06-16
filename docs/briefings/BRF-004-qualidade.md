@@ -9,7 +9,7 @@
 | ID | `BRF-004` |
 | Data | 2026-06-16 |
 | Analista | agente documentação |
-| Status | implementado |
+| Status | arquivado |
 | Aprovado por (G1) | PO — 2026-06-16 |
 | PR vinculado (G2) | BRF-004 Qualidade |
 

@@ -1,13 +1,13 @@
 # Módulo — Supervisão
 
-> Visão consolidada da frente, tempo real online e exceções no fechamento de turno.
+> Visão consolidada read-only da frente e consulta de turnos da equipe.
 
 ## Implementação principal
 
 | Camada | Caminho |
 |--------|---------|
-| Backend | _(planejado)_ |
-| Frontend | _(planejado)_ |
+| Backend | `GET /api/v1/frentes/{id}/turnos`, `GET /api/v1/frentes/{id}/indicadores-resumo` |
+| Frontend | `frontend/src/features/supervisao/` |
 
 ---
 
@@ -15,25 +15,25 @@
 
 | Campo | Valor |
 |-------|-------|
-| **Enunciado** | Supervisor visualiza **turnos abertos**, **pendências de sync da equipe** e **últimos registros** da frente atribuída. |
-| **Escopo** | Mesma unidade e frente; turno vigente e janela recente configurável. |
+| **Enunciado** | Supervisor **visualiza** turnos abertos da equipe, indicadores resumidos por **setor/área** e estado de disponibilidade dos dados. |
+| **Escopo** | Mesma unidade e frente atribuídas; turno vigente. |
 | **Perfis** | Supervisor frente. |
-| **Efeito** | Bloqueio de acesso a outras frentes (`BR-ACESSO-002`). |
-| **Implementação** | _(planejado)_ |
-| **Estado** | planejado |
+| **Efeito** | Somente leitura; bloqueio a outras frentes (`BR-ACESSO-002`). |
+| **Implementação** | `SupervisaoPage`, `TurnoDetalhePage` |
+| **Estado** | implementado |
 
 ---
 
-## BR-SUPERVISAO-002 — Atualizações em tempo real quando online
+## BR-SUPERVISAO-002 — Atualizações quando online
 
 | Campo | Valor |
 |-------|-------|
-| **Enunciado** | Com conexão ativa, atualizações de registros da equipe na mesma frente refletem-se **sem recarregamento manual** pelo supervisor. |
-| **Escopo** | Painel de supervisão; membros da frente com turno aberto. |
+| **Enunciado** | Com conexão ativa, painel da frente **atualiza periodicamente** sem recarregamento manual (polling no MVP). |
+| **Escopo** | Painel de supervisão. |
 | **Perfis** | Supervisor frente. |
-| **Efeito** | Requisito de negócio tempo real; offline exibe último estado local sincronizado. |
-| **Implementação** | _(planejado)_ |
-| **Estado** | planejado |
+| **Efeito** | Offline exibe último snapshot local. |
+| **Implementação** | Polling em `SupervisaoPage` |
+| **Estado** | implementado |
 
 ---
 
@@ -41,13 +41,13 @@
 
 | Campo | Valor |
 |-------|-------|
-| **Enunciado** | Supervisor pode **justificar** fechamento de turno com registros obrigatórios ausentes, registrando motivo auditável. |
-| **Escopo** | Fechamento de turno; validação `INT-001`. |
+| **Enunciado** | Supervisor pode justificar fechamento com registros obrigatórios ausentes. |
+| **Escopo** | Modelo consulta sem registro pelo operador. |
 | **Perfis** | Supervisor frente. |
-| **Efeito** | Permite fechamento excepcional; justificativa obrigatória e imutável pós-sync. |
-| **Implementação** | _(planejado)_ |
+| **Efeito** | **Adiado** — irrelevante enquanto operadores não registram (`INT-001` revogado para campo). |
+| **Implementação** | _(adiado)_ |
 | **Estado** | planejado |
 
 ---
 
-**Última atualização**: 2026-06-14
+**Última atualização**: 2026-06-16

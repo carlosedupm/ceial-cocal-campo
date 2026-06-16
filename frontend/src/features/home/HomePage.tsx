@@ -9,41 +9,26 @@ import {
   getValidAccessToken,
   isSessionValid,
 } from "@/lib/auth/session";
-import { OBRIGATORIOS_COLHEITA } from "@/lib/colheita/validation";
-import { OBRIGATORIOS_TRANSPORTE } from "@/lib/transporte/validation";
-import { OBRIGATORIOS_QUALIDADE } from "@/lib/qualidade/validation";
 import { db } from "@/lib/db/schema";
 import { enqueueRegistro, flushOutbox, aceitarVersaoServidor, isSyncConflictPermanent } from "@/lib/sync/engine";
 import { clearTurnoIfUsuarioMismatch, purgeOrphanRegistros, turnoMatchesUsuario } from "@/lib/turno/session";
 import { SyncStatusBar } from "@/features/sync/SyncStatusBar";
+import { labelArea, labelPerfil } from "@/lib/ui/labels";
 import type { RegistroLocal, Usuario } from "@/types/domain";
 
 const AREA_MENUS: Record<string, { label: string; to?: string }[]> = {
   colheita: [
-    { label: "Registrar indicadores", to: "/colheita" },
-    { label: "Consultar turno" },
+    { label: "Consultar desempenho", to: "/colheita" },
   ],
   transporte: [
-    { label: "Registrar indicadores", to: "/transporte" },
     { label: "Consultar turno" },
   ],
   qualidade: [
-    { label: "Registrar avaliações", to: "/qualidade" },
-    { label: "Consultar turno" },
+    { label: "Consultar avaliações" },
   ],
-  seguranca: [{ label: "Registrar placeholder" }],
-  supervisao: [{ label: "Painel frente" }, { label: "Consultar turno" }],
+  seguranca: [{ label: "Consultar segurança" }],
+  supervisao: [{ label: "Painel frente", to: "/supervisao" }],
 };
-
-async function turnoTemRegistro(turnoId: string, tipo: string): Promise<boolean> {
-  const regs = await db.registros.where("turno_id").equals(turnoId).toArray();
-  return regs.some((r) => r.tipo === tipo);
-}
-
-async function turnoTemAlgumRegistro(turnoId: string, tipos: readonly string[]): Promise<boolean> {
-  const regs = await db.registros.where("turno_id").equals(turnoId).toArray();
-  return regs.some((r) => tipos.includes(r.tipo));
-}
 
 export function HomePage() {
   const navigate = useNavigate();
@@ -79,6 +64,7 @@ export function HomePage() {
       }
     })();
   }, [turno]);
+
   const registros = useLiveQuery(() =>
     db.registros.orderBy("created_at").reverse().toArray()
   ) as RegistroLocal[] | undefined;
@@ -91,6 +77,8 @@ export function HomePage() {
         return;
       }
       setUsuario(await getUsuario());
+      const u = await getUsuario();
+      if (u?.perfil === "supervisor_frente") return;
       if (turno === null) {
         const t = await db.turno_atual.toCollection().first();
         if (!t) navigate("/contexto");
@@ -120,41 +108,6 @@ export function HomePage() {
   async function fecharTurno() {
     if (!turno) return;
     setFecharErro(null);
-
-    if (usuario?.area === "colheita") {
-      for (const tipo of OBRIGATORIOS_COLHEITA) {
-        const ok = await turnoTemRegistro(turno.id, tipo);
-        if (!ok) {
-          setFecharErro(
-            "Registre horas de corte antes de fechar o turno (INT-001). Acesse Colheita → Registrar indicadores."
-          );
-          return;
-        }
-      }
-    }
-
-    if (usuario?.area === "transporte") {
-      for (const tipo of OBRIGATORIOS_TRANSPORTE) {
-        const ok = await turnoTemRegistro(turno.id, tipo);
-        if (!ok) {
-          setFecharErro(
-            "Registre consumo transbordo antes de fechar o turno (INT-001). Acesse Transporte → Registrar indicadores."
-          );
-          return;
-        }
-      }
-    }
-
-    if (usuario?.area === "qualidade") {
-      const ok = await turnoTemAlgumRegistro(turno.id, OBRIGATORIOS_QUALIDADE);
-      if (!ok) {
-        setFecharErro(
-          "Registre ao menos uma avaliação de qualidade antes de fechar o turno (INT-001). Acesse Qualidade → Registrar avaliações."
-        );
-        return;
-      }
-    }
-
     const token = await getValidAccessToken();
     if (!token) return;
     try {
@@ -168,13 +121,7 @@ export function HomePage() {
       navigate("/contexto");
     } catch (err) {
       if (err instanceof ApiClientError && err.code === "ERR-INT-001") {
-        const msg =
-          usuario?.area === "transporte"
-            ? "Registre consumo transbordo antes de fechar o turno (INT-001)."
-            : usuario?.area === "qualidade"
-              ? "Registre ao menos uma avaliação de qualidade antes de fechar o turno (INT-001)."
-              : "Registre horas de corte antes de fechar o turno (INT-001).";
-        setFecharErro(msg);
+        setFecharErro("Não foi possível fechar o turno.");
         return;
       }
       throw err;
@@ -188,27 +135,39 @@ export function HomePage() {
     navigate("/login");
   }
 
-  const menus = usuario ? AREA_MENUS[usuario.area] ?? [] : [];
+  const isSimulador = usuario?.perfil === "simulador_central";
+  const isSupervisor = usuario?.perfil === "supervisor_frente";
+  const menus = isSimulador
+    ? [{ label: "Ingestão simulador", to: "/simulador" }]
+    : usuario
+      ? AREA_MENUS[usuario.area] ?? []
+      : [];
+
   const showPlaceholder =
+    !isSimulador &&
+    !isSupervisor &&
     usuario?.area !== "colheita" &&
-    usuario?.area !== "transporte" &&
-    usuario?.area !== "qualidade" &&
     turno?.status === "aberto";
+
+  const showFecharTurno = turno && turno.status === "aberto" && !isSupervisor && !isSimulador;
+
+  const showRegistrosLocais =
+    !isSimulador && usuario?.area !== "colheita";
 
   return (
     <main className="page">
       <SyncStatusBar />
       <h1>Olá, {usuario?.nome ?? "..."}</h1>
       <p className="subtitle">
-        Perfil: {usuario?.perfil} · Área: {usuario?.area}
+        {usuario ? `${labelPerfil(usuario.perfil)} · ${labelArea(usuario.area)}` : "..."}
       </p>
 
-      {turno && (
+      {turno && !isSupervisor && (
         <section className="card" data-testid="turno-info">
           <h2>Turno {turno.status}</h2>
           <p>Início: {new Date(turno.inicio).toLocaleString("pt-BR")}</p>
           {fecharErro && <p className="error">{fecharErro}</p>}
-          {turno.status === "aberto" && (
+          {showFecharTurno && (
             <>
               {showPlaceholder && (
                 <button type="button" onClick={() => void registrarPlaceholder()}>
@@ -217,17 +176,7 @@ export function HomePage() {
               )}
               {usuario?.area === "colheita" && (
                 <Link className="button-link" to="/colheita">
-                  Registrar indicadores de colheita
-                </Link>
-              )}
-              {usuario?.area === "transporte" && (
-                <Link className="button-link" to="/transporte">
-                  Registrar indicadores de transporte
-                </Link>
-              )}
-              {usuario?.area === "qualidade" && (
-                <Link className="button-link" to="/qualidade">
-                  Registrar avaliações de qualidade
+                  Consultar desempenho do turno
                 </Link>
               )}
               <button type="button" className="secondary" onClick={() => void fecharTurno()}>
@@ -235,6 +184,22 @@ export function HomePage() {
               </button>
             </>
           )}
+        </section>
+      )}
+
+      {isSupervisor && (
+        <section className="card">
+          <Link className="button-link" to="/supervisao">
+            Abrir painel da frente
+          </Link>
+        </section>
+      )}
+
+      {isSimulador && (
+        <section className="card">
+          <Link className="button-link" to="/simulador">
+            Simular ingestão do sistema central
+          </Link>
         </section>
       )}
 
@@ -249,26 +214,28 @@ export function HomePage() {
         </ul>
       </section>
 
-      <section className="card">
-        <h2>Registros locais</h2>
-        <ul data-testid="registros-list">
-          {(registros ?? []).map((r) => (
-            <li key={r.id}>
-              {r.tipo} — {r.sync_status}
-              {r.last_error_code ? ` (${r.last_error_code})` : ""}
-              {isSyncConflictPermanent(r.last_error_code) && (
-                <button
-                  type="button"
-                  className="secondary conflict-btn"
-                  onClick={() => void aceitarVersaoServidor(r.id)}
-                >
-                  Aceitar versão do servidor
-                </button>
-              )}
-            </li>
-          ))}
-        </ul>
-      </section>
+      {showRegistrosLocais && (
+        <section className="card">
+          <h2>Registros locais</h2>
+          <ul data-testid="registros-list">
+            {(registros ?? []).map((r) => (
+              <li key={r.id}>
+                {r.tipo} — {r.sync_status}
+                {r.last_error_code ? ` (${r.last_error_code})` : ""}
+                {isSyncConflictPermanent(r.last_error_code) && (
+                  <button
+                    type="button"
+                    className="secondary conflict-btn"
+                    onClick={() => void aceitarVersaoServidor(r.id)}
+                  >
+                    Aceitar versão do servidor
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <button type="button" className="secondary" onClick={() => void logout()}>
         Sair

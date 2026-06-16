@@ -143,3 +143,93 @@ ul {
     padding: 2rem;
   }
 }
+
+.banner-simulador {
+  background: #fff3e0;
+  border: 1px solid #ffb74d;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.indicadores-grid {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.indicador-card h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  text-transform: capitalize;
+}
+
+.indicador-valor {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0.5rem 0 0;
+}
+
+.badge-ok,
+.badge-warn,
+.badge-muted {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+}
+
+.badge-ok {
+  background: #e8f5e9;
+  color: #1b5e20;
+}
+
+.badge-warn {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.badge-muted {
+  background: #eeeeee;
+  color: #616161;
+}
+
+.meta-ok {
+  color: #1b5e20;
+  font-size: 0.85rem;
+}
+
+.meta-warn {
+  color: #b00020;
+  font-size: 0.85rem;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.page-header {
+  margin-bottom: 0.5rem;
+}
+
+.breadcrumb {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 0.35rem;
+}
+
+.breadcrumb a {
+  color: #1b5e20;
+}
+
+.breadcrumb-sep {
+  color: #999;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  margin: 1rem 0 0.5rem;
+}

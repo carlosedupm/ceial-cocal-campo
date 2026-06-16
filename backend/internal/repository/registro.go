@@ -51,19 +51,49 @@ func (r *RegistroRepository) FindByID(ctx context.Context, id string) (*domain.R
 	return &reg, err
 }
 
-func (r *RegistroRepository) Create(ctx context.Context, reg *domain.Registro, payloadHash string, userID string) error {
+func (r *RegistroRepository) Create(ctx context.Context, reg *domain.Registro, payloadHash string, userID string, origem string, ingestidoPor *string) error {
 	// pgx: map[string]any sem OID falha no encode; []byte vira bytea (22P02).
 	// JSON como string + ::jsonb é o caminho estável.
 	payloadJSON, err := json.Marshal(reg.Payload)
 	if err != nil {
 		return err
 	}
+	if origem == "" {
+		origem = "campo"
+	}
 	return r.pool.QueryRow(ctx, `
-		INSERT INTO registros (id, turno_id, usuario_id, tipo, idempotency_key, payload, payload_hash, device_id, evento_at)
-		VALUES ($1::uuid, $2::uuid, $3::uuid, $4, $5, $6::jsonb, $7, $8, $9::timestamptz)
+		INSERT INTO registros (id, turno_id, usuario_id, tipo, idempotency_key, payload, payload_hash, device_id, evento_at, origem, ingestido_por)
+		VALUES ($1::uuid, $2::uuid, $3::uuid, $4, $5, $6::jsonb, $7, $8, $9::timestamptz, $10, $11::uuid)
 		RETURNING synced_at::text
 	`, reg.ID, reg.TurnoID, userID, reg.Tipo, reg.IdempotencyKey, string(payloadJSON), payloadHash,
-		reg.DeviceID, reg.EventoAt).Scan(&reg.SyncedAt)
+		reg.DeviceID, reg.EventoAt, origem, ingestidoPor).Scan(&reg.SyncedAt)
+}
+
+func (r *RegistroRepository) ListByTurnoID(ctx context.Context, turnoID string) ([]domain.Registro, error) {
+	rows, err := r.pool.Query(ctx, `
+		SELECT id::text, turno_id::text, tipo, idempotency_key, payload,
+		       device_id, evento_at::text, synced_at::text, origem,
+		       ingestido_por::text
+		FROM registros WHERE turno_id = $1::uuid ORDER BY synced_at ASC
+	`, turnoID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var list []domain.Registro
+	for rows.Next() {
+		var reg domain.Registro
+		var payload map[string]any
+		var ingestidoPor *string
+		if err := rows.Scan(&reg.ID, &reg.TurnoID, &reg.Tipo, &reg.IdempotencyKey, &payload,
+			&reg.DeviceID, &reg.EventoAt, &reg.SyncedAt, &reg.Origem, &ingestidoPor); err != nil {
+			return nil, err
+		}
+		reg.Payload = payload
+		reg.IngestidoPor = ingestidoPor
+		list = append(list, reg)
+	}
+	return list, rows.Err()
 }
 
 // IsUniqueViolation reports Postgres unique constraint violations (SQLSTATE 23505).

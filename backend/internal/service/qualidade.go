@@ -36,8 +36,21 @@ func ValidateQualidadeRegistro(user *domain.Usuario, tipo string, payload map[st
 	if !IsQualidadeTipo(tipo) {
 		return nil
 	}
+	if IsSimuladorCentral(user) {
+		return ValidateQualidadePayload(tipo, payload)
+	}
 	if user.Area != AreaQualidade {
 		return domain.NewDomainError(domain.ErrAcesso001, "tipo qualidade nao permitido para esta area")
+	}
+	return ValidateQualidadePayload(tipo, payload)
+}
+
+func ValidateQualidadePayload(tipo string, payload map[string]any) error {
+	if disp, ok := payload["_disponibilidade"].(string); ok && disp == "em_processamento" {
+		if _, err := validateTalhaoCodigo(payload); err != nil {
+			return err
+		}
+		return nil
 	}
 	if _, err := validateTalhaoCodigo(payload); err != nil {
 		return err

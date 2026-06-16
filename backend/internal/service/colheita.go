@@ -38,9 +38,16 @@ func ValidateColheitaRegistro(user *domain.Usuario, tipo string, payload map[str
 	if !IsColheitaTipo(tipo) {
 		return nil
 	}
+	if IsSimuladorCentral(user) {
+		return ValidateColheitaPayload(tipo, payload)
+	}
 	if user.Area != AreaColheita {
 		return domain.NewDomainError(domain.ErrAcesso001, "tipo colheita nao permitido para esta area")
 	}
+	return ValidateColheitaPayload(tipo, payload)
+}
+
+func ValidateColheitaPayload(tipo string, payload map[string]any) error {
 	switch tipo {
 	case TipoHorasCorte:
 		return validateHorasCorte(payload)

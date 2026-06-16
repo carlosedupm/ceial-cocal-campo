@@ -1,51 +1,53 @@
 # Módulo — Qualidade
 
-> Avaliação de impurezas e perdas no campo.
+> Visualização de indicadores de qualidade processados na usina (latência pós-colheita).
 
 ## Implementação principal
 
 | Camada | Caminho |
 |--------|---------|
-| Backend | `backend/internal/service/qualidade.go`, `backend/internal/service/services.go` |
-| Frontend | `frontend/src/features/qualidade/QualidadePage.tsx`, `frontend/src/lib/qualidade/validation.ts` |
+| Backend | Materialização em `indicadores_turno.snapshot.qualidade` |
+| Frontend | `ColheitaConsultaPage` (seção qualidade) |
 
 ---
 
-## BR-QUALIDADE-001 — Impurezas mineral e vegetal
+## BR-QUALIDADE-001 — Visualização de impurezas
 
 | Campo | Valor |
 |-------|-------|
-| **Enunciado** | Técnico registra **impureza mineral** e **impureza vegetal** (kg/ton) por amostra ou consolidado do turno. |
-| **Escopo** | Avaliação de qualidade da cana; horizonte diário e safra. |
-| **Perfis** | Técnico qualidade. |
-| **Efeito** | Bloqueio se amostra sem talhão/frente (`BR-QUALIDADE-003`); comparação com meta via `BR-TRANS-005` — fora do BRF-004. |
-| **Implementação** | Tipo `impurezas`; payload `{ talhao_codigo, impureza_mineral_kg_ton, impureza_vegetal_kg_ton }`; validação em `qualidade.go` e `validation.ts` |
+| **Enunciado** | Profissional autorizado **visualiza** **impureza mineral** e **impureza vegetal** (kg/ton) quando processadas e disponibilizadas pelo central. |
+| **Escopo** | Consulta no turno; frequentemente `em_processamento` até chegada na usina. |
+| **Perfis** | Operador colheita (no contexto do seu turno); supervisor. |
+| **Efeito** | Somente leitura; badge de latência na UI. |
+| **Implementação** | Snapshot `qualidade.impurezas` |
+| **Estado** | implementado |
+
+> Regras de registro em campo (`BRF-004`) **superseded** para operadores; ingestão MVP via `BR-INTEG-005`.
+
+---
+
+## BR-QUALIDADE-002 — Visualização de perdas e pisoteio
+
+| Campo | Valor |
+|-------|-------|
+| **Enunciado** | Profissional **visualiza** **perdas**, **pisoteio** e **abalo e arranquio** (%) quando disponíveis. |
+| **Escopo** | Turno ou consolidação da frente. |
+| **Perfis** | Operador colheita; supervisor. |
+| **Efeito** | Somente leitura. |
+| **Implementação** | Snapshot `qualidade.perdas_campo` |
 | **Estado** | implementado |
 
 ---
 
-## BR-QUALIDADE-002 — Perdas, pisoteio, abalo e arranquio
+## BR-QUALIDADE-003 — Contexto talhão/frente na exibição
 
 | Campo | Valor |
 |-------|-------|
-| **Enunciado** | Técnico registra **perdas**, **pisoteio** e **abalo e arranquio** (%) por avaliação de campo. |
-| **Escopo** | Turno ou visita técnica; talhão/frente identificados. |
-| **Perfis** | Técnico qualidade. |
-| **Efeito** | Bloqueio se percentual fora de 0–100%; meta comparada via `BR-TRANS-005` — fora do BRF-004. |
-| **Implementação** | Tipo `perdas_campo`; payload `{ talhao_codigo, perdas_pct, pisoteio_pct, abalo_arranquio_pct }` |
-| **Estado** | implementado |
-
----
-
-## BR-QUALIDADE-003 — Identificação de talhão/frente
-
-| Campo | Valor |
-|-------|-------|
-| **Enunciado** | Todo registro de qualidade exige identificação de **talhão** e/ou **frente avaliada**. |
-| **Escopo** | Criação de registro nos módulos `BR-QUALIDADE-001` e `BR-QUALIDADE-002`. |
-| **Perfis** | Técnico qualidade. |
-| **Efeito** | Bloqueio sem localização mínima. |
-| **Implementação** | `talhao_codigo` obrigatório no payload; frente via turno (`BR-TRANS-003`) |
+| **Enunciado** | Indicadores de qualidade exibidos incluem identificação de **talhão** e/ou **frente** quando fornecidos pelo central. |
+| **Escopo** | Exibição em consulta. |
+| **Perfis** | Conforme `BR-ACESSO-001`. |
+| **Efeito** | Informativo na UI. |
+| **Implementação** | Campo `talhao_codigo` no snapshot |
 | **Estado** | implementado |
 
 ---

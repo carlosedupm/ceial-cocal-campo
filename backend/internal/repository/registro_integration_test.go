@@ -78,7 +78,7 @@ func TestRegistroCreateHorasCorte(t *testing.T) {
 		DeviceID:       "integration-test",
 		EventoAt:       open.Inicio,
 	}
-	if err := regRepo.Create(ctx, reg, "abc123hash", u.ID); err != nil {
+	if err := regRepo.Create(ctx, reg, "abc123hash", u.ID, "campo", nil); err != nil {
 		t.Fatalf("Create horas_corte: %v", err)
 	}
 }
@@ -106,7 +106,7 @@ func TestRegistroCreateConsumoDensidade(t *testing.T) {
 		DeviceID:       "integration-test",
 		EventoAt:       open.Inicio,
 	}
-	if err := regRepo.Create(ctx, reg, "abc123hash", u.ID); err != nil {
+	if err := regRepo.Create(ctx, reg, "abc123hash", u.ID, "campo", nil); err != nil {
 		t.Fatalf("Create consumo_densidade: %v", err)
 	}
 }
@@ -134,7 +134,7 @@ func TestRegistroCreateEntradaCana(t *testing.T) {
 		DeviceID:       "integration-test",
 		EventoAt:       open.Inicio,
 	}
-	if err := regRepo.Create(ctx, reg, "abc123hash", u.ID); err != nil {
+	if err := regRepo.Create(ctx, reg, "abc123hash", u.ID, "campo", nil); err != nil {
 		t.Fatalf("Create entrada_cana: %v", err)
 	}
 }

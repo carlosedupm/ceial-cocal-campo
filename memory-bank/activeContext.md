@@ -5,39 +5,22 @@
 
 ### **Status Geral**
 
-**Fase 2 em andamento — `BRF-004` Qualidade concluído (G3 + aceite manual).** Fase 1 (fundação, colheita, transporte) concluída. Próximo: briefing Segurança (G1).
+**Reposicionamento para visualização (BRF-005/006/007) implementado.** Operadores consultam indicadores do sistema central; perfil `simulador_central` alimenta a base no MVP.
 
-### ✅ Concluído:
+### ✅ Concluído recentemente:
 
-1. ✅ ADR-001 e ADR-002 aceitos
-2. ✅ Scaffold `backend/` + `frontend/` + Docker Compose + Dev Container
-3. ✅ Fundação: auth JWT, turno, sync Outbox, RBAC básico
-4. ✅ Testes unitários (Go + Vitest) via containers
-5. ✅ `BR-*` da fundação → `implementado` com ponteiros ao código
-6. ✅ Fix tela em branco na HomePage — índice Dexie `created_at` em `registros` (schema v2)
-7. ✅ Guia de fluxo do usuário — [`docs/ops/fluxo-usuario-brf-001.md`](../docs/ops/fluxo-usuario-brf-001.md)
-8. ✅ Cache local de unidades/frentes no IndexedDB (schema v3) — contexto operacional offline após fechar turno
-9. ✅ Validação offline browser (caso 2 regressão BRF-001) — sync automática após reconexão
-10. ✅ **BRF-002 Colheita** — formulários horas de corte, consumo/densidade, entrada de cana; `INT-001` no fechamento
-11. ✅ **BRF-003 Transporte** — consumo transbordo + cargas/viagens; `INT-001` no fechamento; rota `/transporte`; validação manual G3 OK
-12. ✅ **Sync hardening** — log de erros por item em `POST /sync/push`; `RegistroRepository` com `GetByID`
-13. ✅ **Hotfix sync produção (2026-06-16)** — insert JSONB em `registro.go` via `string(json.Marshal(payload))` + `::jsonb` (evita bytea→22P02 e map sem OID); fila offline com `purgeOrphanRegistros`; testes de integração colheita + CI `-tags=integration`
-14. ✅ **Regressões fundação automatizadas (2026-06-16)** — casos pendentes 6 (RBAC visual), 8 (falha API + retry) e piloto mobile adicionados em `frontend/e2e/fundacao.spec.ts`
-15. ✅ **CI lean (2026-06-16)** — PR rápido (docs + unit + build); integração backend só em `main`/manual; E2E fora do gate de PR
-16. ✅ **BRF-004 Qualidade** — impurezas + perdas por talhão; `INT-001` OR no fechamento; rota `/qualidade`; validação manual G3 OK
-
-### ✅ Stack de desenvolvimento:
-
-| Serviço | Como subir |
-|---------|------------|
-| Dev Container | Cursor → Reopen in Container (Postgres) |
-| API + PWA | F5 — *Cocal Campo (API + PWA)* em `.vscode/launch.json` |
-| Stack em containers | `docker compose --profile stack up -d` |
+1. ✅ Escopo consulta: `BR-COLHEITA-*`, `BR-INTEG-*`, `BR-ACESSO-005`, `BR-SUPERVISAO-001/002`
+2. ✅ BRF-005 Colheita consulta — `ColheitaConsultaPage`, pull + cache IndexedDB
+3. ✅ BRF-007 Simulador central — `/simulador`, RBAC ingestão, `indicadores_turno`
+4. ✅ BRF-006 Supervisão — `/supervisao`, detalhe read-only
+5. ✅ Clareza UX jornadas — rótulos humanos, entrada supervisor, frente dinâmica, PageHeader, docs ops
+6. ✅ `INT-001` revogado para operadores (fechamento sem registro obrigatório)
+7. ✅ BRF-002/003/004 superseded para operadores de campo
 
 ### 📋 Próximos passos:
 
-1. **Feedback de usuários** em produção — priorizar bugs de sync/uso real
-2. **E2E sob demanda** (`npm run test:e2e`) antes de releases ou piloto em frente
-3. **Próximo módulo recomendado:** Segurança (Fase 2); Supervisão permanece Fase 3
+1. Contrato integração sistema central real (Fase 3)
+2. Feedback piloto com operadores e supervisores
+3. Demais áreas (transporte/qualidade leitura para operadores)
 
 **Última atualização**: 2026-06-16

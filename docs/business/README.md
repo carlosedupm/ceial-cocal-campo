@@ -34,17 +34,16 @@ Ver também [AGENTS.md](../../AGENTS.md) e `.cursor/rules/documentation-maintena
 
 | Módulo | Arquivo | Regras | Estado |
 |--------|---------|--------|--------|
-| **Transversal (mestre)** | [_transversal.md](./_transversal.md) | `BR-TRANS-001`–`005`, `TMP-001`–`002`, `INT-001`–`002` | planejado |
-| **Acesso e perfis** | [acesso-perfis.md](./acesso-perfis.md) | `BR-ACESSO-001`–`003` | planejado |
-| **Turnos** | [turnos.md](./turnos.md) | `BR-TURNO-001`–`004` | planejado |
-| **Offline e sync** | [offline-sync.md](./offline-sync.md) | `BR-SYNC-001`–`004` | planejado |
-| **Colheita** | [colheita.md](./colheita.md) | `BR-COLHEITA-001`–`003` | parcial (BRF-002) |
-| **Transporte** | [transporte.md](./transporte.md) | `BR-TRANSPORTE-001`–`002` | implementado (BRF-003) |
-| **Qualidade** | [qualidade.md](./qualidade.md) | `BR-QUALIDADE-001`–`003` | implementado (BRF-004) |
-| **Segurança** | [seguranca.md](./seguranca.md) | `BR-SEGURANCA-001`–`003` | planejado |
-| **Performance** | [performance.md](./performance.md) | `BR-PERFORMANCE-001`–`002` | planejado |
-| **Supervisão** | [supervisao.md](./supervisao.md) | `BR-SUPERVISAO-001`–`003` | planejado |
+| **Transversal (mestre)** | [_transversal.md](./_transversal.md) | `BR-TRANS-001`–`005`, `TMP-001`–`002`, `INT-001`–`002` | implementado |
+| **Turnos** | [turnos.md](./turnos.md) | `BR-TURNO-001`–`004` | implementado |
+| **Offline e sync** | [offline-sync.md](./offline-sync.md) | `BR-SYNC-001`–`005`, `BR-SYNC-PULL-001` | implementado |
+| **Integração central** | [integracao-central.md](./integracao-central.md) | `BR-INTEG-001`–`005` | implementado (MVP simulador) |
+| **Acesso e perfis** | [acesso-perfis.md](./acesso-perfis.md) | `BR-ACESSO-001`–`005` | implementado |
+| **Colheita** | [colheita.md](./colheita.md) | `BR-COLHEITA-001`–`003` | implementado (consulta) |
+| **Qualidade** | [qualidade.md](./qualidade.md) | `BR-QUALIDADE-001`–`003` | implementado (consulta) |
+| **Performance** | [performance.md](./performance.md) | `BR-PERFORMANCE-001`–`003` | parcial |
+| **Supervisão** | [supervisao.md](./supervisao.md) | `BR-SUPERVISAO-001`–`002` | implementado |
 
 ---
 
-**Última atualização**: 2026-06-15
+**Última atualização**: 2026-06-16

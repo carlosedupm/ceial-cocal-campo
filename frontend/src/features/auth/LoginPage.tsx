@@ -2,6 +2,7 @@ import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "@/lib/api/client";
 import { refreshContextoCatalog } from "@/lib/catalog/contexto-cache";
+import { postLoginPath } from "@/lib/auth/routes";
 import { saveSession } from "@/lib/auth/session";
 import { clearTurnoIfUsuarioMismatch } from "@/lib/turno/session";
 
@@ -21,7 +22,7 @@ export function LoginPage() {
       await saveSession(pair);
       await clearTurnoIfUsuarioMismatch();
       void refreshContextoCatalog(pair.access_token);
-      navigate("/contexto");
+      navigate(postLoginPath(pair.usuario.perfil));
     } catch {
       setError("Falha no login. Verifique credenciais e conexão.");
     } finally {

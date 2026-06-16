@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/carlosedupm/ceial-cocal-campo/backend/internal/config"
@@ -218,43 +219,18 @@ func (s *TurnoService) Fechar(ctx context.Context, user *domain.Usuario, turnoID
 }
 
 func (s *TurnoService) validateObrigatoriosFechamento(ctx context.Context, t *domain.Turno) error {
-	var obrigatorios []string
-	switch t.Area {
-	case AreaColheita:
-		obrigatorios = ObrigatoriosColheitaFechamento
-	case AreaTransporte:
-		obrigatorios = ObrigatoriosTransporteFechamento
-	case AreaQualidade:
-		ok, err := s.registros.HasAnyTipoForTurno(ctx, t.ID, TiposQualidadeFechamento)
-		if err != nil {
-			return err
-		}
-		if !ok {
-			return domain.NewDomainError(domain.ErrINT001, "registro obrigatorio ausente: qualidade")
-		}
-		return nil
-	default:
-		return nil
-	}
-	for _, tipo := range obrigatorios {
-		ok, err := s.registros.HasTipoForTurno(ctx, t.ID, tipo)
-		if err != nil {
-			return err
-		}
-		if !ok {
-			return domain.NewDomainError(domain.ErrINT001, "registro obrigatorio ausente: "+tipo)
-		}
-	}
+	// INT-001 revogado para modelo consulta (BRF-005): operadores não registram indicadores.
 	return nil
 }
 
 type SyncService struct {
-	turnos    *repository.TurnoRepository
-	registros *repository.RegistroRepository
+	turnos      *repository.TurnoRepository
+	registros   *repository.RegistroRepository
+	indicadores *IndicadoresService
 }
 
-func NewSyncService(turnos *repository.TurnoRepository, registros *repository.RegistroRepository) *SyncService {
-	return &SyncService{turnos: turnos, registros: registros}
+func NewSyncService(turnos *repository.TurnoRepository, registros *repository.RegistroRepository, indicadores *IndicadoresService) *SyncService {
+	return &SyncService{turnos: turnos, registros: registros, indicadores: indicadores}
 }
 
 func (s *SyncService) Push(ctx context.Context, user *domain.Usuario, item domain.SyncPushItem) (*domain.Registro, error) {
@@ -271,8 +247,32 @@ func (s *SyncService) Push(ctx context.Context, user *domain.Usuario, item domai
 	if err != nil {
 		return nil, err
 	}
-	if turno == nil || turno.UsuarioID != user.ID {
+	if turno == nil {
 		return nil, domain.NewDomainError(domain.ErrTMP002, "turno invalido para usuario")
+	}
+
+	simulador := IsSimuladorCentral(user)
+	if IsIndicadorOperacionalTipo(item.Tipo) && !simulador {
+		return nil, domain.NewDomainError(domain.ErrAcesso001, "indicadores apenas via sistema central")
+	}
+
+	var ownerID string
+	var origem string
+	var ingestidoPor *string
+
+	if simulador {
+		if !contains(user.FrenteIDs, turno.FrenteID) {
+			return nil, domain.NewDomainError(domain.ErrAcesso001, "frente nao autorizada para ingestao")
+		}
+		ownerID = turno.UsuarioID
+		origem = "simulador"
+		ingestidoPor = &user.ID
+	} else {
+		if turno.UsuarioID != user.ID {
+			return nil, domain.NewDomainError(domain.ErrTMP002, "turno invalido para usuario")
+		}
+		ownerID = user.ID
+		origem = "campo"
 	}
 	// TMP-002 / BR-TURNO-001
 	if turno.Status != domain.TurnoAberto {
@@ -305,6 +305,7 @@ func (s *SyncService) Push(ctx context.Context, user *domain.Usuario, item domai
 		if existingHash != payloadHash {
 			return nil, domain.NewDomainError(domain.ErrSyncConflict, "conflito de sync first-sync-wins")
 		}
+		s.materializeIndicadores(ctx, simulador, item.TurnoID)
 		return existing, nil
 	}
 
@@ -320,15 +321,26 @@ func (s *SyncService) Push(ctx context.Context, user *domain.Usuario, item domai
 	if reg.ID == "" {
 		reg.ID = uuid.NewString()
 	}
-	if err := s.registros.Create(ctx, reg, payloadHash, user.ID); err != nil {
+	if err := s.registros.Create(ctx, reg, payloadHash, ownerID, origem, ingestidoPor); err != nil {
 		if recovered, recErr := s.recoverDuplicateRegistro(ctx, item, payloadHash, err); recErr != nil {
 			return nil, recErr
 		} else if recovered != nil {
+			s.materializeIndicadores(ctx, simulador, item.TurnoID)
 			return recovered, nil
 		}
 		return nil, err
 	}
+	s.materializeIndicadores(ctx, simulador, item.TurnoID)
 	return reg, nil
+}
+
+func (s *SyncService) materializeIndicadores(ctx context.Context, simulador bool, turnoID string) {
+	if !simulador || s.indicadores == nil {
+		return
+	}
+	if _, err := s.indicadores.MaterializeFromRegistros(ctx, turnoID); err != nil {
+		log.Printf("materialize indicadores turno=%s: %v", turnoID, err)
+	}
 }
 
 // recoverDuplicateRegistro trata retry após insert bem-sucedido com resposta perdida (idempotência).

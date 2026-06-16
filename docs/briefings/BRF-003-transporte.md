@@ -8,7 +8,7 @@
 | ID | `BRF-003` |
 | Data | 2026-06-15 |
 | Analista | Hermes (analista funcional) |
-| Status | implementado |
+| Status | arquivado |
 | Aprovado por (G1) | Carlos Manarin (PO) — 2026-06-15 |
 | PR vinculado (G2) | BRF-003 Transporte |
 

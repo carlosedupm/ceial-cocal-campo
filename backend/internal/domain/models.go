@@ -77,6 +77,26 @@ type Registro struct {
 	DeviceID       string         `json:"device_id"`
 	EventoAt       string         `json:"evento_at"`
 	SyncedAt       string         `json:"synced_at"`
+	Origem         string         `json:"origem,omitempty"`
+	IngestidoPor   *string        `json:"ingestido_por,omitempty"`
+}
+
+type IndicadoresTurno struct {
+	ID           string         `json:"id"`
+	TurnoID      string         `json:"turno_id"`
+	UsuarioID    string         `json:"usuario_id"`
+	FrenteID     string         `json:"frente_id"`
+	UnidadeID    string         `json:"unidade_id"`
+	Area         string         `json:"area"`
+	Snapshot     map[string]any `json:"snapshot"`
+	Origem       string         `json:"origem"`
+	AtualizadoEm string         `json:"atualizado_em"`
+}
+
+type TurnoComUsuario struct {
+	Turno
+	UsuarioNome string `json:"usuario_nome"`
+	UsuarioArea string `json:"usuario_area"`
 }
 
 type SyncPushItem struct {
