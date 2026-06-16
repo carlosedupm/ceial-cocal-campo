@@ -76,6 +76,7 @@ O Dev Container usa as chaves SSH do host (WSL2). Pré-requisitos antes de *Reop
 |--------|-------|--------|
 | `colheita@cocal.dev` | `campo123` | Operador colheita |
 | `transporte@cocal.dev` | `campo123` | Operador transporte |
+| `qualidade@cocal.dev` | `campo123` | Técnico qualidade |
 | `supervisor@cocal.dev` | `campo123` | Supervisor |
 
 **Última atualização**: 2026-06-16

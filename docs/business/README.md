@@ -40,7 +40,7 @@ Ver também [AGENTS.md](../../AGENTS.md) e `.cursor/rules/documentation-maintena
 | **Offline e sync** | [offline-sync.md](./offline-sync.md) | `BR-SYNC-001`–`004` | planejado |
 | **Colheita** | [colheita.md](./colheita.md) | `BR-COLHEITA-001`–`003` | parcial (BRF-002) |
 | **Transporte** | [transporte.md](./transporte.md) | `BR-TRANSPORTE-001`–`002` | implementado (BRF-003) |
-| **Qualidade** | [qualidade.md](./qualidade.md) | `BR-QUALIDADE-001`–`003` | planejado |
+| **Qualidade** | [qualidade.md](./qualidade.md) | `BR-QUALIDADE-001`–`003` | implementado (BRF-004) |
 | **Segurança** | [seguranca.md](./seguranca.md) | `BR-SEGURANCA-001`–`003` | planejado |
 | **Performance** | [performance.md](./performance.md) | `BR-PERFORMANCE-001`–`002` | planejado |
 | **Supervisão** | [supervisao.md](./supervisao.md) | `BR-SUPERVISAO-001`–`003` | planejado |

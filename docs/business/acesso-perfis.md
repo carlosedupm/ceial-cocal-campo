@@ -58,9 +58,9 @@
 | **Escopo** | Seleção de frente antes do registro; módulos qualidade e segurança. |
 | **Perfis** | Técnico qualidade, técnico segurança. |
 | **Efeito** | Bloqueio de registro em unidade não atribuída. |
-| **Implementação** | _(planejado)_ |
-| **Estado** | planejado |
+| **Implementação** | `frontend/src/features/turno/ContextoPage.tsx` (seleção de frente); seed `qualidade@cocal.dev` com múltiplas frentes — ver BRF-004 |
+| **Estado** | parcial |
 
 ---
 
-**Última atualização**: 2026-06-14
+**Última atualização**: 2026-06-16

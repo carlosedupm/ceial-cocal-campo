@@ -5,7 +5,7 @@
 
 ### **Status Geral**
 
-**Fase 1 em andamento — `BRF-001` fundação, `BRF-002` Colheita e `BRF-003` Transporte implementados (G3).** Hotfix sync produção aplicado (jun/2026). Próximo: validar deploy em produção e iniciar módulo de Qualidade.
+**Fase 2 em andamento — `BRF-004` Qualidade concluído (G3 + aceite manual).** Fase 1 (fundação, colheita, transporte) concluída. Próximo: briefing Segurança (G1).
 
 ### ✅ Concluído:
 
@@ -24,6 +24,7 @@
 13. ✅ **Hotfix sync produção (2026-06-16)** — insert JSONB em `registro.go` via `string(json.Marshal(payload))` + `::jsonb` (evita bytea→22P02 e map sem OID); fila offline com `purgeOrphanRegistros`; testes de integração colheita + CI `-tags=integration`
 14. ✅ **Regressões fundação automatizadas (2026-06-16)** — casos pendentes 6 (RBAC visual), 8 (falha API + retry) e piloto mobile adicionados em `frontend/e2e/fundacao.spec.ts`
 15. ✅ **CI lean (2026-06-16)** — PR rápido (docs + unit + build); integração backend só em `main`/manual; E2E fora do gate de PR
+16. ✅ **BRF-004 Qualidade** — impurezas + perdas por talhão; `INT-001` OR no fechamento; rota `/qualidade`; validação manual G3 OK
 
 ### ✅ Stack de desenvolvimento:
 
@@ -35,8 +36,8 @@
 
 ### 📋 Próximos passos:
 
-1. **Feedback de usuários** em produção (já disponível externamente) — priorizar bugs de sync/uso real
+1. **Feedback de usuários** em produção — priorizar bugs de sync/uso real
 2. **E2E sob demanda** (`npm run test:e2e`) antes de releases ou piloto em frente
-3. **Próximo módulo recomendado:** Qualidade (Fase 2), mantendo Supervisão para Fase 3
+3. **Próximo módulo recomendado:** Segurança (Fase 2); Supervisão permanece Fase 3
 
 **Última atualização**: 2026-06-16

@@ -80,6 +80,19 @@ func (r *RegistroRepository) HasTipoForTurno(ctx context.Context, turnoID, tipo 
 	return exists, err
 }
 
+func (r *RegistroRepository) HasAnyTipoForTurno(ctx context.Context, turnoID string, tipos []string) (bool, error) {
+	if len(tipos) == 0 {
+		return true, nil
+	}
+	var exists bool
+	err := r.pool.QueryRow(ctx, `
+		SELECT EXISTS(
+			SELECT 1 FROM registros WHERE turno_id = $1::uuid AND tipo = ANY($2::text[])
+		)
+	`, turnoID, tipos).Scan(&exists)
+	return exists, err
+}
+
 func (r *RegistroRepository) GetPayloadHash(ctx context.Context, key string) (string, error) {
 	var hash string
 	err := r.pool.QueryRow(ctx, `SELECT payload_hash FROM registros WHERE idempotency_key = $1`, key).Scan(&hash)

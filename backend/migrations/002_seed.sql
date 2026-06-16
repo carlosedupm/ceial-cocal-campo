@@ -6,7 +6,8 @@ INSERT INTO unidades (id, nome) VALUES
 
 INSERT INTO frentes (id, unidade_id, nome) VALUES
     ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '11111111-1111-1111-1111-111111111111', 'Frente Colheita 01'),
-    ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', '11111111-1111-1111-1111-111111111111', 'Frente Transporte 01');
+    ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', '11111111-1111-1111-1111-111111111111', 'Frente Transporte 01'),
+    ('cccccccc-cccc-cccc-cccc-cccccccccccc', '11111111-1111-1111-1111-111111111111', 'Frente Qualidade 01');
 
 -- password: campo123 (bcrypt)
 INSERT INTO usuarios (id, email, senha_hash, nome, perfil, area, unidade_ids, frente_ids) VALUES
@@ -24,4 +25,9 @@ INSERT INTO usuarios (id, email, senha_hash, nome, perfil, area, unidade_ids, fr
      '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
      'Supervisor Frente', 'supervisor_frente', 'supervisao',
      ARRAY['11111111-1111-1111-1111-111111111111']::UUID[],
-     ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb']::UUID[]);
+     ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb']::UUID[]),
+    ('66666666-6666-6666-6666-666666666666', 'qualidade@cocal.dev',
+     '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
+     'Tecnico Qualidade', 'tecnico_qualidade', 'qualidade',
+     ARRAY['11111111-1111-1111-1111-111111111111']::UUID[],
+     ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'cccccccc-cccc-cccc-cccc-cccccccccccc']::UUID[]);

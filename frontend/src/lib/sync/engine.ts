@@ -2,6 +2,7 @@ import { api, ApiClientError } from "@/lib/api/client";
 import { getValidAccessToken } from "@/lib/auth/session";
 import { buildIdempotencyKey, db, updatePendingCount } from "@/lib/db/schema";
 import { reconcileTurnoFromServer, purgeOrphanRegistros } from "@/lib/turno/session";
+import { idempotencyKeyTalhao } from "@/lib/qualidade/validation";
 import type { RegistroLocal, SyncStatus } from "@/types/domain";
 import { ERR_CODES } from "@/types/domain";
 
@@ -124,6 +125,48 @@ export async function enqueueRegistroViagem(
   if (isSyncConflictPermanent(existing?.last_error_code)) {
     throw new Error(
       `Conflito de sync em "${tipo}" viagem ${viagemNumero}: a versão no servidor prevaleceu (BR-SYNC-005). Use "Aceitar versão do servidor" na home.`
+    );
+  }
+
+  const eventoAt = new Date().toISOString();
+  const registro: RegistroLocal = {
+    id: existing?.id ?? crypto.randomUUID(),
+    turno_id: turnoId,
+    tipo,
+    idempotency_key: idempotencyKey,
+    payload,
+    device_id: deviceId,
+    evento_at: eventoAt,
+    sync_status: "pendente",
+    created_at: existing?.created_at ?? eventoAt,
+    last_error_code: undefined,
+  };
+  await db.registros.put(registro);
+  await updatePendingCount();
+  void flushOutbox();
+  return registro;
+}
+
+/** Um registro por talhão e tipo no turno (BRF-004 idempotência). */
+export async function enqueueRegistroTalhao(
+  turnoId: string,
+  tipo: string,
+  talhaoCodigo: string,
+  payload: Record<string, unknown>,
+  deviceId: string
+): Promise<RegistroLocal> {
+  const idempotencyKey = idempotencyKeyTalhao(turnoId, tipo, talhaoCodigo);
+  const existing = await db.registros
+    .where("idempotency_key")
+    .equals(idempotencyKey)
+    .first();
+
+  if (existing?.sync_status === "sincronizado") {
+    throw new RegistroImutavelError(`${tipo} (talhão ${talhaoCodigo})`);
+  }
+  if (isSyncConflictPermanent(existing?.last_error_code)) {
+    throw new Error(
+      `Conflito de sync em "${tipo}" talhão ${talhaoCodigo}: a versão no servidor prevaleceu (BR-SYNC-005). Use "Aceitar versão do servidor" na home.`
     );
   }
 

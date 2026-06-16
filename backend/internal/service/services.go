@@ -224,6 +224,15 @@ func (s *TurnoService) validateObrigatoriosFechamento(ctx context.Context, t *do
 		obrigatorios = ObrigatoriosColheitaFechamento
 	case AreaTransporte:
 		obrigatorios = ObrigatoriosTransporteFechamento
+	case AreaQualidade:
+		ok, err := s.registros.HasAnyTipoForTurno(ctx, t.ID, TiposQualidadeFechamento)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			return domain.NewDomainError(domain.ErrINT001, "registro obrigatorio ausente: qualidade")
+		}
+		return nil
 	default:
 		return nil
 	}
@@ -273,6 +282,9 @@ func (s *SyncService) Push(ctx context.Context, user *domain.Usuario, item domai
 		return nil, err
 	}
 	if err := ValidateTransporteRegistro(user, item.Tipo, item.Payload); err != nil {
+		return nil, err
+	}
+	if err := ValidateQualidadeRegistro(user, item.Tipo, item.Payload); err != nil {
 		return nil, err
 	}
 

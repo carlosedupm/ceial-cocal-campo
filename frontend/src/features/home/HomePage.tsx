@@ -11,6 +11,7 @@ import {
 } from "@/lib/auth/session";
 import { OBRIGATORIOS_COLHEITA } from "@/lib/colheita/validation";
 import { OBRIGATORIOS_TRANSPORTE } from "@/lib/transporte/validation";
+import { OBRIGATORIOS_QUALIDADE } from "@/lib/qualidade/validation";
 import { db } from "@/lib/db/schema";
 import { enqueueRegistro, flushOutbox, aceitarVersaoServidor, isSyncConflictPermanent } from "@/lib/sync/engine";
 import { clearTurnoIfUsuarioMismatch, purgeOrphanRegistros, turnoMatchesUsuario } from "@/lib/turno/session";
@@ -26,7 +27,10 @@ const AREA_MENUS: Record<string, { label: string; to?: string }[]> = {
     { label: "Registrar indicadores", to: "/transporte" },
     { label: "Consultar turno" },
   ],
-  qualidade: [{ label: "Registrar placeholder" }],
+  qualidade: [
+    { label: "Registrar avaliações", to: "/qualidade" },
+    { label: "Consultar turno" },
+  ],
   seguranca: [{ label: "Registrar placeholder" }],
   supervisao: [{ label: "Painel frente" }, { label: "Consultar turno" }],
 };
@@ -34,6 +38,11 @@ const AREA_MENUS: Record<string, { label: string; to?: string }[]> = {
 async function turnoTemRegistro(turnoId: string, tipo: string): Promise<boolean> {
   const regs = await db.registros.where("turno_id").equals(turnoId).toArray();
   return regs.some((r) => r.tipo === tipo);
+}
+
+async function turnoTemAlgumRegistro(turnoId: string, tipos: readonly string[]): Promise<boolean> {
+  const regs = await db.registros.where("turno_id").equals(turnoId).toArray();
+  return regs.some((r) => tipos.includes(r.tipo));
 }
 
 export function HomePage() {
@@ -136,6 +145,16 @@ export function HomePage() {
       }
     }
 
+    if (usuario?.area === "qualidade") {
+      const ok = await turnoTemAlgumRegistro(turno.id, OBRIGATORIOS_QUALIDADE);
+      if (!ok) {
+        setFecharErro(
+          "Registre ao menos uma avaliação de qualidade antes de fechar o turno (INT-001). Acesse Qualidade → Registrar avaliações."
+        );
+        return;
+      }
+    }
+
     const token = await getValidAccessToken();
     if (!token) return;
     try {
@@ -152,7 +171,9 @@ export function HomePage() {
         const msg =
           usuario?.area === "transporte"
             ? "Registre consumo transbordo antes de fechar o turno (INT-001)."
-            : "Registre horas de corte antes de fechar o turno (INT-001).";
+            : usuario?.area === "qualidade"
+              ? "Registre ao menos uma avaliação de qualidade antes de fechar o turno (INT-001)."
+              : "Registre horas de corte antes de fechar o turno (INT-001).";
         setFecharErro(msg);
         return;
       }
@@ -171,6 +192,7 @@ export function HomePage() {
   const showPlaceholder =
     usuario?.area !== "colheita" &&
     usuario?.area !== "transporte" &&
+    usuario?.area !== "qualidade" &&
     turno?.status === "aberto";
 
   return (
@@ -201,6 +223,11 @@ export function HomePage() {
               {usuario?.area === "transporte" && (
                 <Link className="button-link" to="/transporte">
                   Registrar indicadores de transporte
+                </Link>
+              )}
+              {usuario?.area === "qualidade" && (
+                <Link className="button-link" to="/qualidade">
+                  Registrar avaliações de qualidade
                 </Link>
               )}
               <button type="button" className="secondary" onClick={() => void fecharTurno()}>

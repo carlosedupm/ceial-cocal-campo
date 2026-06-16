@@ -113,9 +113,9 @@ flowchart LR
 
 | ID | Enunciado |
 |----|-----------|
-| **INT-001** | Fechamento de turno exige que todos os registros **obrigatórios da área** estejam presentes ou **justificados** pelo supervisor. **Fundação (`BRF-001`):** sem registros obrigatórios por área. **Colheita (`BRF-002`):** `horas_corte` obrigatório para área colheita. **Transporte (`BRF-003`):** `consumo_transbordo` obrigatório para área transporte |
+| **INT-001** | Fechamento de turno exige que todos os registros **obrigatórios da área** estejam presentes ou **justificados** pelo supervisor. **Fundação (`BRF-001`):** sem registros obrigatórios por área. **Colheita (`BRF-002`):** `horas_corte` obrigatório para área colheita. **Transporte (`BRF-003`):** `consumo_transbordo` obrigatório para área transporte. **Qualidade (`BRF-004`):** pelo menos um entre `impurezas` ou `perdas_campo` |
 | `INT-002` | Contador de dias sem acidentes só muda por **ocorrência registrada e validada** — nunca por edição manual livre do contador |
 
 ---
 
-**Última atualização**: 2026-06-15
+**Última atualização**: 2026-06-16
