@@ -9,6 +9,7 @@ import {
   saveFrentesCache,
 } from "@/lib/catalog/contexto-cache";
 import { getDeviceId, getUsuario, getValidAccessToken } from "@/lib/auth/session";
+import { clearTurnoIfUsuarioMismatch, turnoMatchesUsuario } from "@/lib/turno/session";
 import { db } from "@/lib/db/schema";
 import type { Frente, Turno, Unidade } from "@/types/domain";
 
@@ -65,8 +66,10 @@ export function ContextoPage() {
         }
       }
 
+      await clearTurnoIfUsuarioMismatch();
+      const usuario = await getUsuario();
       const local = await db.turno_atual.toCollection().first();
-      if (local?.status === "aberto") {
+      if (local?.status === "aberto" && turnoMatchesUsuario(local, usuario)) {
         navigate("/");
         return;
       }

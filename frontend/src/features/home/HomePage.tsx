@@ -13,6 +13,7 @@ import { OBRIGATORIOS_COLHEITA } from "@/lib/colheita/validation";
 import { OBRIGATORIOS_TRANSPORTE } from "@/lib/transporte/validation";
 import { db } from "@/lib/db/schema";
 import { enqueueRegistro, flushOutbox, aceitarVersaoServidor, isSyncConflictPermanent } from "@/lib/sync/engine";
+import { clearTurnoIfUsuarioMismatch, turnoMatchesUsuario } from "@/lib/turno/session";
 import { SyncStatusBar } from "@/features/sync/SyncStatusBar";
 import type { RegistroLocal, Usuario } from "@/types/domain";
 
@@ -39,19 +40,36 @@ export function HomePage() {
   const navigate = useNavigate();
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [fecharErro, setFecharErro] = useState<string | null>(null);
+
+  useEffect(() => {
+    void clearTurnoIfUsuarioMismatch();
+  }, []);
+
   const turno = useLiveQuery(async () => {
+    const usuarioAtual = await getUsuario();
     const local = await db.turno_atual.toCollection().first();
-    if (local) return local;
-    const token = await getValidAccessToken();
-    if (!token || !navigator.onLine) return null;
-    try {
-      const remoto = await api.turnoAtual(token);
-      if (remoto) await db.turno_atual.put(remoto);
-      return remoto;
-    } catch {
-      return null;
+    if (local) {
+      if (!turnoMatchesUsuario(local, usuarioAtual)) return null;
+      return local;
     }
+    return null;
   });
+
+  useEffect(() => {
+    if (turno !== null) return;
+    void (async () => {
+      const local = await db.turno_atual.toCollection().first();
+      if (local) return;
+      const token = await getValidAccessToken();
+      if (!token || !navigator.onLine) return;
+      try {
+        const remoto = await api.turnoAtual(token);
+        if (remoto) await db.turno_atual.put(remoto);
+      } catch {
+        /* offline ou sem turno remoto */
+      }
+    })();
+  }, [turno]);
   const registros = useLiveQuery(() =>
     db.registros.orderBy("created_at").reverse().toArray()
   ) as RegistroLocal[] | undefined;

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { api } from "@/lib/api/client";
 import { refreshContextoCatalog } from "@/lib/catalog/contexto-cache";
 import { saveSession } from "@/lib/auth/session";
+import { clearTurnoIfUsuarioMismatch } from "@/lib/turno/session";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ export function LoginPage() {
     try {
       const pair = await api.login(email, password);
       await saveSession(pair);
+      await clearTurnoIfUsuarioMismatch();
       void refreshContextoCatalog(pair.access_token);
       navigate("/contexto");
     } catch {

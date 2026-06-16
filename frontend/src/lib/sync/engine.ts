@@ -1,6 +1,7 @@
 import { api, ApiClientError } from "@/lib/api/client";
 import { getValidAccessToken } from "@/lib/auth/session";
 import { buildIdempotencyKey, db, updatePendingCount } from "@/lib/db/schema";
+import { reconcileTurnoFromServer } from "@/lib/turno/session";
 import type { RegistroLocal, SyncStatus } from "@/types/domain";
 import { ERR_CODES } from "@/types/domain";
 
@@ -160,6 +161,11 @@ async function syncTurnoLocal(token: string): Promise<void> {
     if (err instanceof ApiClientError && err.code === "ERR-TURNO-002") {
       return;
     }
+    // Turno local incompatível com o usuário logado (ex.: troca de perfil sem logout).
+    if (err instanceof ApiClientError && err.code === ERR_CODES.ACESSO001) {
+      await reconcileTurnoFromServer(token);
+      return;
+    }
     throw err;
   }
 }
@@ -175,7 +181,11 @@ export async function flushOutbox(): Promise<void> {
     const token = await getValidAccessToken();
     if (!token) return;
 
-    await syncTurnoLocal(token);
+    try {
+      await syncTurnoLocal(token);
+    } catch {
+      /* falha ao sincronizar turno não deve bloquear a fila de registros */
+    }
 
     const pendentes = (await db.registros
       .where("sync_status")

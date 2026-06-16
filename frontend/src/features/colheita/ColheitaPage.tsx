@@ -87,6 +87,10 @@ export function ColheitaPage() {
     if (turno === undefined) return;
     if (!turno || turno.status !== "aberto") {
       navigate("/");
+      return;
+    }
+    if (turno.area !== "colheita") {
+      navigate("/");
     }
   }, [navigate, turno]);
 
