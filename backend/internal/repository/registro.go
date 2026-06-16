@@ -2,10 +2,12 @@ package repository
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 
 	"github.com/carlosedupm/ceial-cocal-campo/backend/internal/domain"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -33,13 +35,39 @@ func (r *RegistroRepository) FindByIdempotencyKey(ctx context.Context, key strin
 	return &reg, err
 }
 
+func (r *RegistroRepository) FindByID(ctx context.Context, id string) (*domain.Registro, error) {
+	var reg domain.Registro
+	var payload map[string]any
+	err := r.pool.QueryRow(ctx, `
+		SELECT id::text, turno_id::text, tipo, idempotency_key, payload,
+		       device_id, evento_at::text, synced_at::text
+		FROM registros WHERE id = $1::uuid
+	`, id).Scan(&reg.ID, &reg.TurnoID, &reg.Tipo, &reg.IdempotencyKey, &payload,
+		&reg.DeviceID, &reg.EventoAt, &reg.SyncedAt)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, nil
+	}
+	reg.Payload = payload
+	return &reg, err
+}
+
 func (r *RegistroRepository) Create(ctx context.Context, reg *domain.Registro, payloadHash string, userID string) error {
+	payloadJSON, err := json.Marshal(reg.Payload)
+	if err != nil {
+		return err
+	}
 	return r.pool.QueryRow(ctx, `
 		INSERT INTO registros (id, turno_id, usuario_id, tipo, idempotency_key, payload, payload_hash, device_id, evento_at)
-		VALUES ($1::uuid, $2::uuid, $3::uuid, $4, $5, $6, $7, $8, $9::timestamptz)
+		VALUES ($1::uuid, $2::uuid, $3::uuid, $4, $5, $6::jsonb, $7, $8, $9::timestamptz)
 		RETURNING synced_at::text
-	`, reg.ID, reg.TurnoID, userID, reg.Tipo, reg.IdempotencyKey, reg.Payload, payloadHash,
+	`, reg.ID, reg.TurnoID, userID, reg.Tipo, reg.IdempotencyKey, payloadJSON, payloadHash,
 		reg.DeviceID, reg.EventoAt).Scan(&reg.SyncedAt)
+}
+
+// IsUniqueViolation reports Postgres unique constraint violations (SQLSTATE 23505).
+func IsUniqueViolation(err error) bool {
+	var pgErr *pgconn.PgError
+	return errors.As(err, &pgErr) && pgErr.Code == "23505"
 }
 
 func (r *RegistroRepository) HasTipoForTurno(ctx context.Context, turnoID, tipo string) (bool, error) {

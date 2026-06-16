@@ -309,9 +309,47 @@ func (s *SyncService) Push(ctx context.Context, user *domain.Usuario, item domai
 		reg.ID = uuid.NewString()
 	}
 	if err := s.registros.Create(ctx, reg, payloadHash, user.ID); err != nil {
+		if recovered, recErr := s.recoverDuplicateRegistro(ctx, item, payloadHash, err); recErr != nil {
+			return nil, recErr
+		} else if recovered != nil {
+			return recovered, nil
+		}
 		return nil, err
 	}
 	return reg, nil
+}
+
+// recoverDuplicateRegistro trata retry após insert bem-sucedido com resposta perdida (idempotência).
+func (s *SyncService) recoverDuplicateRegistro(
+	ctx context.Context,
+	item domain.SyncPushItem,
+	payloadHash string,
+	insertErr error,
+) (*domain.Registro, error) {
+	if !repository.IsUniqueViolation(insertErr) {
+		return nil, nil
+	}
+	existing, err := s.registros.FindByIdempotencyKey(ctx, item.IdempotencyKey)
+	if err != nil {
+		return nil, err
+	}
+	if existing == nil && item.ID != "" {
+		existing, err = s.registros.FindByID(ctx, item.ID)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if existing == nil {
+		return nil, nil
+	}
+	existingHash, err := s.registros.GetPayloadHash(ctx, existing.IdempotencyKey)
+	if err != nil {
+		return nil, err
+	}
+	if existingHash != payloadHash {
+		return nil, domain.NewDomainError(domain.ErrSyncConflict, "conflito de sync first-sync-wins")
+	}
+	return existing, nil
 }
 
 func hashPayload(payload map[string]any) (string, error) {

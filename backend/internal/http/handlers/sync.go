@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/carlosedupm/ceial-cocal-campo/backend/internal/domain"
@@ -41,6 +42,7 @@ func (h *SyncHandler) Push(w http.ResponseWriter, r *http.Request) {
 	for _, item := range req.Items {
 		reg, err := h.sync.Push(r.Context(), user, item)
 		if err != nil {
+			log.Printf("sync push item tipo=%s turno=%s: %v", item.Tipo, item.TurnoID, err)
 			httpx.WriteError(w, err)
 			return
 		}
