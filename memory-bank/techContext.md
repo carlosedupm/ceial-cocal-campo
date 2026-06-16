@@ -32,6 +32,11 @@ npm run validate
 # Testes (containers)
 npm run test
 
+# Testes de integração backend (Postgres obrigatório; fora da CI padrão)
+docker compose up -d postgres
+docker compose --profile stack run --rm --no-deps api \
+  go test -tags=integration ./internal/repository/...
+
 # Lockfiles (primeira vez ou após mudar deps)
 bash scripts/bootstrap-lockfiles.sh
 ```

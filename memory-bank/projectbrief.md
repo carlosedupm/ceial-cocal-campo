@@ -23,19 +23,19 @@ O painel **Gestão à Vista** (dashboard de gestão) fica **fora do escopo do MV
 
 ## 🎯 Objetivos Específicos
 
-### Fase atual (Fase 0)
+### Fase atual (Fase 1)
 
-- Catálogo de negócio completo com regras `BR-*` em estado `planejado`
-- Vocabulário de domínio em `domain-patterns.mdc`
-- Briefing de fundação `BRF-001` pronto para gate G1
+- Fundação `BRF-001`, Colheita `BRF-002` e Transporte `BRF-003` implementados (G3)
+- Stack Go + React PWA + PostgreSQL em produção (Render + Vercel + Supabase)
+- Próximo: regressões BRF-001 pendentes ou módulo Qualidade/Segurança
 
 ### Roadmap (fases)
 
 | Fase | Foco | Estado |
 |------|------|--------|
-| Fase 0 | Catálogo de negócio + vocabulário | em andamento |
-| Fase 1 | Turno + sync + acesso + Colheita | em andamento (fundação G3; colheita G3) |
-| Fase 2 | Transporte, Qualidade, Segurança, Performance | planejado |
+| Fase 0 | Catálogo de negócio + vocabulário | concluído |
+| Fase 1 | Turno + sync + acesso + Colheita + Transporte | em andamento (BRF-001/002/003 G3) |
+| Fase 2 | Qualidade, Segurança, Performance | planejado |
 | Fase 3 | Supervisão + tempo real entre equipe | planejado |
 | Fase 4 | Integração futura com Gestão à Vista | fora do MVP |
 

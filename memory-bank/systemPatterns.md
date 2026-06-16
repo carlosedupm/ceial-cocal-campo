@@ -43,7 +43,7 @@ backend/
   internal/http/         # handlers, middleware RBAC
   migrations/
 frontend/
-  src/features/          # auth, turno, sync, home
+  src/features/          # auth, turno, sync, home, colheita, transporte
   src/lib/db/            # Dexie schema + outbox
   src/lib/sync/          # SyncEngine
   src/lib/auth/          # sessão offline 7d
@@ -76,10 +76,13 @@ Ver [`docs/architecture/ADR-002-sync-outbox.md`](../docs/architecture/ADR-002-sy
 
 | Tipo | Onde | Ferramenta |
 |------|------|------------|
-| Unit backend | `backend/internal/**/**_test.go` | `go test` |
+| Unit backend | `backend/internal/**/**_test.go` | `go test ./...` |
+| Integração backend | `backend/internal/repository/*_integration_test.go` | `go test -tags=integration` (requer Postgres) |
 | Unit frontend | `frontend/src/**/*.test.ts` | Vitest |
 | E2E fundação | `frontend/e2e/` | Playwright |
 | Campo manual | `docs/tests/` | checklist G3 |
+
+Testes com `//go:build integration` ficam **fora** do `go test ./...` padrão (CI e `npm run test:backend`).
 
 ## Referências
 
@@ -87,4 +90,4 @@ Ver [`docs/architecture/ADR-002-sync-outbox.md`](../docs/architecture/ADR-002-sy
 - [ADR-002](../docs/architecture/ADR-002-sync-outbox.md)
 - [Catálogo BR-*](../docs/business/README.md)
 
-**Última atualização**: 2026-06-14
+**Última atualização**: 2026-06-15
