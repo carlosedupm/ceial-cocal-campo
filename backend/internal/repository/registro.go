@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 
 	"github.com/carlosedupm/ceial-cocal-campo/backend/internal/domain"
@@ -51,11 +52,17 @@ func (r *RegistroRepository) FindByID(ctx context.Context, id string) (*domain.R
 }
 
 func (r *RegistroRepository) Create(ctx context.Context, reg *domain.Registro, payloadHash string, userID string) error {
+	// pgx: map[string]any sem OID falha no encode; []byte vira bytea (22P02).
+	// JSON como string + ::jsonb é o caminho estável.
+	payloadJSON, err := json.Marshal(reg.Payload)
+	if err != nil {
+		return err
+	}
 	return r.pool.QueryRow(ctx, `
 		INSERT INTO registros (id, turno_id, usuario_id, tipo, idempotency_key, payload, payload_hash, device_id, evento_at)
-		VALUES ($1::uuid, $2::uuid, $3::uuid, $4, $5, $6, $7, $8, $9::timestamptz)
+		VALUES ($1::uuid, $2::uuid, $3::uuid, $4, $5, $6::jsonb, $7, $8, $9::timestamptz)
 		RETURNING synced_at::text
-	`, reg.ID, reg.TurnoID, userID, reg.Tipo, reg.IdempotencyKey, reg.Payload, payloadHash,
+	`, reg.ID, reg.TurnoID, userID, reg.Tipo, reg.IdempotencyKey, string(payloadJSON), payloadHash,
 		reg.DeviceID, reg.EventoAt).Scan(&reg.SyncedAt)
 }
 

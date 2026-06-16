@@ -21,7 +21,7 @@
 10. ✅ **BRF-002 Colheita** — formulários horas de corte, consumo/densidade, entrada de cana; `INT-001` no fechamento
 11. ✅ **BRF-003 Transporte** — consumo transbordo + cargas/viagens; `INT-001` no fechamento; rota `/transporte`; validação manual G3 OK
 12. ✅ **Sync hardening** — log de erros por item em `POST /sync/push`; `RegistroRepository` com `GetByID`
-13. ✅ **Hotfix sync produção (2026-06-16)** — revertido insert JSONB em `registro.go` (regressão `091b28a`: `[]byte` + `::jsonb` → SQLSTATE 22P02); fila offline filtra turno atual e descarta órfãos (`purgeOrphanRegistros`); `ERR-TMP-002`/`ERR-TURNO-003` como erro permanente; testes de integração `horas_corte` + CI com `-tags=integration`
+13. ✅ **Hotfix sync produção (2026-06-16)** — insert JSONB em `registro.go` via `string(json.Marshal(payload))` + `::jsonb` (evita bytea→22P02 e map sem OID); fila offline com `purgeOrphanRegistros`; testes de integração colheita + CI `-tags=integration`
 
 ### ✅ Stack de desenvolvimento:
 

@@ -83,6 +83,34 @@ func TestRegistroCreateHorasCorte(t *testing.T) {
 	}
 }
 
+func TestRegistroCreateConsumoDensidade(t *testing.T) {
+	ctx := context.Background()
+	pool := testPool(t)
+
+	userRepo := NewUserRepository(pool)
+	turnoRepo := NewTurnoRepository(pool)
+	regRepo := NewRegistroRepository(pool)
+
+	u, _, err := userRepo.FindByEmail(ctx, "colheita@cocal.dev")
+	if err != nil || u == nil {
+		t.Fatalf("user: %v", err)
+	}
+	open := testOpenTurno(t, ctx, turnoRepo, u.ID)
+
+	reg := &domain.Registro{
+		ID:             uuid.NewString(),
+		TurnoID:        open.ID,
+		Tipo:           "consumo_densidade",
+		IdempotencyKey: open.ID + ":consumo_densidade:integration-" + uuid.NewString()[:8],
+		Payload:        map[string]any{"consumo_lt": 8.5, "densidade_ton_carga": 28.0},
+		DeviceID:       "integration-test",
+		EventoAt:       open.Inicio,
+	}
+	if err := regRepo.Create(ctx, reg, "abc123hash", u.ID); err != nil {
+		t.Fatalf("Create consumo_densidade: %v", err)
+	}
+}
+
 func TestRegistroCreateEntradaCana(t *testing.T) {
 	ctx := context.Background()
 	pool := testPool(t)
