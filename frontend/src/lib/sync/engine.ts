@@ -1,7 +1,7 @@
 import { api, ApiClientError } from "@/lib/api/client";
 import { getValidAccessToken } from "@/lib/auth/session";
 import { buildIdempotencyKey, db, updatePendingCount } from "@/lib/db/schema";
-import { reconcileTurnoFromServer } from "@/lib/turno/session";
+import { reconcileTurnoFromServer, purgeOrphanRegistros } from "@/lib/turno/session";
 import type { RegistroLocal, SyncStatus } from "@/types/domain";
 import { ERR_CODES } from "@/types/domain";
 
@@ -26,6 +26,16 @@ export function idempotencyKeyViagem(turnoId: string, tipo: string, viagemNumero
 
 export function isSyncConflictPermanent(code?: string): boolean {
   return code === ERR_CODES.SYNC_CONFLICT;
+}
+
+/** Erros irrecuperáveis — não reenviar na fila de sync. */
+export function isSyncErrorPermanent(code?: string): boolean {
+  if (!code) return false;
+  return (
+    isSyncConflictPermanent(code) ||
+    code === ERR_CODES.TMP002 ||
+    code === ERR_CODES.TURNO003
+  );
 }
 
 export async function enqueueRegistro(
@@ -187,11 +197,23 @@ export async function flushOutbox(): Promise<void> {
       /* falha ao sincronizar turno não deve bloquear a fila de registros */
     }
 
+    const turnoAtual = await db.turno_atual.toCollection().first();
+    if (turnoAtual?.status === "aberto") {
+      await purgeOrphanRegistros(turnoAtual.id);
+    }
+
     const pendentes = (await db.registros
       .where("sync_status")
       .anyOf(["pendente", "erro"])
       .toArray()
-    ).filter((item) => !isSyncConflictPermanent(item.last_error_code));
+    )
+      .filter((item) => !isSyncErrorPermanent(item.last_error_code))
+      .filter(
+        (item) =>
+          !turnoAtual ||
+          turnoAtual.status !== "aberto" ||
+          item.turno_id === turnoAtual.id
+      );
 
     for (const item of pendentes) {
       try {
@@ -219,10 +241,14 @@ export async function flushOutbox(): Promise<void> {
         });
       } catch (err) {
         const code = err instanceof ApiClientError ? err.code : "ERR-UNKNOWN";
-        await db.registros.update(item.id, {
-          sync_status: "erro",
-          last_error_code: code,
-        });
+        if (isSyncErrorPermanent(code)) {
+          await db.registros.delete(item.id);
+        } else {
+          await db.registros.update(item.id, {
+            sync_status: "erro",
+            last_error_code: code,
+          });
+        }
         await updatePendingCount();
       }
     }

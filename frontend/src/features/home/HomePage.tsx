@@ -13,7 +13,7 @@ import { OBRIGATORIOS_COLHEITA } from "@/lib/colheita/validation";
 import { OBRIGATORIOS_TRANSPORTE } from "@/lib/transporte/validation";
 import { db } from "@/lib/db/schema";
 import { enqueueRegistro, flushOutbox, aceitarVersaoServidor, isSyncConflictPermanent } from "@/lib/sync/engine";
-import { clearTurnoIfUsuarioMismatch, turnoMatchesUsuario } from "@/lib/turno/session";
+import { clearTurnoIfUsuarioMismatch, purgeOrphanRegistros, turnoMatchesUsuario } from "@/lib/turno/session";
 import { SyncStatusBar } from "@/features/sync/SyncStatusBar";
 import type { RegistroLocal, Usuario } from "@/types/domain";
 
@@ -163,6 +163,7 @@ export function HomePage() {
   async function logout() {
     await clearSession();
     await db.turno_atual.clear();
+    await purgeOrphanRegistros();
     navigate("/login");
   }
 

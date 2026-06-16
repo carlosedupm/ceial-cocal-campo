@@ -1,6 +1,9 @@
-import { describe, expect, it } from "vitest";
-import { turnoMatchesUsuario } from "@/lib/turno/session";
+import "fake-indexeddb/auto";
+import { afterEach, describe, expect, it } from "vitest";
+import { db } from "@/lib/db/schema";
+import { purgeOrphanRegistros, turnoMatchesUsuario } from "@/lib/turno/session";
 import type { Turno, Usuario } from "@/types/domain";
+import { ERR_CODES } from "@/types/domain";
 
 const usuario: Usuario = {
   id: "u1",
@@ -29,5 +32,44 @@ describe("turnoMatchesUsuario", () => {
 
   it("rejeita turno de outro usuário", () => {
     expect(turnoMatchesUsuario({ ...turno, usuario_id: "u2" }, usuario)).toBe(false);
+  });
+});
+
+describe("purgeOrphanRegistros", () => {
+  afterEach(async () => {
+    await db.registros.clear();
+  });
+
+  it("remove pendentes de outros turnos", async () => {
+    await db.registros.bulkPut([
+      {
+        id: "r-atual",
+        turno_id: "t-atual",
+        tipo: "horas_corte",
+        idempotency_key: "t-atual:horas_corte:unico",
+        payload: { horas: 8, minutos: 0 },
+        device_id: "dev",
+        evento_at: "2026-06-16T00:00:00.000Z",
+        sync_status: "pendente",
+        created_at: "2026-06-16T00:00:00.000Z",
+      },
+      {
+        id: "r-antigo",
+        turno_id: "t-antigo",
+        tipo: "horas_corte",
+        idempotency_key: "t-antigo:horas_corte:unico",
+        payload: { horas: 4, minutos: 0 },
+        device_id: "dev",
+        evento_at: "2026-06-15T00:00:00.000Z",
+        sync_status: "erro",
+        last_error_code: ERR_CODES.TMP002,
+        created_at: "2026-06-15T00:00:00.000Z",
+      },
+    ]);
+
+    const removed = await purgeOrphanRegistros("t-atual");
+    expect(removed).toBe(1);
+    expect(await db.registros.get("r-atual")).toBeDefined();
+    expect(await db.registros.get("r-antigo")).toBeUndefined();
   });
 });
