@@ -218,10 +218,16 @@ func (s *TurnoService) Fechar(ctx context.Context, user *domain.Usuario, turnoID
 }
 
 func (s *TurnoService) validateObrigatoriosFechamento(ctx context.Context, t *domain.Turno) error {
-	if t.Area != AreaColheita {
+	var obrigatorios []string
+	switch t.Area {
+	case AreaColheita:
+		obrigatorios = ObrigatoriosColheitaFechamento
+	case AreaTransporte:
+		obrigatorios = ObrigatoriosTransporteFechamento
+	default:
 		return nil
 	}
-	for _, tipo := range ObrigatoriosColheitaFechamento {
+	for _, tipo := range obrigatorios {
 		ok, err := s.registros.HasTipoForTurno(ctx, t.ID, tipo)
 		if err != nil {
 			return err
@@ -264,6 +270,9 @@ func (s *SyncService) Push(ctx context.Context, user *domain.Usuario, item domai
 		return nil, domain.NewDomainError(domain.ErrTurno003, "turno fechado")
 	}
 	if err := ValidateColheitaRegistro(user, item.Tipo, item.Payload); err != nil {
+		return nil, err
+	}
+	if err := ValidateTransporteRegistro(user, item.Tipo, item.Payload); err != nil {
 		return nil, err
 	}
 

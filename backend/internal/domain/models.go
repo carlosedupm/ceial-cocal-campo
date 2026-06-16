@@ -11,6 +11,7 @@ const (
 	ErrSyncConflict   = "ERR-SYNC-CONFLICT"
 	ErrAcesso001      = "ERR-ACESSO-001"
 	ErrColheita001    = "ERR-COLHEITA-001"
+	ErrTransporte001  = "ERR-TRANSPORTE-001"
 	ErrINT001         = "ERR-INT-001"
 	ErrUnauthorized   = "ERR-AUTH-001"
 	ErrInvalidRequest = "ERR-REQ-001"

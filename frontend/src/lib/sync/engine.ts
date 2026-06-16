@@ -19,6 +19,10 @@ export function idempotencyKeyTurno(turnoId: string, tipo: string): string {
   return buildIdempotencyKey(turnoId, tipo, "unico");
 }
 
+export function idempotencyKeyViagem(turnoId: string, tipo: string, viagemNumero: number): string {
+  return buildIdempotencyKey(turnoId, tipo, String(viagemNumero));
+}
+
 export function isSyncConflictPermanent(code?: string): boolean {
   return code === ERR_CODES.SYNC_CONFLICT;
 }
@@ -67,6 +71,48 @@ export async function enqueueRegistroTurno(
   if (isSyncConflictPermanent(existing?.last_error_code)) {
     throw new Error(
       `Conflito de sync em "${tipo}": a versão no servidor prevaleceu (BR-SYNC-005). Use "Aceitar versão do servidor" na home.`
+    );
+  }
+
+  const eventoAt = new Date().toISOString();
+  const registro: RegistroLocal = {
+    id: existing?.id ?? crypto.randomUUID(),
+    turno_id: turnoId,
+    tipo,
+    idempotency_key: idempotencyKey,
+    payload,
+    device_id: deviceId,
+    evento_at: eventoAt,
+    sync_status: "pendente",
+    created_at: existing?.created_at ?? eventoAt,
+    last_error_code: undefined,
+  };
+  await db.registros.put(registro);
+  await updatePendingCount();
+  void flushOutbox();
+  return registro;
+}
+
+/** Um registro por viagem no turno (BRF-003 idempotência cargas_viagens). */
+export async function enqueueRegistroViagem(
+  turnoId: string,
+  tipo: string,
+  viagemNumero: number,
+  payload: Record<string, unknown>,
+  deviceId: string
+): Promise<RegistroLocal> {
+  const idempotencyKey = idempotencyKeyViagem(turnoId, tipo, viagemNumero);
+  const existing = await db.registros
+    .where("idempotency_key")
+    .equals(idempotencyKey)
+    .first();
+
+  if (existing?.sync_status === "sincronizado") {
+    throw new RegistroImutavelError(`${tipo} (viagem ${viagemNumero})`);
+  }
+  if (isSyncConflictPermanent(existing?.last_error_code)) {
+    throw new Error(
+      `Conflito de sync em "${tipo}" viagem ${viagemNumero}: a versão no servidor prevaleceu (BR-SYNC-005). Use "Aceitar versão do servidor" na home.`
     );
   }
 

@@ -8,9 +8,9 @@
 | ID | `BRF-003` |
 | Data | 2026-06-15 |
 | Analista | Hermes (analista funcional) |
-| Status | aprovado |
+| Status | implementado |
 | Aprovado por (G1) | Carlos Manarin (PO) — 2026-06-15 |
-| PR vinculado (G2) | — |
+| PR vinculado (G2) | BRF-003 Transporte |
 
 ## 1. Objetivo
 
@@ -65,15 +65,15 @@ Permitir que o **operador de transporte** registre no turno aberto os indicadore
 
 ## 4. Casos de teste exigidos
 
-- [ ] **Caminho feliz online**: operador transporte registra consumo transbordo → sync → imutável (`BR-TRANS-004`)
-- [ ] **Offline**: registros na fila → reconexão → sync automático (`BR-TRANS-001`, `BR-SYNC-002`)
-- [ ] **Sem turno / turno fechado**: bloqueio ao registrar (`TMP-002`, `BR-TURNO-003`)
-- [ ] **Valor inválido**: consumo transbordo fora da faixa MVP rejeitado (`BR-TRANSPORTE-001`, `ERR-TRANSPORTE-001`)
-- [ ] **Timestamp futuro**: rejeitado (`TMP-001`)
-- [ ] **RBAC**: perfil colheita não acessa `/transporte` (`BR-ACESSO-001`)
-- [ ] **INT-001**: fechar turno transporte sem `consumo_transbordo` bloqueado (`ERR-INT-001`)
-- [ ] **INT-001 feliz**: com `consumo_transbordo` registrado, fechamento permitido
-- [ ] **Cargas/viagens**: múltiplos registros por turno (idempotência por `viagem_numero`) aceitos; opcional no fechamento
+- [x] **Caminho feliz online**: operador transporte registra consumo transbordo → sync → imutável (`BR-TRANS-004`)
+- [x] **Offline**: registros na fila → reconexão → sync automático (`BR-TRANS-001`, `BR-SYNC-002`)
+- [x] **Sem turno / turno fechado**: bloqueio ao registrar (`TMP-002`, `BR-TURNO-003`)
+- [x] **Valor inválido**: consumo transbordo fora da faixa MVP rejeitado (`BR-TRANSPORTE-001`, `ERR-TRANSPORTE-001`)
+- [x] **Timestamp futuro**: rejeitado (`TMP-001`)
+- [x] **RBAC**: perfil colheita não acessa `/transporte` (`BR-ACESSO-001`)
+- [x] **INT-001**: fechar turno transporte sem `consumo_transbordo` bloqueado (`ERR-INT-001`)
+- [x] **INT-001 feliz**: com `consumo_transbordo` registrado, fechamento permitido
+- [x] **Cargas/viagens**: múltiplos registros por turno (idempotência por `viagem_numero`) aceitos; opcional no fechamento
 
 ## 5. Perguntas em aberto (obrigatório)
 
@@ -87,13 +87,13 @@ Permitir que o **operador de transporte** registre no turno aberto os indicadore
 
 ## 6. Critérios de aceite (gate G3)
 
-- [ ] Testes da stack passam (comandos em `techContext.md`)
-- [ ] `node scripts/validate-br-refs.mjs` OK
-- [ ] Casos de teste da seção 4 existem e passam
-- [ ] Comportamento validado manualmente
-- [ ] `BR-TRANSPORTE-001`–`002` → `implementado` com ponteiros ao código
-- [ ] `memory-bank/activeContext.md` atualizado
-- [ ] Status deste briefing → `implementado`
+- [x] Testes da stack passam (comandos em `techContext.md`)
+- [x] `node scripts/validate-br-refs.mjs` OK
+- [x] Casos de teste da seção 4 existem e passam
+- [x] Comportamento validado manualmente
+- [x] `BR-TRANSPORTE-001`–`002` → `implementado` com ponteiros ao código
+- [x] `memory-bank/activeContext.md` atualizado
+- [x] Status deste briefing → `implementado`
 
 ## 7. Notas adicionais
 

@@ -10,6 +10,7 @@ import {
   isSessionValid,
 } from "@/lib/auth/session";
 import { OBRIGATORIOS_COLHEITA } from "@/lib/colheita/validation";
+import { OBRIGATORIOS_TRANSPORTE } from "@/lib/transporte/validation";
 import { db } from "@/lib/db/schema";
 import { enqueueRegistro, flushOutbox, aceitarVersaoServidor, isSyncConflictPermanent } from "@/lib/sync/engine";
 import { SyncStatusBar } from "@/features/sync/SyncStatusBar";
@@ -20,7 +21,10 @@ const AREA_MENUS: Record<string, { label: string; to?: string }[]> = {
     { label: "Registrar indicadores", to: "/colheita" },
     { label: "Consultar turno" },
   ],
-  transporte: [{ label: "Registrar placeholder" }, { label: "Consultar turno" }],
+  transporte: [
+    { label: "Registrar indicadores", to: "/transporte" },
+    { label: "Consultar turno" },
+  ],
   qualidade: [{ label: "Registrar placeholder" }],
   seguranca: [{ label: "Registrar placeholder" }],
   supervisao: [{ label: "Painel frente" }, { label: "Consultar turno" }],
@@ -102,6 +106,18 @@ export function HomePage() {
       }
     }
 
+    if (usuario?.area === "transporte") {
+      for (const tipo of OBRIGATORIOS_TRANSPORTE) {
+        const ok = await turnoTemRegistro(turno.id, tipo);
+        if (!ok) {
+          setFecharErro(
+            "Registre consumo transbordo antes de fechar o turno (INT-001). Acesse Transporte → Registrar indicadores."
+          );
+          return;
+        }
+      }
+    }
+
     const token = await getValidAccessToken();
     if (!token) return;
     try {
@@ -115,7 +131,11 @@ export function HomePage() {
       navigate("/contexto");
     } catch (err) {
       if (err instanceof ApiClientError && err.code === "ERR-INT-001") {
-        setFecharErro("Registre horas de corte antes de fechar o turno (INT-001).");
+        const msg =
+          usuario?.area === "transporte"
+            ? "Registre consumo transbordo antes de fechar o turno (INT-001)."
+            : "Registre horas de corte antes de fechar o turno (INT-001).";
+        setFecharErro(msg);
         return;
       }
       throw err;
@@ -130,7 +150,9 @@ export function HomePage() {
 
   const menus = usuario ? AREA_MENUS[usuario.area] ?? [] : [];
   const showPlaceholder =
-    usuario?.area !== "colheita" && turno?.status === "aberto";
+    usuario?.area !== "colheita" &&
+    usuario?.area !== "transporte" &&
+    turno?.status === "aberto";
 
   return (
     <main className="page">
@@ -155,6 +177,11 @@ export function HomePage() {
               {usuario?.area === "colheita" && (
                 <Link className="button-link" to="/colheita">
                   Registrar indicadores de colheita
+                </Link>
+              )}
+              {usuario?.area === "transporte" && (
+                <Link className="button-link" to="/transporte">
+                  Registrar indicadores de transporte
                 </Link>
               )}
               <button type="button" className="secondary" onClick={() => void fecharTurno()}>

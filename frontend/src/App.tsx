@@ -1,6 +1,7 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { ColheitaPage } from "@/features/colheita/ColheitaPage";
+import { TransportePage } from "@/features/transporte/TransportePage";
 import { LoginPage } from "@/features/auth/LoginPage";
 import { HomePage } from "@/features/home/HomePage";
 import { ContextoPage } from "@/features/turno/ContextoPage";
@@ -42,6 +43,7 @@ export function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/contexto" element={<ContextoPage />} />
         <Route path="/colheita" element={<ColheitaPage />} />
+        <Route path="/transporte" element={<TransportePage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
