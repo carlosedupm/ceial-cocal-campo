@@ -50,7 +50,7 @@
 
 - [x] Login como operador colheita — área `colheita` (API)
 - [x] Login como operador transporte — área `transporte` (API)
-- [ ] Verificação visual do menu filtrado no browser (colheita vs transporte)
+- [x] Verificação visual do menu filtrado no browser (colheita vs transporte) — coberto em `frontend/e2e/fundacao.spec.ts`
 
 ### 7. Bordas temporais (`TMP-001`)
 
@@ -60,8 +60,8 @@
 ### 8. Falha sync (`BR-SYNC-004`)
 
 - [x] Retry idempotente após push bem-sucedido (API)
-- [ ] Simular falha de API (servidor parado ou timeout) — fila local preservada
-- [ ] Após restaurar servidor, retry sincroniza sem perda
+- [x] Simular falha de API (servidor parado ou timeout) — fila local preservada (Playwright com intercept em `sync/push`)
+- [x] Após restaurar servidor, retry sincroniza sem perda (Playwright com `unroute` + reload)
 
 ## Resultado
 
@@ -69,5 +69,6 @@
 |------|----------|--------|-------------|
 | 2026-06-15 | agente (API + unitários) | Parcial (6/8 casos API) | Casos 2, 6 (UI), 8 (falha rede) pendentes manual/browser. Playwright E2E: browsers não instalados (`npx playwright install`). |
 | 2026-06-15 | usuário (browser) | Caso 2 OK | Offline completo: turno, registro, fechar, cache contexto, reconexão e sync automática. |
+| 2026-06-16 | agente (automação E2E) | Cobertura adicionada | Casos 6, 8 e piloto mobile em `frontend/e2e/fundacao.spec.ts`; rodar com `npm run test:e2e` (fora do gate de PR). |
 
-**Última atualização**: 2026-06-15
+**Última atualização**: 2026-06-16

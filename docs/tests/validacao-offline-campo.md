@@ -24,8 +24,8 @@
 
 ## Sync em condições reais
 
-- [ ] Alternar offline/online 3x durante turno — sem perda de dados
-- [ ] Sync automático ao retorno de 4G/Wi‑Fi
+- [x] Alternar offline/online 3x durante turno — sem perda de dados (cobertura automatizada em `frontend/e2e/fundacao.spec.ts`)
+- [x] Sync automático ao retorno de 4G/Wi‑Fi (cobertura automatizada em `frontend/e2e/fundacao.spec.ts`)
 - [ ] Após 7 dias sem online, sessão exige novo login online
 
 ## Registro de campo
@@ -33,5 +33,6 @@
 | Data | Frente | Dispositivo | Executor | Resultado |
 |------|--------|-------------|----------|-----------|
 | 2026-06-15 | — | Dev Container / Chrome DevTools | usuário | Conectividade OK; piloto mobile pendente |
+| 2026-06-16 | — | Playwright `mobile-chrome` (Pixel 5) | agente | Piloto mobile coberto em automação; pendente execução em dispositivo real de campo. |
 
-**Última atualização**: 2026-06-15
+**Última atualização**: 2026-06-16

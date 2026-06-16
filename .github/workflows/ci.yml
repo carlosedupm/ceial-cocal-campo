@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   docs-validate:
@@ -19,7 +20,37 @@ jobs:
       - run: node scripts/validate-br-refs.mjs
 
   backend:
-    name: Backend - Test & Build
+    name: Backend - Unit Test & Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+      - working-directory: backend
+        run: |
+          go mod download
+          go test ./...
+          go build -o /dev/null ./cmd/api
+
+  frontend:
+    name: Frontend - Test & Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - working-directory: frontend
+        run: |
+          npm ci
+          npm test
+          npm run build
+
+  # Integração com Postgres — só em main ou disparo manual (não bloqueia PR).
+  backend-integration:
+    name: Backend - Integration Tests
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -45,20 +76,4 @@ jobs:
           DATABASE_URL: postgres://cocal:cocal@localhost:5432/cocal_campo?sslmode=disable
         run: |
           go mod download
-          go test ./...
-          go test -tags=integration ./...
-          go build -o /dev/null ./cmd/api
-
-  frontend:
-    name: Frontend - Test & Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-      - working-directory: frontend
-        run: |
-          npm ci
-          npm test
-          npm run build
+          go test -tags=integration ./internal/repository/...

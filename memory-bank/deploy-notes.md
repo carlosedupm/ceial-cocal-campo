@@ -161,8 +161,10 @@ Ver [`techContext.md`](techContext.md) — Dev Container + F5 (`launch.json`) ou
 
 ## Gate de deploy
 
-- CI verde (`.github/workflows/ci.yml`)
+- CI verde no PR (docs + unit + build) — ver [`.github/workflows/ci.yml`](../.github/workflows/ci.yml)
+- Push em `main`: integração backend também deve passar
 - `npm run validate` OK
-- Checklist [`docs/tests/validacao-offline-campo.md`](../docs/tests/validacao-offline-campo.md) em piloto
+- Smoke manual em produção (login, registro, sync) — produto já disponível para teste externo
+- E2E/piloto mobile: `npm run test:e2e` ou checklist [`docs/tests/validacao-offline-campo.md`](../docs/tests/validacao-offline-campo.md) antes de piloto em frente
 
-**Última atualização**: 2026-06-15
+**Última atualização**: 2026-06-16

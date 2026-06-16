@@ -13,6 +13,8 @@
     "dev:logs": "docker compose --profile stack logs -f api frontend",
     "test": "docker compose up -d postgres && docker compose --profile stack run --rm api go test ./... && docker compose --profile stack run --rm --no-deps frontend npm test",
     "test:backend": "docker compose --profile stack run --rm --no-deps api go test ./...",
+    "test:integration": "docker compose up -d postgres && docker compose --profile stack run --rm --no-deps api go test -tags=integration ./internal/repository/...",
+    "test:e2e": "docker compose --profile stack up -d && cd frontend && npx playwright install chromium && npm run test:e2e",
     "test:frontend": "docker compose --profile stack run --rm --no-deps frontend npm test",
     "build": "docker compose --profile stack run --rm --no-deps frontend npm run build && docker compose --profile stack run --rm --no-deps api go build -o /tmp/api ./cmd/api"
   }

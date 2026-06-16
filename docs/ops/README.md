@@ -25,11 +25,23 @@ Checklist ao revisar PR vinculado a `BRF-NNN`:
 
 ## CI
 
-Workflow em `.github/workflows/docs-validate.yml`:
+Estratégia **lean** (`.github/workflows/ci.yml`):
+
+| Gatilho | O que roda |
+|---------|------------|
+| **Pull request** | docs + testes unitários + build (backend e frontend) |
+| **Push em `main`** | acima + testes de integração backend (`-tags=integration`) |
+| **Manual** (`workflow_dispatch`) | mesmo pacote completo de `main` |
+
+E2E Playwright **não** entra no gate de PR — rodar localmente antes de releases ou piloto:
 
 ```bash
-npm run validate
+npm run test:e2e          # stack Docker + browsers Playwright
+npm run test:integration  # só integração backend
+npm run validate          # docs e estrutura
 ```
+
+Workflow legado `.github/workflows/docs-validate.yml` também valida referências `BR-*` em PR/push (duplicata leve; pode ser consolidado depois).
 
 ## Rollback e incidentes
 
@@ -37,4 +49,4 @@ Documente procedimentos específicos do projeto aqui conforme a stack evoluir.
 
 ---
 
-**Última atualização**: 2026-06-15
+**Última atualização**: 2026-06-16
