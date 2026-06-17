@@ -42,3 +42,6 @@ vite.config.ts.timestamp-*.mjs
 
 # Cursor local (user-specific; project rules/hooks ARE versioned)
 .cursor/plans/
+
+# Playwright (artefatos locais de execução)
+frontend/test-results/

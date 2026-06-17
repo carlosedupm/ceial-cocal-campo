@@ -503,9 +503,12 @@ ul {
   color: #666;
 }
 
-.gestao-valor-pl::before {
-  content: "P: ";
+.gestao-valor-rotulo {
   font-weight: 600;
+}
+
+.gestao-valor-ex .gestao-valor-rotulo {
+  font-size: 0.85em;
 }
 
 .gestao-valor-ex {
@@ -515,39 +518,68 @@ ul {
   border-radius: 4px;
 }
 
-.gestao-valor-ex::before {
-  content: "E: ";
-  font-weight: 600;
-  font-size: 0.85em;
-}
-
-.gestao-indicador-card {
+.gestao-matriz-mobile .gestao-indicador-card {
   border: 1px solid #e0e0e0;
   border-radius: 8px;
-  padding: 0.75rem;
+  padding: 1rem;
   background: #fafafa;
 }
 
-.gestao-indicador-card header {
-  margin-bottom: 0.5rem;
+.gestao-matriz-mobile .gestao-indicador-card header {
+  margin-bottom: 0.65rem;
 }
 
-.gestao-card-horizontes {
+.gestao-matriz-mobile .gestao-card-horizontes {
   display: grid;
   gap: 0.5rem;
 }
 
-.gestao-card-horizonte {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.35rem 0;
-  border-top: 1px solid #eee;
+.gestao-matriz-mobile .gestao-card-horizontes-cols-1 {
+  grid-template-columns: 1fr;
 }
 
-.gestao-card-horizonte:first-child {
-  border-top: none;
+.gestao-matriz-mobile .gestao-card-horizontes-cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.gestao-matriz-mobile .gestao-card-horizonte-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.65rem 0.5rem;
+  background: #f8faf8;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.gestao-matriz-mobile .gestao-card-horizonte-tile .gestao-horizonte-tag {
+  margin-bottom: 0.15rem;
+  color: #2e7d32;
+  letter-spacing: 0.06em;
+}
+
+.gestao-matriz-mobile .gestao-valor-ex-hero {
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+}
+
+.gestao-matriz-mobile .gestao-valor-pl-sub {
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.gestao-comparativo.compact .gestao-matriz-mobile .gestao-valor-ex-hero {
+  font-size: 1.35rem;
+}
+
+.gestao-comparativo.compact .gestao-matriz-mobile .gestao-card-horizonte-tile {
+  padding: 0.5rem 0.35rem;
 }
 
 .gestao-unidade-medida {
