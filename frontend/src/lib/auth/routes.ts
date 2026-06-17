@@ -3,3 +3,7 @@ export function postLoginPath(perfil: string): string {
   if (perfil === "supervisor_frente") return "/supervisao";
   return "/contexto";
 }
+
+export function postOpenTurnoPath(area: string): string {
+  return area === "colheita" ? "/colheita" : "/";
+}

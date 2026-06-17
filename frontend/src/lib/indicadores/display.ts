@@ -29,7 +29,7 @@ export function labelDisponibilidade(d: DisponibilidadeIndicador): string {
 
 export function badgeClass(d: DisponibilidadeIndicador): string {
   if (d === "disponivel") return "badge-ok";
-  if (d === "em_processamento") return "badge-warn";
+  if (d === "em_processamento") return "badge-processing";
   return "badge-muted";
 }
 

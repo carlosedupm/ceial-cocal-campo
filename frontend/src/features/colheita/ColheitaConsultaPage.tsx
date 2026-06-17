@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
 import { IndicadorCard } from "@/components/IndicadorCard";
 import { PageHeader } from "@/components/PageHeader";
 import { PageFooter } from "@/components/PageFooter";
 import { SyncStatusBar } from "@/features/sync/SyncStatusBar";
+import { formatContextoLabel, resolveContextoLabels } from "@/lib/catalog/contexto-labels";
 import { getValidAccessToken, getUsuario, isSessionValid } from "@/lib/auth/session";
 import { db } from "@/lib/db/schema";
 import {
@@ -17,6 +18,7 @@ import {
   formatNum,
   getItem,
 } from "@/lib/indicadores/display";
+import { COPY } from "@/lib/ui/copy";
 import type { IndicadoresTurno } from "@/types/indicadores";
 
 export function ColheitaConsultaPage() {
@@ -24,6 +26,7 @@ export function ColheitaConsultaPage() {
   const [dados, setDados] = useState<IndicadoresTurno | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [contextoSubtitle, setContextoSubtitle] = useState<string>(COPY.colheitaConsultaSubtitle);
 
   const turno = useLiveQuery(async () => {
     const list = await db.turno_atual.toArray();
@@ -52,6 +55,16 @@ export function ColheitaConsultaPage() {
       }
     })();
   }, [navigate]);
+
+  useEffect(() => {
+    if (!turno?.unidade_id || !turno.frente_id) return;
+    void (async () => {
+      const labels = await resolveContextoLabels(turno.unidade_id, turno.frente_id);
+      setContextoSubtitle(
+        `${formatContextoLabel(labels.frenteNome, labels.unidadeNome)} · ${COPY.colheitaConsultaSubtitle}`
+      );
+    })();
+  }, [turno?.unidade_id, turno?.frente_id]);
 
   useEffect(() => {
     if (!turno?.id) return;
@@ -89,6 +102,9 @@ export function ColheitaConsultaPage() {
           backLabel="Voltar ao início"
         />
         <p>Abra um turno para consultar seu desempenho.</p>
+        <Link className="button-link" to="/contexto">
+          {COPY.abrirTurno}
+        </Link>
         <PageFooter backTo="/" backLabel="Voltar ao início" />
       </main>
     );
@@ -105,14 +121,14 @@ export function ColheitaConsultaPage() {
       <SyncStatusBar />
       <PageHeader
         title="Desempenho do turno"
-        subtitle="Consulta somente leitura — dados do sistema central"
+        subtitle={contextoSubtitle}
         breadcrumbs={[{ label: "Início", to: "/" }, { label: "Desempenho" }]}
         backTo="/"
         backLabel="Voltar ao início"
       />
       {atualizadoEm && (
         <p className="hint">
-          Atualizado em {new Date(atualizadoEm).toLocaleString("pt-BR")}
+          {COPY.dadosDe(new Date(atualizadoEm).toLocaleString("pt-BR"))}
         </p>
       )}
       {loading && <p>Carregando indicadores...</p>}
@@ -120,13 +136,27 @@ export function ColheitaConsultaPage() {
       {snap && (
         <>
           <section>
-            <h2 className="section-title">Performance</h2>
+            <h2 className="section-title">Destaques do turno</h2>
             <div className="indicadores-grid">
               <IndicadorCard
+                variant="hero"
+                tituloKey="entrada_cana"
+                item={getItem(perf, "entrada_cana")}
+                renderValor={(v) => formatNum(v?.toneladas, " ton")}
+                metaKey="toneladas"
+                metaValor={metas.toneladas}
+              />
+              <IndicadorCard
+                variant="hero"
                 tituloKey="horas_corte"
                 item={getItem(perf, "horas_corte")}
                 renderValor={(v) => formatHorasCorteValor(v)}
               />
+            </div>
+          </section>
+          <section>
+            <h2 className="section-title">Performance</h2>
+            <div className="indicadores-grid">
               <IndicadorCard
                 tituloKey="consumo_densidade"
                 item={getItem(perf, "consumo_densidade")}
@@ -135,13 +165,6 @@ export function ColheitaConsultaPage() {
                 }
                 metaKey="consumo_lt"
                 metaValor={metas.consumo_lt}
-              />
-              <IndicadorCard
-                tituloKey="entrada_cana"
-                item={getItem(perf, "entrada_cana")}
-                renderValor={(v) => formatNum(v?.toneladas, " ton")}
-                metaKey="toneladas"
-                metaValor={metas.toneladas}
               />
             </div>
           </section>

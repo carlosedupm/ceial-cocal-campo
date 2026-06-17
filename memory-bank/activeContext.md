@@ -5,24 +5,23 @@
 
 ### **Status Geral**
 
-**Gestão à Vista MVP (BRF-008) implementado.** Painel por unidade com dias sem acidentes e comparativos performance/qualidade; simulador alimenta snapshot; supervisor vê painel inline em `/supervisao` + rota dedicada `/gestao-a-vista`.
+**UX piloto campo (3 fases) implementado.** Copy humana, SyncStatusBar orientada a confiança, CTA colheita, contexto rápido, KPI hero, redirect pós-turno colheita → `/colheita`, cards supervisor, banner PWA e logo.
 
-**Shell de UI padronizado** — navegação (`BackLink`, `PageHeader`, `PageFooter`) em todas as telas internas; home com card **Atalhos** único por perfil (sem menu duplicado).
+**Gestão à Vista MVP (BRF-008)** — painel por unidade; supervisor vê resumo inline + `/gestao-a-vista`.
 
 ### ✅ Concluído recentemente:
 
-1. ✅ BRF-008 Gestão à Vista — `painel_unidade`, matriz comparativa, dashboard compact no supervisor
-2. ✅ UI shell — voltar topo + rodapé sticky; `page-has-footer` nas subpáginas
-3. ✅ Home — card **Atalhos** (supervisor, simulador, operadores); turno só ações operacionais
-4. ✅ BRF-005 Colheita consulta — `ColheitaConsultaPage`, pull + cache IndexedDB
-5. ✅ BRF-007 Simulador central — `/simulador`, RBAC ingestão, `indicadores_turno`
-6. ✅ BRF-006 Supervisão — `/supervisao`, detalhe read-only
+1. ✅ UX Fase 1 — `copy.ts`, sync humanizado, CTA **Ver desempenho**, atalhos sem rota ocultos, diagnóstico sync colapsável
+2. ✅ UX Fase 2 — **Continuar com** em contexto, labels unidade/frente, KPI hero colheita, `postOpenTurnoPath`
+3. ✅ UX Fase 3 — cards turnos supervisor, `InstallPrompt`, `AppLogo`
+4. ✅ BRF-008 Gestão à Vista — matriz comparativa, dashboard compact
+5. ✅ BRF-005/006/007 — consulta colheita, supervisão, simulador
 
 ### 📋 Próximos passos:
 
-1. Contrato integração sistema central real (Fase 3)
-2. Layout TV fiel Gestão à Vista + fluxo ocorrências segurança
-3. Rotas consulta transporte/qualidade/segurança (atalhos placeholder na home)
-4. Feedback piloto com operadores e supervisores
+1. Feedback piloto com operadores e supervisores (validar redirect colheita)
+2. Contrato integração sistema central real (Fase 3)
+3. Rotas consulta transporte/qualidade/segurança (BRF-003+)
+4. Layout TV Gestão à Vista + fluxo ocorrências segurança
 
 **Última atualização**: 2026-06-16

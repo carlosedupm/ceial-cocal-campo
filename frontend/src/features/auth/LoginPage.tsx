@@ -5,6 +5,8 @@ import { refreshContextoCatalog } from "@/lib/catalog/contexto-cache";
 import { postLoginPath } from "@/lib/auth/routes";
 import { saveSession } from "@/lib/auth/session";
 import { clearTurnoIfUsuarioMismatch } from "@/lib/turno/session";
+import { AppLogo } from "@/components/AppLogo";
+import { COPY } from "@/lib/ui/copy";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -32,8 +34,8 @@ export function LoginPage() {
 
   return (
     <main className="page">
-      <h1>Cocal Campo</h1>
-      <p className="subtitle">Identificação — login online obrigatório (BR-ACESSO-004)</p>
+      <AppLogo />
+      <p className="subtitle">{COPY.loginSubtitle}</p>
       <form onSubmit={onSubmit} className="card">
         <label>
           E-mail

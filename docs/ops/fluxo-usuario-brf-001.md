@@ -18,7 +18,8 @@ flowchart TD
   loginCheck -->|Não| login["/login — Identificação"]
   loginCheck -->|Sim| turnoCheck{Turno aberto?}
   login -->|Login OK| contexto["/contexto — Unidade + Frente"]
-  contexto -->|Abrir turno| home["/ — Home operacional"]
+  contexto -->|Abrir turno colheita| colheita["/colheita — Desempenho"]
+  contexto -->|Abrir turno demais| home["/ — Home operacional"]
   turnoCheck -->|Não| contexto
   turnoCheck -->|Sim| home
   home -->|Fechar turno| contexto
@@ -43,8 +44,8 @@ Qualquer outra URL redireciona para `/`.
 
 **O que o usuário vê:**
 
-- Título "Cocal Campo"
-- Subtítulo citando `BR-ACESSO-004` (login online obrigatório)
+- Logo e nome **Cocal Campo**
+- Subtítulo: internet necessária para entrar; consulta offline por até 7 dias após login
 - Campos: e-mail e senha
 - Botão "Entrar"
 - Mensagem de erro se credenciais/conexão falharem
@@ -75,10 +76,11 @@ Qualquer outra URL redireciona para `/`.
 **O que o usuário vê:**
 
 - Título "Contexto operacional"
-- Subtítulo citando `BR-TRANS-003` (vínculo turno/frente/unidade)
-- Select **Unidade** (lista da API)
-- Select **Frente** (filtrada pela unidade)
+- Subtítulo: "Escolha onde você está trabalhando hoje."
+- Botão **Continuar com {Frente} — {Unidade}** quando há último contexto conhecido
+- Select **Unidade** e **Frente** (rótulo "Ou escolha outro contexto")
 - Botão "Abrir turno"
+- Botão **Sair** — encerra sessão e volta a `/login` (troca de operador no tablet)
 - Erro se abertura falhar
 
 **Dados disponíveis no seed:**
@@ -92,7 +94,7 @@ Qualquer outra URL redireciona para `/`.
 
 - Sem token → volta para `/login`
 - Perfil **supervisor** → redireciona para `/supervisao` (não usa esta tela)
-- Turno aberto local ou remoto → pula direto para `/` (catálogo é atualizado em segundo plano no login)
+- Turno aberto local ou remoto → pula para destino pós-turno (`/colheita` para colheita, `/` para demais)
 - Caso contrário → carrega unidades da API (online) ou do **cache IndexedDB** (offline)
 - Após fechar turno offline, unidade/frente do último turno são pré-selecionados
 
@@ -103,7 +105,7 @@ Qualquer outra URL redireciona para `/`.
 - **Online:** `POST /api/v1/turnos` com `id`, `unidade_id`, `frente_id`, `device_id`, `inicio`
   - Se `ERR-TURNO-002` (já existe turno aberto) → recupera turno atual e vai para home
 - **Offline:** grava turno localmente no IndexedDB (`db.turno_atual`) e vai para home
-- Redireciona para `/`
+- Redireciona para `/colheita` (colheita) ou `/` (demais áreas)
 
 ---
 
@@ -115,9 +117,8 @@ Qualquer outra URL redireciona para `/`.
 
 | Indicador | Origem | Significado |
 |-----------|--------|-------------|
-| Online / Offline | `navigator.onLine` | Conectividade do browser |
-| Pendências: N | `db.sync_meta.pending_count` | Registros `pendente` + `erro` na fila |
-| Última sync | `db.sync_meta.last_success_at` | Último push bem-sucedido |
+| Mensagem principal | `formatSyncStatus` | Linguagem humana (ex.: "Offline — dados de …", "Sincronizado") |
+| Pendências: N | `data-testid="sync-pending-count"` | Registros `pendente` + `erro` na fila |
 
 **Cabeçalho do usuário:**
 
@@ -126,37 +127,27 @@ Qualquer outra URL redireciona para `/`.
 
 **Card "Turno {status}"** — somente **operadores** (não supervisor nem simulador):
 
+- Unidade e frente do turno (`data-testid="turno-contexto"`)
 - Status: `aberto` ou `fechado`
 - Início formatado (`pt-BR`)
-- Se **aberto**:
-  - Botão **Registrar placeholder** → transporte, qualidade e segurança (colheita não exibe — consulta via atalho)
-  - Botão **Fechar turno** → `POST .../turnos/{id}/fechar` (online) ou fecha local (offline) → volta a `/contexto`
-- Ações operacionais ficam aqui; **links de navegação ficam no card Atalhos**
+- Se **aberto**: botão **Fechar turno**
+- **Colheita:** CTA primário **Ver desempenho** (`data-testid="colheita-cta"`) acima do card turno
 
 **Card "Atalhos"** (`data-testid="home-atalhos"`):
 
-- Destinos por perfil/área via `getHomeAtalhos()` em [`HomePage.tsx`](../../frontend/src/features/home/HomePage.tsx)
-- Item com `to` → botão-link; sem `to` → texto hint (rota ainda não implementada)
-- Operadores: atalhos só com turno **aberto**
+- Destinos por perfil via `getHomeAtalhos()` — somente rotas implementadas (sem hints mortos)
+- Operadores colheita: CTA primário na home; card Atalhos omitido para evitar duplicata
 
 | Perfil / área | Itens | Navegação |
 |---------------|-------|-----------|
 | `supervisor_frente` | Abrir painel da frente, Gestão à vista | `/supervisao`, `/gestao-a-vista` |
-| `simulador_central` | Simular ingestão do sistema central, Gestão à vista | `/simulador`, `/gestao-a-vista` |
-| colheita | Consultar desempenho do turno | `/colheita` |
-| transporte | Consultar turno | hint (sem rota) |
-| qualidade | Consultar avaliações | hint (sem rota) |
-| seguranca | Consultar segurança | hint (sem rota) |
+| `simulador_central` | Simular ingestão, Gestão à vista | `/simulador`, `/gestao-a-vista` |
+| colheita | Ver desempenho (CTA) | `/colheita` |
+| transporte / qualidade / segurança | _(sem atalhos até BRF-003+)_ | — |
 
-- Não há card **Menu** separado — evita duplicar os mesmos destinos
-- `BR-ACESSO-001`: atalhos filtrados por `usuario.perfil` / `usuario.area`
+**Diagnóstico de sincronização** (`details`, fechado por padrão):
 
-**Card "Registros locais":**
-
-- Operadores de **transporte, qualidade e segurança** (colheita consulta indicadores centralizados; supervisor/simulador não exibem)
-- Lista da fila IndexedDB (`db.registros`), mais recentes primeiro
-- Cada item: `{tipo} — {sync_status}` e código de erro se houver (`last_error_code`)
-- Conflito permanente (`ERR-SYNC-CONFLICT`): botão **Aceitar versão do servidor**
+- Transporte, qualidade e segurança: placeholder de sync + **Registros locais** (fila IndexedDB)
 
 **Botão "Sair":**
 

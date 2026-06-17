@@ -47,23 +47,28 @@ Entrada pós-login:
 flowchart TD
   login["/login"]
   ctx["/contexto — abrir turno"]
-  home["/ — Home"]
   col["/colheita — Desempenho"]
+  home["/ — Home"]
 
-  login --> ctx --> home --> col
+  login --> ctx --> col
   col --> home
   home -->|Fechar turno| ctx
 ```
 
+**Pós-abertura de turno:** área colheita redireciona direto para `/colheita` (`postOpenTurnoPath`).
+
 **O que o usuário vê em `/colheita`:**
 
-- Seções **Performance** e **Qualidade** com cards legíveis (ex.: "Horas de corte", "Entrada de cana")
+- Seção **Destaques do turno** (KPI hero: entrada de cana, horas de corte)
+- Seções **Performance** e **Qualidade** com cards legíveis
+- Subtítulo com frente e unidade do turno
+- Timestamp "Dados de …"
 - Badges: Disponível / Em processamento na usina / Indisponível
 - Comparação com meta quando disponível
 - Timestamp da última atualização
 - Dados via `GET /turnos/atual/indicadores` + cache IndexedDB offline
 
-**Home:** menu "Consultar desempenho"; card de turno com atalho; sem card "Registros locais" (operador não registra indicadores).
+**Home:** CTA **Ver desempenho** (`colheita-cta`); sem card "Registros locais".
 
 ---
 
@@ -82,7 +87,7 @@ flowchart TD
 
 **O que o usuário vê:**
 
-- Lista de turnos abertos na frente (nome, área, início)
+- Lista de turnos abertos em **cards clicáveis** com badge Com dados / Aguardando central
 - Seletor de frente quando o supervisor tem mais de uma frente atribuída
 - Polling automático a cada 45s (online)
 - Detalhe read-only com mesmos indicadores agrupados (Performance / Qualidade)
@@ -147,18 +152,20 @@ Testes E2E: `frontend/e2e/colheita.spec.ts`, `supervisao.spec.ts`, `gestao-vista
 
 ## Componentes de navegação
 
-- **SyncStatusBar** — online/offline, pendências, última sync (home e telas operacionais)
+- **SyncStatusBar** — mensagens de confiança + contador de pendências
+- **AppLogo** — login e home
+- **InstallPrompt** — banner PWA instalável (home)
 - **PageHeader** — título, subtítulo, breadcrumb e `backTo` opcional no topo
 - **PageFooter** — botão voltar sticky no rodapé (`page-has-footer` no `<main>`)
 - **BackLink** — seta ←; variantes `inline` (header) e `bar` (footer)
-- **Home** — card **Atalhos** por perfil/área (`getHomeAtalhos`); turno só ações operacionais
+- **Home** — CTA colheita, atalhos por perfil (`getHomeAtalhos`), diagnóstico sync colapsável
 
 ---
 
 ## O que ainda NÃO existe
 
 - Integração real com sistema central (Fase 3)
-- Consulta transporte/qualidade/segurança para operadores (atalhos placeholder na home, sem rota)
+- Consulta transporte/qualidade/segurança para operadores (Fase 2 produto)
 - Layout TV pixel-perfect Gestão à Vista
 - Fluxo ocorrências de segurança (BR-SEGURANCA-001/003/004)
 - Resumo agregado por setor no painel supervisor (BR-SUPERVISAO-001 parcial)

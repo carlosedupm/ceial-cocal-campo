@@ -11,18 +11,21 @@ export function IndicadorCard({
   renderValor,
   metaKey,
   metaValor,
+  variant = "default",
 }: {
   tituloKey: string;
   item?: { valor?: Record<string, unknown>; disponibilidade: string };
   renderValor: (valor?: Record<string, unknown>) => string;
   metaKey?: string;
   metaValor?: unknown;
+  variant?: "default" | "hero";
 }) {
   const titulo = labelIndicador(tituloKey);
+  const cardClass = `card indicador-card${variant === "hero" ? " hero" : ""}`;
 
   if (!item) {
     return (
-      <div className="card indicador-card" data-testid={`indicador-${tituloKey}`}>
+      <div className={cardClass} data-testid={`indicador-${tituloKey}`}>
         <h3>{titulo}</h3>
         <p className="subtitle">Aguardando dados do sistema central</p>
       </div>
@@ -37,7 +40,7 @@ export function IndicadorCard({
       : null;
 
   return (
-    <div className="card indicador-card" data-testid={`indicador-${tituloKey}`}>
+    <div className={cardClass} data-testid={`indicador-${tituloKey}`}>
       <h3>{titulo}</h3>
       <span className={badgeClass(disp)}>{labelDisponibilidade(disp)}</span>
       {showValor ? (
@@ -52,7 +55,7 @@ export function IndicadorCard({
       ) : (
         <p className="subtitle">
           {disp === "em_processamento"
-            ? "Dados em processamento — consulte novamente mais tarde."
+            ? "Dados em processamento na usina — consulte novamente mais tarde."
             : "Indicador indisponível no momento."}
         </p>
       )}

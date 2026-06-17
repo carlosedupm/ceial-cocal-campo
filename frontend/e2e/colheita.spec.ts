@@ -12,7 +12,7 @@ test.describe("BRF-005 colheita consulta", () => {
     await opPage.getByLabel("Senha").fill("campo123");
     await opPage.getByRole("button", { name: "Entrar" }).click();
     await opPage.getByRole("button", { name: "Abrir turno" }).click();
-    await expect(opPage.getByTestId("turno-info")).toBeVisible();
+    await expect(opPage.getByTestId("colheita-consulta")).toBeVisible();
 
     await simPage.goto("/login");
     await simPage.getByLabel("E-mail").fill("simulador@cocal.dev");
@@ -21,8 +21,7 @@ test.describe("BRF-005 colheita consulta", () => {
     await simPage.getByRole("button", { name: "Horas de corte" }).click();
     await expect(simPage.getByText(/ingerido com sucesso/i)).toBeVisible();
 
-    await opPage.getByRole("link", { name: /Consultar desempenho/ }).click();
-    await expect(opPage.getByTestId("colheita-consulta")).toBeVisible();
+    await opPage.reload();
     await expect(opPage.getByTestId("indicador-horas_corte")).toContainText("Disponível");
 
     await opPage.getByRole("link", { name: /Voltar ao início/ }).first().click();
@@ -39,7 +38,9 @@ test.describe("BRF-005 colheita consulta", () => {
     await page.getByLabel("Senha").fill("campo123");
     await page.getByRole("button", { name: "Entrar" }).click();
     await page.getByRole("button", { name: "Abrir turno" }).click();
+    await expect(page.getByTestId("colheita-consulta")).toBeVisible();
 
+    await page.getByRole("link", { name: /Voltar ao início/ }).first().click();
     await page.getByRole("button", { name: "Fechar turno" }).click();
     await expect(page.getByRole("heading", { name: "Contexto operacional" })).toBeVisible();
   });

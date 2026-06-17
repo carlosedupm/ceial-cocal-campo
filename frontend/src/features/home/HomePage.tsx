@@ -3,22 +3,26 @@ import { Link, useNavigate } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
 import { api, ApiClientError } from "@/lib/api/client";
 import {
-  clearSession,
   getDeviceId,
   getUsuario,
   getValidAccessToken,
   isSessionValid,
+  logoutSession,
 } from "@/lib/auth/session";
 import { db } from "@/lib/db/schema";
 import { enqueueRegistro, flushOutbox, aceitarVersaoServidor, isSyncConflictPermanent } from "@/lib/sync/engine";
-import { clearTurnoIfUsuarioMismatch, purgeOrphanRegistros, turnoMatchesUsuario } from "@/lib/turno/session";
+import { clearTurnoIfUsuarioMismatch, turnoMatchesUsuario } from "@/lib/turno/session";
+import { AppLogo } from "@/components/AppLogo";
+import { InstallPrompt } from "@/components/InstallPrompt";
 import { SyncStatusBar } from "@/features/sync/SyncStatusBar";
+import { formatContextoLabel, resolveContextoLabels } from "@/lib/catalog/contexto-labels";
+import { COPY } from "@/lib/ui/copy";
 import { labelArea, labelPerfil } from "@/lib/ui/labels";
 import type { RegistroLocal, Turno, Usuario } from "@/types/domain";
 
 type HomeAtalho = {
   label: string;
-  to?: string;
+  to: string;
   secondary?: boolean;
 };
 
@@ -33,13 +37,10 @@ const SIMULADOR_ATALHOS: HomeAtalho[] = [
 ];
 
 const AREA_ATALHOS: Record<string, HomeAtalho[]> = {
-  colheita: [{ label: "Consultar desempenho do turno", to: "/colheita" }],
-  transporte: [{ label: "Consultar turno" }],
-  qualidade: [{ label: "Consultar avaliações" }],
-  seguranca: [{ label: "Consultar segurança" }],
+  colheita: [{ label: COPY.consultarDesempenhoTurno, to: "/colheita" }],
 };
 
-function getHomeAtalhos(usuario: Usuario | null, turno: Turno | null | undefined): HomeAtalho[] {
+export function getHomeAtalhos(usuario: Usuario | null, turno: Turno | null | undefined): HomeAtalho[] {
   if (!usuario) return [];
   if (usuario.perfil === "supervisor_frente") return SUPERVISOR_ATALHOS;
   if (usuario.perfil === "simulador_central") return SIMULADOR_ATALHOS;
@@ -85,6 +86,12 @@ export function HomePage() {
   const registros = useLiveQuery(() =>
     db.registros.orderBy("created_at").reverse().toArray()
   ) as RegistroLocal[] | undefined;
+
+  const contextoLabel = useLiveQuery(async () => {
+    if (!turno?.unidade_id || !turno.frente_id) return null;
+    const labels = await resolveContextoLabels(turno.unidade_id, turno.frente_id);
+    return formatContextoLabel(labels.frenteNome, labels.unidadeNome);
+  }, [turno?.unidade_id, turno?.frente_id]);
 
   useEffect(() => {
     void (async () => {
@@ -146,48 +153,52 @@ export function HomePage() {
   }
 
   async function logout() {
-    await clearSession();
-    await db.turno_atual.clear();
-    await purgeOrphanRegistros();
+    await logoutSession();
     navigate("/login");
   }
 
   const isSimulador = usuario?.perfil === "simulador_central";
   const isSupervisor = usuario?.perfil === "supervisor_frente";
   const isOperador = !isSimulador && !isSupervisor;
-  const atalhos = getHomeAtalhos(usuario, turno);
+  const showColheitaCta =
+    isOperador && usuario?.area === "colheita" && turno?.status === "aberto";
+  const atalhos = getHomeAtalhos(usuario, turno).filter(
+    (item) => !(showColheitaCta && item.to === "/colheita")
+  );
 
   const showPlaceholder =
     isOperador && usuario?.area !== "colheita" && turno?.status === "aberto";
 
   const showFecharTurno = turno && turno.status === "aberto" && isOperador;
 
-  const showRegistrosLocais = isOperador && usuario?.area !== "colheita";
+  const showSyncDiagnostico = isOperador && usuario?.area !== "colheita";
 
   return (
     <main className="page">
       <SyncStatusBar />
+      <AppLogo title="" />
+      <InstallPrompt />
       <h1>Olá, {usuario?.nome ?? "..."}</h1>
       <p className="subtitle">
         {usuario ? `${labelPerfil(usuario.perfil)} · ${labelArea(usuario.area)}` : "..."}
       </p>
 
+      {showColheitaCta && (
+        <Link className="button-link button-link-primary" to="/colheita" data-testid="colheita-cta">
+          {COPY.verDesempenho}
+        </Link>
+      )}
+
       {turno && isOperador && (
         <section className="card" data-testid="turno-info">
           <h2>Turno {turno.status}</h2>
+          {contextoLabel && <p data-testid="turno-contexto">{contextoLabel}</p>}
           <p>Início: {new Date(turno.inicio).toLocaleString("pt-BR")}</p>
           {fecharErro && <p className="error">{fecharErro}</p>}
           {showFecharTurno && (
-            <>
-              {showPlaceholder && (
-                <button type="button" onClick={() => void registrarPlaceholder()}>
-                  Registrar placeholder
-                </button>
-              )}
-              <button type="button" className="secondary" onClick={() => void fecharTurno()}>
-                Fechar turno
-              </button>
-            </>
+            <button type="button" className="secondary" onClick={() => void fecharTurno()}>
+              Fechar turno
+            </button>
           )}
         </section>
       )}
@@ -196,28 +207,28 @@ export function HomePage() {
         <section className="card" data-testid="home-atalhos">
           <h2>Atalhos</h2>
           <div className="page-actions">
-            {atalhos.map((item) =>
-              item.to ? (
-                <Link
-                  key={item.label}
-                  className={`button-link${item.secondary ? " secondary-link" : ""}`}
-                  to={item.to}
-                >
-                  {item.label}
-                </Link>
-              ) : (
-                <p key={item.label} className="hint home-atalho-indisponivel">
-                  {item.label}
-                </p>
-              )
-            )}
+            {atalhos.map((item) => (
+              <Link
+                key={item.label}
+                className={`button-link${item.secondary ? " secondary-link" : ""}`}
+                to={item.to}
+              >
+                {item.label}
+              </Link>
+            ))}
           </div>
         </section>
       )}
 
-      {showRegistrosLocais && (
-        <section className="card">
-          <h2>Registros locais</h2>
+      {showSyncDiagnostico && (
+        <details className="card sync-diagnostic" data-testid="sync-diagnostic">
+          <summary>{COPY.diagnosticoSync}</summary>
+          {showPlaceholder && turno?.status === "aberto" && (
+            <button type="button" onClick={() => void registrarPlaceholder()}>
+              {COPY.registrarPlaceholder}
+            </button>
+          )}
+          <h3 className="sync-diagnostic-subtitle">Registros locais</h3>
           <ul data-testid="registros-list">
             {(registros ?? []).map((r) => (
               <li key={r.id}>
@@ -235,11 +246,11 @@ export function HomePage() {
               </li>
             ))}
           </ul>
-        </section>
+        </details>
       )}
 
       <button type="button" className="secondary" onClick={() => void logout()}>
-        Sair
+        {COPY.sair}
       </button>
     </main>
   );

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useLiveQuery } from "dexie-react-hooks";
 import { GestaoDashboard } from "@/components/gestao-vista/GestaoDashboard";
 import { PageFooter } from "@/components/PageFooter";
 import { PageHeader } from "@/components/PageHeader";
@@ -7,6 +8,7 @@ import { api } from "@/lib/api/client";
 import { fetchAndCachePainelUnidade } from "@/lib/gestao-vista/cache";
 import { getUsuario, getValidAccessToken, isSessionValid } from "@/lib/auth/session";
 import { refreshContextoCatalog } from "@/lib/catalog/contexto-cache";
+import { db } from "@/lib/db/schema";
 import {
   frenteNomeById,
   getSelectedFrenteId,
@@ -14,6 +16,7 @@ import {
   setSelectedFrenteId,
 } from "@/lib/frente/helpers";
 import { SyncStatusBar } from "@/features/sync/SyncStatusBar";
+import { labelArea } from "@/lib/ui/labels";
 import type { FrenteResumo } from "@/types/indicadores";
 import type { PainelUnidade } from "@/types/gestao-vista";
 
@@ -28,6 +31,20 @@ export function SupervisaoPage() {
   const [resumo, setResumo] = useState<FrenteResumo | null>(null);
   const [painel, setPainel] = useState<PainelUnidade | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+
+  const turnoIds = (resumo?.turnos ?? []).map((t) => t.id).join(",");
+
+  const indicadoresPorTurno = useLiveQuery(async () => {
+    const turnos = resumo?.turnos ?? [];
+    const flags: Record<string, boolean> = {};
+    await Promise.all(
+      turnos.map(async (t) => {
+        const row = await db.indicadores_cache.get(t.id);
+        flags[t.id] = Boolean(row?.snapshot);
+      })
+    );
+    return flags;
+  }, [turnoIds, resumo?.turnos?.length]);
 
   async function carregarPainel(unidadeId: string) {
     const token = await getValidAccessToken();
@@ -127,18 +144,28 @@ export function SupervisaoPage() {
       )}
       <section className="card">
         <h2>Turnos abertos</h2>
-        <ul data-testid="turnos-equipe">
-          {(resumo?.turnos ?? []).map((t) => (
-            <li key={t.id}>
+        <div className="turnos-equipe" data-testid="turnos-equipe">
+          {(resumo?.turnos ?? []).map((t) => {
+            const comDados = indicadoresPorTurno?.[t.id];
+            return (
               <Link
+                key={t.id}
+                className="card turno-card-link"
+                data-testid={`turno-card-${t.id}`}
                 to={`/supervisao/turnos/${t.id}${frenteId ? `?frente=${frenteId}` : ""}`}
               >
-                {t.usuario_nome} · {t.usuario_area} · desde{" "}
-                {new Date(t.inicio).toLocaleString("pt-BR")}
+                <strong>{t.usuario_nome}</strong>
+                <p className="turno-card-meta">
+                  <span>{labelArea(t.usuario_area)}</span>
+                  <span>desde {new Date(t.inicio).toLocaleString("pt-BR")}</span>
+                  <span className={comDados ? "badge-ok" : "badge-muted"}>
+                    {comDados ? "Com dados" : "Aguardando central"}
+                  </span>
+                </p>
               </Link>
-            </li>
-          ))}
-        </ul>
+            );
+          })}
+        </div>
         {(resumo?.turnos ?? []).length === 0 && (
           <p className="subtitle">Nenhum turno aberto nesta frente.</p>
         )}

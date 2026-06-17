@@ -64,8 +64,11 @@ Padrão vinculante para telas internas — ver [`docs/ops/fluxo-usuario-visualiz
 
 **Home (`HomePage`):**
 
-- Card **Turno** — só status e ações operacionais (fechar turno, placeholder); sem links de navegação
-- Card **Atalhos** — destinos por perfil via `getHomeAtalhos()` / `AREA_ATALHOS`; item sem rota = texto hint (placeholder)
+- Card **Turno** — status, unidade/frente, fechar turno; colheita usa CTA **Ver desempenho** separado
+- Card **Atalhos** — destinos por perfil via `getHomeAtalhos()`; só rotas implementadas (sem hints)
+- **Diagnóstico de sincronização** — `details` colapsável para placeholder/registros (transporte+)
+- **SyncStatusBar** — `formatSyncStatus()` com mensagens de confiança
+- **postOpenTurnoPath** — colheita → `/colheita` após abrir turno
 - Sem card **Menu** separado — evita duplicar atalhos
 
 **Gestão à Vista:**

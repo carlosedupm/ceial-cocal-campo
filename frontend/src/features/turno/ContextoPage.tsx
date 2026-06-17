@@ -9,10 +9,13 @@ import {
   refreshContextoCatalog,
   saveFrentesCache,
 } from "@/lib/catalog/contexto-cache";
-import { getDeviceId, getUsuario, getValidAccessToken } from "@/lib/auth/session";
+import { getDeviceId, getUsuario, getValidAccessToken, logoutSession } from "@/lib/auth/session";
+import { SyncStatusBar } from "@/features/sync/SyncStatusBar";
+import { postOpenTurnoPath } from "@/lib/auth/routes";
 import { clearTurnoIfUsuarioMismatch, turnoMatchesUsuario } from "@/lib/turno/session";
+import { COPY } from "@/lib/ui/copy";
 import { db } from "@/lib/db/schema";
-import type { Frente, Turno, Unidade } from "@/types/domain";
+import type { Frente, Turno, Unidade, Usuario } from "@/types/domain";
 
 async function applyFrentesForUnidade(
   unidadeId: string,
@@ -30,6 +33,10 @@ async function applyFrentesForUnidade(
   return frentes;
 }
 
+function destinoAposTurno(usuario: Usuario | null): string {
+  return postOpenTurnoPath(usuario?.area ?? "");
+}
+
 export function ContextoPage() {
   const navigate = useNavigate();
   const [unidades, setUnidades] = useState<Unidade[]>([]);
@@ -39,6 +46,7 @@ export function ContextoPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [catalogOffline, setCatalogOffline] = useState(false);
+  const [hasDefaults, setHasDefaults] = useState(false);
 
   useEffect(() => {
     void (async () => {
@@ -60,7 +68,8 @@ export function ContextoPage() {
       }
 
       const defaults = await getDefaultContextoIds();
-      if (defaults?.unidadeId) {
+      if (defaults?.unidadeId && defaults.frenteId) {
+        setHasDefaults(true);
         setUnidadeId(defaults.unidadeId);
         const cachedFrentes = await loadFrentesFromCache(defaults.unidadeId);
         if (cachedFrentes.length > 0) {
@@ -76,7 +85,7 @@ export function ContextoPage() {
       await clearTurnoIfUsuarioMismatch();
       const local = await db.turno_atual.toCollection().first();
       if (local?.status === "aberto" && turnoMatchesUsuario(local, usuario)) {
-        navigate("/");
+        navigate(destinoAposTurno(usuario));
         return;
       }
 
@@ -86,7 +95,7 @@ export function ContextoPage() {
           if (remoto) {
             await db.turno_atual.put(remoto);
             void refreshContextoCatalog(token);
-            navigate("/");
+            navigate(destinoAposTurno(usuario));
             return;
           }
         } catch {
@@ -145,6 +154,7 @@ export function ContextoPage() {
         device_id: deviceId,
         inicio,
       };
+      const destino = destinoAposTurno(usuario);
 
       if (navigator.onLine) {
         const token = await getValidAccessToken();
@@ -152,19 +162,19 @@ export function ContextoPage() {
         try {
           const turno = await api.abrirTurno(token, payload);
           await db.turno_atual.put(turno);
-          navigate("/");
+          navigate(destino);
           return;
         } catch (err) {
           if (err instanceof ApiClientError && err.code === "ERR-TURNO-002") {
             const remoto = await api.turnoAtual(token);
             if (remoto) {
               await db.turno_atual.put(remoto);
-              navigate("/");
+              navigate(destino);
               return;
             }
             const local = await db.turno_atual.toCollection().first();
             if (local) {
-              navigate("/");
+              navigate(destino);
               return;
             }
           }
@@ -183,7 +193,7 @@ export function ContextoPage() {
         device_id: deviceId,
       };
       await db.turno_atual.put(localTurno);
-      navigate("/");
+      navigate(destino);
     } catch {
       setError("Não foi possível abrir turno.");
     } finally {
@@ -191,17 +201,37 @@ export function ContextoPage() {
     }
   }
 
+  const unidadeNome = unidades.find((u) => u.id === unidadeId)?.nome ?? "";
+  const frenteNome = frentes.find((f) => f.id === frenteId)?.nome ?? "";
+  const showContinuar = hasDefaults && Boolean(unidadeId && frenteId && unidadeNome && frenteNome);
+
+  async function sair() {
+    await logoutSession();
+    navigate("/login");
+  }
+
   return (
     <main className="page">
-      <PageHeader
-        title="Contexto operacional"
-        subtitle="Selecione unidade e frente (BR-TRANS-003)"
-      />
+      <SyncStatusBar />
+      <PageHeader title="Contexto operacional" subtitle={COPY.contextoSubtitle} />
       {catalogOffline && unidades.length > 0 && (
         <p className="subtitle" data-testid="catalogo-offline">
           Catálogo local (offline)
         </p>
       )}
+      {showContinuar && (
+        <div className="contexto-rapido">
+          <button
+            type="button"
+            data-testid="contexto-continuar"
+            onClick={() => void abrirTurno()}
+            disabled={loading}
+          >
+            {COPY.continuarCom(frenteNome, unidadeNome)}
+          </button>
+        </div>
+      )}
+      {showContinuar && <p className="contexto-rapido-label">{COPY.contextoOutro}</p>}
       <div className="card">
         <label>
           Unidade
@@ -228,6 +258,9 @@ export function ContextoPage() {
           Abrir turno
         </button>
       </div>
+      <button type="button" className="secondary" onClick={() => void sair()}>
+        {COPY.sair}
+      </button>
     </main>
   );
 }

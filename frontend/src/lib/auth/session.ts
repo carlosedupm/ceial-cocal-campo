@@ -1,5 +1,6 @@
 import { db } from "@/lib/db/schema";
 import { api } from "@/lib/api/client";
+import { purgeOrphanRegistros } from "@/lib/turno/session";
 import type { Usuario } from "@/types/domain";
 
 const SESSION_ID = "current";
@@ -85,4 +86,11 @@ export async function isSessionValid(): Promise<boolean> {
 export async function getUsuario(): Promise<Usuario | null> {
   const session = await getSession();
   return session?.usuario ?? null;
+}
+
+/** Encerra sessão local, turno e fila órfã (logout API em clearSession se online). */
+export async function logoutSession(): Promise<void> {
+  await clearSession();
+  await db.turno_atual.clear();
+  await purgeOrphanRegistros();
 }
