@@ -129,4 +129,16 @@ export const api = {
       {},
       token
     ),
+  gestaoVista: (token: string, unidadeId: string) =>
+    request<import("@/types/gestao-vista").PainelUnidade>(
+      `/api/v1/unidades/${unidadeId}/gestao-vista`,
+      {},
+      token
+    ),
+  putGestaoVista: (token: string, unidadeId: string, snapshot: Record<string, unknown>) =>
+    request<import("@/types/gestao-vista").PainelUnidade>(
+      `/api/v1/unidades/${unidadeId}/gestao-vista`,
+      { method: "PUT", body: JSON.stringify({ snapshot }) },
+      token
+    ),
 };

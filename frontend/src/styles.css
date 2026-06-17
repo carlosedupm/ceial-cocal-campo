@@ -17,6 +17,11 @@ body {
   max-width: 480px;
   margin: 0 auto;
   padding: 1rem;
+  padding-bottom: 1.5rem;
+}
+
+.page-has-footer {
+  padding-bottom: 5rem;
 }
 
 h1 {
@@ -212,7 +217,86 @@ ul {
 }
 
 .page-header {
+  margin-bottom: 0.75rem;
+}
+
+.page-header-nav {
   margin-bottom: 0.5rem;
+}
+
+.nav-back {
+  text-decoration: none;
+  font-weight: 600;
+  color: #1b5e20;
+}
+
+.nav-back-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 44px;
+  padding: 0.25rem 0;
+  font-size: 0.95rem;
+}
+
+.nav-back-inline:hover,
+.nav-back-inline:focus-visible {
+  text-decoration: underline;
+}
+
+.nav-back:focus-visible {
+  outline: 2px solid #1b5e20;
+  outline-offset: 2px;
+}
+
+.nav-back-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.nav-back-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 48px;
+  padding: 0.65rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #1b5e20;
+  background: #fff;
+  color: #1b5e20;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.nav-back-bar:hover,
+.nav-back-bar:focus-visible {
+  background: #f1f8f1;
+}
+
+.page-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  margin-top: 1.25rem;
+  padding: 0.75rem 0 0.25rem;
+  background: linear-gradient(to bottom, transparent, #f4f6f4 28%);
+}
+
+.page-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.page-actions .button-link {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.home-atalho-indisponivel {
+  margin: 0;
+  text-align: center;
 }
 
 .breadcrumb {
@@ -232,4 +316,293 @@ ul {
 .section-title {
   font-size: 1.1rem;
   margin: 1rem 0 0.5rem;
+}
+
+.page-gestao-vista {
+  max-width: 1280px;
+}
+
+.gestao-dashboard-page {
+  padding-bottom: 2rem;
+}
+
+.gestao-dashboard-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #f4f6f4;
+  padding: 0.5rem 0 0.75rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.gestao-dashboard-title {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.gestao-dashboard-ts {
+  margin: 0.25rem 0 0;
+}
+
+.gestao-panel-title {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #1b5e20;
+}
+
+.gestao-panels-row {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .gestao-panels-row {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+.gestao-dias-tiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.gestao-dias.compact .gestao-dias-tiles {
+  gap: 0.5rem;
+}
+
+.gestao-dias-tile {
+  background: #f8faf8;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 0.75rem;
+  text-align: center;
+  display: grid;
+  gap: 0.15rem;
+}
+
+.gestao-dias.compact .gestao-dias-tile {
+  padding: 0.5rem;
+}
+
+.gestao-dias-valor {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #1b5e20;
+  font-variant-numeric: tabular-nums;
+}
+
+.gestao-dias.compact .gestao-dias-valor {
+  font-size: 1.75rem;
+}
+
+.gestao-dias-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #2e7d32;
+}
+
+.gestao-dias-rotulo {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.gestao-dias-tipo {
+  font-size: 0.7rem;
+  color: #777;
+  text-transform: uppercase;
+}
+
+.gestao-matriz-desktop {
+  display: none;
+}
+
+.gestao-matriz-mobile {
+  display: grid;
+  gap: 0.75rem;
+}
+
+@media (min-width: 641px) {
+  .gestao-matriz-desktop {
+    display: block;
+  }
+
+  .gestao-matriz-mobile {
+    display: none;
+  }
+}
+
+.gestao-matriz {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 0.9rem;
+}
+
+.gestao-matriz.compact {
+  font-size: 0.8rem;
+}
+
+.gestao-matriz th,
+.gestao-matriz td {
+  border: 1px solid #e0e0e0;
+  padding: 0.5rem;
+  vertical-align: top;
+}
+
+.gestao-matriz.compact th,
+.gestao-matriz.compact td {
+  padding: 0.35rem;
+}
+
+.gestao-matriz thead th {
+  background: #eef2ee;
+  font-size: 0.8rem;
+}
+
+.gestao-matriz tbody tr:nth-child(even) {
+  background: #fafafa;
+}
+
+.gestao-indicador-nome {
+  text-align: left;
+  font-weight: 600;
+  width: 28%;
+}
+
+.gestao-horizonte-cell {
+  text-align: center;
+}
+
+.gestao-horizonte-tag {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 0.35rem;
+}
+
+.gestao-par-valores {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  align-items: center;
+}
+
+.gestao-valor-pl {
+  font-size: 0.85em;
+  color: #666;
+}
+
+.gestao-valor-pl::before {
+  content: "P: ";
+  font-weight: 600;
+}
+
+.gestao-valor-ex {
+  font-size: 1.05em;
+  font-weight: 700;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+}
+
+.gestao-valor-ex::before {
+  content: "E: ";
+  font-weight: 600;
+  font-size: 0.85em;
+}
+
+.gestao-indicador-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 0.75rem;
+  background: #fafafa;
+}
+
+.gestao-indicador-card header {
+  margin-bottom: 0.5rem;
+}
+
+.gestao-card-horizontes {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.gestao-card-horizonte {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0;
+  border-top: 1px solid #eee;
+}
+
+.gestao-card-horizonte:first-child {
+  border-top: none;
+}
+
+.gestao-unidade-medida {
+  display: block;
+  font-size: 0.75rem;
+  color: #777;
+  font-weight: normal;
+}
+
+.cmp-dentro {
+  color: #1b5e20;
+  background: #e8f5e9;
+}
+
+.cmp-fora {
+  color: #b00020;
+  background: #ffebee;
+}
+
+.cmp-neutro {
+  color: #616161;
+  background: #f5f5f5;
+}
+
+.gestao-comparativo.compact .gestao-panel-title {
+  font-size: 0.9rem;
+}
+
+.gestao-dashboard.compact .gestao-dashboard-title {
+  font-size: 1.15rem;
+}
+
+.tab-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.tab {
+  background: #fff;
+  color: #1b5e20;
+  border: 1px solid #1b5e20;
+  min-height: 40px;
+  font-size: 0.9rem;
+}
+
+.tab.active {
+  background: #1b5e20;
+  color: #fff;
+}
+
+a.button-link.secondary-link {
+  margin-top: 0;
+  background: #fff;
+  color: #1b5e20;
+  border: 1px solid #1b5e20;
 }

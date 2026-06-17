@@ -19,16 +19,19 @@ func NewRouter(cfg config.Config, pool *pgxpool.Pool) http.Handler {
 	turnoRepo := repository.NewTurnoRepository(pool)
 	regRepo := repository.NewRegistroRepository(pool)
 	indRepo := repository.NewIndicadoresRepository(pool)
+	painelRepo := repository.NewPainelUnidadeRepository(pool)
 
 	authSvc := service.NewAuthService(cfg, userRepo)
 	turnoSvc := service.NewTurnoService(turnoRepo, regRepo, userRepo)
 	indSvc := service.NewIndicadoresService(turnoRepo, regRepo, indRepo, userRepo)
+	gestaoSvc := service.NewGestaoVistaService(painelRepo)
 	syncSvc := service.NewSyncService(turnoRepo, regRepo, indSvc)
 
 	authH := handlers.NewAuthHandler(authSvc)
 	turnoH := handlers.NewTurnoHandler(turnoSvc, userRepo)
 	syncH := handlers.NewSyncHandler(syncSvc)
 	indH := handlers.NewIndicadoresHandler(indSvc)
+	gestaoH := handlers.NewGestaoVistaHandler(gestaoSvc)
 
 	r := chi.NewRouter()
 	r.Use(chimiddleware.RequestID)
@@ -53,6 +56,8 @@ func NewRouter(cfg config.Config, pool *pgxpool.Pool) http.Handler {
 			protected.Get("/me", authH.Me)
 			protected.Get("/unidades", turnoH.ListUnidades)
 			protected.Get("/unidades/{unidadeId}/frentes", turnoH.ListFrentes)
+			protected.Get("/unidades/{unidadeId}/gestao-vista", gestaoH.Get)
+			protected.Put("/unidades/{unidadeId}/gestao-vista", gestaoH.Put)
 			protected.Post("/turnos", turnoH.Abrir)
 			protected.Get("/turnos/atual", turnoH.Atual)
 			protected.Get("/turnos/atual/indicadores", indH.Atual)

@@ -43,12 +43,35 @@ backend/
   internal/http/         # handlers, middleware RBAC
   migrations/
 frontend/
-  src/features/          # auth, turno, sync, home, colheita, transporte
+  src/components/        # shell UI (BackLink, PageHeader, PageFooter, gestao-vista)
+  src/features/          # auth, turno, sync, home, colheita, supervisao, gestao-vista, simulador
   src/lib/db/            # Dexie schema + outbox
   src/lib/sync/          # SyncEngine
   src/lib/auth/          # sessão offline 7d
   src/lib/api/           # cliente HTTP
 ```
+
+## Shell de UI (PWA)
+
+Padrão vinculante para telas internas — ver [`docs/ops/fluxo-usuario-visualizacao.md`](../docs/ops/fluxo-usuario-visualizacao.md).
+
+| Componente | Uso |
+|------------|-----|
+| `BackLink` | Link ← com variantes `inline` (topo) e `bar` (botão largo) |
+| `PageHeader` | Título, subtítulo, breadcrumbs; opcional `backTo` no topo |
+| `PageFooter` | Rodapé sticky com `BackLink` bar — classe `page-has-footer` no `<main>` |
+| `SyncStatusBar` | Online/offline, pendências, última sync |
+
+**Home (`HomePage`):**
+
+- Card **Turno** — só status e ações operacionais (fechar turno, placeholder); sem links de navegação
+- Card **Atalhos** — destinos por perfil via `getHomeAtalhos()` / `AREA_ATALHOS`; item sem rota = texto hint (placeholder)
+- Sem card **Menu** separado — evita duplicar atalhos
+
+**Gestão à Vista:**
+
+- `GestaoDashboard` — matriz comparativa + tiles dias sem acidentes; prop `hideHeader` quando `PageHeader` da página já traz o título
+- Supervisor: dashboard `compact` inline em `/supervisao`; rota `/gestao-a-vista` para visão dedicada
 
 ## Códigos de erro HTTP
 
@@ -90,4 +113,4 @@ Testes com `//go:build integration` ficam **fora** do `go test ./...` padrão (C
 - [ADR-002](../docs/architecture/ADR-002-sync-outbox.md)
 - [Catálogo BR-*](../docs/business/README.md)
 
-**Última atualização**: 2026-06-15
+**Última atualização**: 2026-06-16

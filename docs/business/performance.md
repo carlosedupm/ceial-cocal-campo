@@ -19,8 +19,8 @@
 | **Escopo** | Fonte: sistema central (não registros locais do operador). |
 | **Perfis** | Operadores (diário/turno); supervisor (semanal/safra online). |
 | **Efeito** | Informativo; MVP foca turno/diário. |
-| **Implementação** | _(parcial)_ — snapshot por turno |
-| **Estado** | parcial |
+| **Implementação** | `gestao_vista.go` (painel unidade); snapshot por turno em `indicadores.go` |
+| **Estado** | implementado |
 
 ---
 
@@ -45,8 +45,8 @@
 | **Escopo** | Metas por indicador e frente/unidade no snapshot. |
 | **Perfis** | `simulador_central`; supervisor frente. |
 | **Efeito** | Comparação `BR-PERFORMANCE-002` só quando meta presente. |
-| **Implementação** | Campo `metas` no snapshot JSON |
-| **Estado** | parcial |
+| **Implementação** | `planejado` por horizonte no painel unidade; campo `metas` no snapshot turno |
+| **Estado** | implementado |
 
 ---
 

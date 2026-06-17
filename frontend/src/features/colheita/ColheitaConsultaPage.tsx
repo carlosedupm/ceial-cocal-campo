@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
 import { IndicadorCard } from "@/components/IndicadorCard";
 import { PageHeader } from "@/components/PageHeader";
+import { PageFooter } from "@/components/PageFooter";
 import { SyncStatusBar } from "@/features/sync/SyncStatusBar";
 import { getValidAccessToken, getUsuario, isSessionValid } from "@/lib/auth/session";
 import { db } from "@/lib/db/schema";
@@ -79,10 +80,16 @@ export function ColheitaConsultaPage() {
 
   if (!turno) {
     return (
-      <main className="page">
+      <main className="page page-has-footer">
         <SyncStatusBar />
+        <PageHeader
+          title="Desempenho do turno"
+          subtitle="Consulta somente leitura"
+          backTo="/"
+          backLabel="Voltar ao início"
+        />
         <p>Abra um turno para consultar seu desempenho.</p>
-        <Link to="/">Voltar</Link>
+        <PageFooter backTo="/" backLabel="Voltar ao início" />
       </main>
     );
   }
@@ -94,12 +101,14 @@ export function ColheitaConsultaPage() {
   const atualizadoEm = dados?.atualizado_em ?? cached?.atualizado_em;
 
   return (
-    <main className="page" data-testid="colheita-consulta">
+    <main className="page page-has-footer" data-testid="colheita-consulta">
       <SyncStatusBar />
       <PageHeader
         title="Desempenho do turno"
         subtitle="Consulta somente leitura — dados do sistema central"
         breadcrumbs={[{ label: "Início", to: "/" }, { label: "Desempenho" }]}
+        backTo="/"
+        backLabel="Voltar ao início"
       />
       {atualizadoEm && (
         <p className="hint">
@@ -157,7 +166,7 @@ export function ColheitaConsultaPage() {
           </section>
         </>
       )}
-      <Link to="/">Voltar</Link>
+      <PageFooter backTo="/" backLabel="Voltar ao início" />
     </main>
   );
 }

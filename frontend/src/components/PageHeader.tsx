@@ -1,3 +1,4 @@
+import { BackLink } from "@/components/BackLink";
 import { Link } from "react-router-dom";
 
 export type BreadcrumbItem = {
@@ -9,13 +10,22 @@ export function PageHeader({
   title,
   subtitle,
   breadcrumbs,
+  backTo,
+  backLabel = "Voltar",
 }: {
   title: string;
   subtitle?: string;
   breadcrumbs?: BreadcrumbItem[];
+  backTo?: string;
+  backLabel?: string;
 }) {
   return (
     <header className="page-header">
+      {backTo && (
+        <div className="page-header-nav">
+          <BackLink to={backTo}>{backLabel}</BackLink>
+        </div>
+      )}
       {breadcrumbs && breadcrumbs.length > 0 && (
         <nav className="breadcrumb" aria-label="Navegação">
           {breadcrumbs.map((item, i) => (

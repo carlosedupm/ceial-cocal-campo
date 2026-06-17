@@ -101,8 +101,8 @@ flowchart LR
 | **Escopo** | Indicadores de performance e qualidade com meta cadastrada. |
 | **Perfis** | Todos com permissão de visualização do indicador. |
 | **Efeito** | Informativo na UI; não bloqueia registro fora da meta. |
-| **Implementação** | _(planejado)_ — ver [performance.md](./performance.md) |
-| **Estado** | planejado |
+| **Implementação** | `frontend/src/lib/gestao-vista/comparacao.ts` |
+| **Estado** | implementado |
 
 ## Validações temporais (`TMP-*`)
 

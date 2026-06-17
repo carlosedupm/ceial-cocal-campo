@@ -38,6 +38,7 @@ backend/tmp/
 # Frontend (futuro)
 frontend/dist/
 frontend/.vite/
+vite.config.ts.timestamp-*.mjs
 
 # Cursor local (user-specific; project rules/hooks ARE versioned)
 .cursor/plans/

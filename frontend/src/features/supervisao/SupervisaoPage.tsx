@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { GestaoDashboard } from "@/components/gestao-vista/GestaoDashboard";
+import { PageFooter } from "@/components/PageFooter";
 import { PageHeader } from "@/components/PageHeader";
 import { api } from "@/lib/api/client";
+import { fetchAndCachePainelUnidade } from "@/lib/gestao-vista/cache";
 import { getUsuario, getValidAccessToken, isSessionValid } from "@/lib/auth/session";
 import { refreshContextoCatalog } from "@/lib/catalog/contexto-cache";
 import {
@@ -12,6 +15,7 @@ import {
 } from "@/lib/frente/helpers";
 import { SyncStatusBar } from "@/features/sync/SyncStatusBar";
 import type { FrenteResumo } from "@/types/indicadores";
+import type { PainelUnidade } from "@/types/gestao-vista";
 
 const POLL_MS = 45000;
 
@@ -22,7 +26,15 @@ export function SupervisaoPage() {
   const [frenteId, setFrenteId] = useState("");
   const [frenteNome, setFrenteNome] = useState("");
   const [resumo, setResumo] = useState<FrenteResumo | null>(null);
+  const [painel, setPainel] = useState<PainelUnidade | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+
+  async function carregarPainel(unidadeId: string) {
+    const token = await getValidAccessToken();
+    if (!token || !unidadeId) return;
+    const row = await fetchAndCachePainelUnidade(token, unidadeId);
+    setPainel(row);
+  }
 
   async function carregar(activeFrenteId: string) {
     const token = await getValidAccessToken();
@@ -57,6 +69,7 @@ export function SupervisaoPage() {
       setSelectedFrenteId(selected);
       setFrenteNome(await frenteNomeById(selected));
       await carregar(selected);
+      if (u.unidade_ids[0]) await carregarPainel(u.unidade_ids[0]);
     })();
   }, [navigate, searchParams]);
 
@@ -80,12 +93,14 @@ export function SupervisaoPage() {
   }
 
   return (
-    <main className="page" data-testid="supervisao-page">
+    <main className="page page-gestao-vista page-has-footer" data-testid="supervisao-page">
       <SyncStatusBar />
       <PageHeader
         title="Painel da frente"
         subtitle={`Consulta somente leitura — ${frenteNome || "equipe na frente"}`}
         breadcrumbs={[{ label: "Início", to: "/" }, { label: "Painel da frente" }]}
+        backTo="/"
+        backLabel="Voltar ao início"
       />
       {frentes.length > 1 && (
         <section className="card">
@@ -102,6 +117,14 @@ export function SupervisaoPage() {
         </section>
       )}
       {erro && <p className="error">{erro}</p>}
+      {painel?.snapshot && (
+        <GestaoDashboard
+          snapshot={painel.snapshot}
+          atualizadoEm={painel.atualizado_em}
+          compact
+          testId="gestao-vista-resumo"
+        />
+      )}
       <section className="card">
         <h2>Turnos abertos</h2>
         <ul data-testid="turnos-equipe">
@@ -120,7 +143,7 @@ export function SupervisaoPage() {
           <p className="subtitle">Nenhum turno aberto nesta frente.</p>
         )}
       </section>
-      <Link to="/">Voltar</Link>
+      <PageFooter backTo="/" backLabel="Voltar ao início" />
     </main>
   );
 }

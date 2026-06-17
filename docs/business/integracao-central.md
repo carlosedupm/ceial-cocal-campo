@@ -76,4 +76,17 @@
 
 ---
 
+## BR-INTEG-006 — Painel Gestão à Vista por unidade
+
+| Campo | Valor |
+|-------|-------|
+| **Enunciado** | Snapshot **pré-agregado** de Gestão à Vista (segurança, performance, qualidade por horizonte) vincula-se a **unidade**; origem autoritativa no sistema central; MVP via simulador. |
+| **Escopo** | Tabela `painel_unidade`; `GET/PUT /api/v1/unidades/{id}/gestao-vista`. |
+| **Perfis** | Leitura: perfis da unidade; escrita: `simulador_central`. |
+| **Efeito** | Não substitui snapshot por turno (`BR-INTEG-002`). |
+| **Implementação** | `backend/internal/service/gestao_vista.go`, `frontend/src/features/gestao-vista/` |
+| **Estado** | implementado |
+
+---
+
 **Última atualização**: 2026-06-16

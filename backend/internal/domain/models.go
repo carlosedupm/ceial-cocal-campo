@@ -16,6 +16,7 @@ const (
 	ErrINT001         = "ERR-INT-001"
 	ErrUnauthorized   = "ERR-AUTH-001"
 	ErrInvalidRequest = "ERR-REQ-001"
+	ErrNotFound       = "ERR-NOT-FOUND"
 )
 
 type DomainError struct {
@@ -118,6 +119,15 @@ type Frente struct {
 	ID        string `json:"id"`
 	UnidadeID string `json:"unidade_id"`
 	Nome      string `json:"nome"`
+}
+
+// PainelUnidade — BR-INTEG-006 snapshot Gestão à Vista por unidade.
+type PainelUnidade struct {
+	UnidadeID    string         `json:"unidade_id"`
+	Snapshot     map[string]any `json:"snapshot"`
+	Origem       string         `json:"origem"`
+	IngestidoPor *string        `json:"ingestido_por,omitempty"`
+	AtualizadoEm string         `json:"atualizado_em"`
 }
 
 type TokenPair struct {

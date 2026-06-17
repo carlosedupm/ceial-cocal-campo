@@ -25,7 +25,7 @@ test.describe("BRF-005 colheita consulta", () => {
     await expect(opPage.getByTestId("colheita-consulta")).toBeVisible();
     await expect(opPage.getByTestId("indicador-horas_corte")).toContainText("Disponível");
 
-    await opPage.getByRole("link", { name: "Voltar" }).click();
+    await opPage.getByRole("link", { name: /Voltar ao início/ }).first().click();
     await opPage.getByRole("button", { name: "Fechar turno" }).click();
     await expect(opPage.getByRole("heading", { name: "Contexto operacional" })).toBeVisible();
 

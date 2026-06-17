@@ -14,21 +14,38 @@ import { enqueueRegistro, flushOutbox, aceitarVersaoServidor, isSyncConflictPerm
 import { clearTurnoIfUsuarioMismatch, purgeOrphanRegistros, turnoMatchesUsuario } from "@/lib/turno/session";
 import { SyncStatusBar } from "@/features/sync/SyncStatusBar";
 import { labelArea, labelPerfil } from "@/lib/ui/labels";
-import type { RegistroLocal, Usuario } from "@/types/domain";
+import type { RegistroLocal, Turno, Usuario } from "@/types/domain";
 
-const AREA_MENUS: Record<string, { label: string; to?: string }[]> = {
-  colheita: [
-    { label: "Consultar desempenho", to: "/colheita" },
-  ],
-  transporte: [
-    { label: "Consultar turno" },
-  ],
-  qualidade: [
-    { label: "Consultar avaliações" },
-  ],
-  seguranca: [{ label: "Consultar segurança" }],
-  supervisao: [{ label: "Painel frente", to: "/supervisao" }],
+type HomeAtalho = {
+  label: string;
+  to?: string;
+  secondary?: boolean;
 };
+
+const SUPERVISOR_ATALHOS: HomeAtalho[] = [
+  { label: "Abrir painel da frente", to: "/supervisao" },
+  { label: "Gestão à vista", to: "/gestao-a-vista", secondary: true },
+];
+
+const SIMULADOR_ATALHOS: HomeAtalho[] = [
+  { label: "Simular ingestão do sistema central", to: "/simulador" },
+  { label: "Gestão à vista", to: "/gestao-a-vista", secondary: true },
+];
+
+const AREA_ATALHOS: Record<string, HomeAtalho[]> = {
+  colheita: [{ label: "Consultar desempenho do turno", to: "/colheita" }],
+  transporte: [{ label: "Consultar turno" }],
+  qualidade: [{ label: "Consultar avaliações" }],
+  seguranca: [{ label: "Consultar segurança" }],
+};
+
+function getHomeAtalhos(usuario: Usuario | null, turno: Turno | null | undefined): HomeAtalho[] {
+  if (!usuario) return [];
+  if (usuario.perfil === "supervisor_frente") return SUPERVISOR_ATALHOS;
+  if (usuario.perfil === "simulador_central") return SIMULADOR_ATALHOS;
+  if (turno?.status !== "aberto") return [];
+  return AREA_ATALHOS[usuario.area] ?? [];
+}
 
 export function HomePage() {
   const navigate = useNavigate();
@@ -137,22 +154,15 @@ export function HomePage() {
 
   const isSimulador = usuario?.perfil === "simulador_central";
   const isSupervisor = usuario?.perfil === "supervisor_frente";
-  const menus = isSimulador
-    ? [{ label: "Ingestão simulador", to: "/simulador" }]
-    : usuario
-      ? AREA_MENUS[usuario.area] ?? []
-      : [];
+  const isOperador = !isSimulador && !isSupervisor;
+  const atalhos = getHomeAtalhos(usuario, turno);
 
   const showPlaceholder =
-    !isSimulador &&
-    !isSupervisor &&
-    usuario?.area !== "colheita" &&
-    turno?.status === "aberto";
+    isOperador && usuario?.area !== "colheita" && turno?.status === "aberto";
 
-  const showFecharTurno = turno && turno.status === "aberto" && !isSupervisor && !isSimulador;
+  const showFecharTurno = turno && turno.status === "aberto" && isOperador;
 
-  const showRegistrosLocais =
-    !isSimulador && usuario?.area !== "colheita";
+  const showRegistrosLocais = isOperador && usuario?.area !== "colheita";
 
   return (
     <main className="page">
@@ -162,7 +172,7 @@ export function HomePage() {
         {usuario ? `${labelPerfil(usuario.perfil)} · ${labelArea(usuario.area)}` : "..."}
       </p>
 
-      {turno && !isSupervisor && (
+      {turno && isOperador && (
         <section className="card" data-testid="turno-info">
           <h2>Turno {turno.status}</h2>
           <p>Início: {new Date(turno.inicio).toLocaleString("pt-BR")}</p>
@@ -174,11 +184,6 @@ export function HomePage() {
                   Registrar placeholder
                 </button>
               )}
-              {usuario?.area === "colheita" && (
-                <Link className="button-link" to="/colheita">
-                  Consultar desempenho do turno
-                </Link>
-              )}
               <button type="button" className="secondary" onClick={() => void fecharTurno()}>
                 Fechar turno
               </button>
@@ -187,32 +192,28 @@ export function HomePage() {
         </section>
       )}
 
-      {isSupervisor && (
-        <section className="card">
-          <Link className="button-link" to="/supervisao">
-            Abrir painel da frente
-          </Link>
+      {atalhos.length > 0 && (
+        <section className="card" data-testid="home-atalhos">
+          <h2>Atalhos</h2>
+          <div className="page-actions">
+            {atalhos.map((item) =>
+              item.to ? (
+                <Link
+                  key={item.label}
+                  className={`button-link${item.secondary ? " secondary-link" : ""}`}
+                  to={item.to}
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <p key={item.label} className="hint home-atalho-indisponivel">
+                  {item.label}
+                </p>
+              )
+            )}
+          </div>
         </section>
       )}
-
-      {isSimulador && (
-        <section className="card">
-          <Link className="button-link" to="/simulador">
-            Simular ingestão do sistema central
-          </Link>
-        </section>
-      )}
-
-      <section className="card">
-        <h2>Menu ({usuario?.area})</h2>
-        <ul>
-          {menus.map((item) => (
-            <li key={item.label}>
-              {item.to ? <Link to={item.to}>{item.label}</Link> : item.label}
-            </li>
-          ))}
-        </ul>
-      </section>
 
       {showRegistrosLocais && (
         <section className="card">

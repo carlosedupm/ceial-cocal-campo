@@ -16,7 +16,7 @@ test.describe("BRF-001 fundacao", () => {
 
     await page.getByRole("link", { name: /Consultar desempenho/ }).click();
     await expect(page.getByTestId("colheita-consulta")).toBeVisible();
-    await page.getByRole("link", { name: "Voltar" }).click();
+    await page.getByRole("link", { name: /Voltar ao início/ }).first().click();
     await expect(page.getByRole("link", { name: /Consultar desempenho/ })).toBeVisible();
   });
 
@@ -27,9 +27,9 @@ test.describe("BRF-001 fundacao", () => {
     await page.getByRole("button", { name: "Entrar" }).click();
     await page.getByRole("button", { name: "Abrir turno" }).click();
 
-    await expect(page.getByRole("heading", { name: /Menu \(colheita\)/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Atalhos" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Consultar desempenho do turno" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Consultar desempenho" })).toHaveAttribute(
+    await expect(page.getByRole("link", { name: "Consultar desempenho do turno" })).toHaveAttribute(
       "href",
       "/colheita"
     );
@@ -41,8 +41,9 @@ test.describe("BRF-001 fundacao", () => {
     await page.getByRole("button", { name: "Entrar" }).click();
     await page.getByRole("button", { name: "Abrir turno" }).click();
 
-    await expect(page.getByRole("heading", { name: /Menu \(transporte\)/ })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Consultar desempenho" })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Atalhos" })).toBeVisible();
+    await expect(page.getByText("Consultar turno")).toBeVisible();
+    await expect(page.getByRole("link", { name: "Consultar desempenho do turno" })).toHaveCount(0);
   });
 
   test("preserva fila local em falha de API e sincroniza no retry", async ({ page }) => {

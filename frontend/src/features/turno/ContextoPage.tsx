@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { PageHeader } from "@/components/PageHeader";
 import { api, ApiClientError } from "@/lib/api/client";
 import {
   getDefaultContextoIds,
@@ -192,8 +193,10 @@ export function ContextoPage() {
 
   return (
     <main className="page">
-      <h1>Contexto operacional</h1>
-      <p className="subtitle">Selecione unidade e frente (BR-TRANS-003)</p>
+      <PageHeader
+        title="Contexto operacional"
+        subtitle="Selecione unidade e frente (BR-TRANS-003)"
+      />
       {catalogOffline && unidades.length > 0 && (
         <p className="subtitle" data-testid="catalogo-offline">
           Catálogo local (offline)

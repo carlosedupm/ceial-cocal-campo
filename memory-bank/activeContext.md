@@ -5,22 +5,24 @@
 
 ### **Status Geral**
 
-**Reposicionamento para visualização (BRF-005/006/007) implementado.** Operadores consultam indicadores do sistema central; perfil `simulador_central` alimenta a base no MVP.
+**Gestão à Vista MVP (BRF-008) implementado.** Painel por unidade com dias sem acidentes e comparativos performance/qualidade; simulador alimenta snapshot; supervisor vê painel inline em `/supervisao` + rota dedicada `/gestao-a-vista`.
+
+**Shell de UI padronizado** — navegação (`BackLink`, `PageHeader`, `PageFooter`) em todas as telas internas; home com card **Atalhos** único por perfil (sem menu duplicado).
 
 ### ✅ Concluído recentemente:
 
-1. ✅ Escopo consulta: `BR-COLHEITA-*`, `BR-INTEG-*`, `BR-ACESSO-005`, `BR-SUPERVISAO-001/002`
-2. ✅ BRF-005 Colheita consulta — `ColheitaConsultaPage`, pull + cache IndexedDB
-3. ✅ BRF-007 Simulador central — `/simulador`, RBAC ingestão, `indicadores_turno`
-4. ✅ BRF-006 Supervisão — `/supervisao`, detalhe read-only
-5. ✅ Clareza UX jornadas — rótulos humanos, entrada supervisor, frente dinâmica, PageHeader, docs ops
-6. ✅ `INT-001` revogado para operadores (fechamento sem registro obrigatório)
-7. ✅ BRF-002/003/004 superseded para operadores de campo
+1. ✅ BRF-008 Gestão à Vista — `painel_unidade`, matriz comparativa, dashboard compact no supervisor
+2. ✅ UI shell — voltar topo + rodapé sticky; `page-has-footer` nas subpáginas
+3. ✅ Home — card **Atalhos** (supervisor, simulador, operadores); turno só ações operacionais
+4. ✅ BRF-005 Colheita consulta — `ColheitaConsultaPage`, pull + cache IndexedDB
+5. ✅ BRF-007 Simulador central — `/simulador`, RBAC ingestão, `indicadores_turno`
+6. ✅ BRF-006 Supervisão — `/supervisao`, detalhe read-only
 
 ### 📋 Próximos passos:
 
 1. Contrato integração sistema central real (Fase 3)
-2. Feedback piloto com operadores e supervisores
-3. Demais áreas (transporte/qualidade leitura para operadores)
+2. Layout TV fiel Gestão à Vista + fluxo ocorrências segurança
+3. Rotas consulta transporte/qualidade/segurança (atalhos placeholder na home)
+4. Feedback piloto com operadores e supervisores
 
 **Última atualização**: 2026-06-16

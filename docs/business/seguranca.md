@@ -6,8 +6,8 @@
 
 | Camada | Caminho |
 |--------|---------|
-| Backend | _(planejado)_ |
-| Frontend | _(planejado)_ |
+| Backend | `backend/internal/service/gestao_vista.go` |
+| Frontend | `frontend/src/features/gestao-vista/` |
 
 ---
 
@@ -32,8 +32,8 @@
 | **Escopo** | Consulta read-only; sincronizada quando online. |
 | **Perfis** | Técnico segurança, supervisor frente, operadores conforme `BR-ACESSO-001`. |
 | **Efeito** | Informativo; dados somente leitura. |
-| **Implementação** | _(planejado)_ |
-| **Estado** | planejado |
+| **Implementação** | `DiasSemAcidentesPanel`, snapshot `seguranca.dias_sem_acidentes` |
+| **Estado** | parcial |
 
 ---
 
@@ -63,4 +63,4 @@
 
 ---
 
-**Última atualização**: 2026-06-14
+**Última atualização**: 2026-06-16

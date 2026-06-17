@@ -1,6 +1,7 @@
 import Dexie, { type Table } from "dexie";
 import type { Frente, RegistroLocal, Turno, Unidade, Usuario } from "@/types/domain";
 import type { IndicadoresCacheRecord } from "@/types/indicadores";
+import type { PainelUnidadeCacheRecord } from "@/types/gestao-vista";
 
 export type SessionRecord = {
   id: string;
@@ -24,6 +25,7 @@ export class CocalDatabase extends Dexie {
   unidades!: Table<Unidade, string>;
   frentes!: Table<Frente, string>;
   indicadores_cache!: Table<IndicadoresCacheRecord, string>;
+  painel_unidade_cache!: Table<PainelUnidadeCacheRecord, string>;
 
   constructor() {
     super("cocal-campo");
@@ -47,7 +49,7 @@ export class CocalDatabase extends Dexie {
       unidades: "id, nome",
       frentes: "id, unidade_id, nome",
     });
-    this.version(4).stores({
+    this.version(5).stores({
       session: "id",
       turno_atual: "id",
       registros: "id, turno_id, sync_status, idempotency_key, created_at",
@@ -55,6 +57,7 @@ export class CocalDatabase extends Dexie {
       unidades: "id, nome",
       frentes: "id, unidade_id, nome",
       indicadores_cache: "turno_id, atualizado_em",
+      painel_unidade_cache: "unidade_id, atualizado_em",
     });
   }
 }

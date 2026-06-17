@@ -37,11 +37,12 @@ Ver também [AGENTS.md](../../AGENTS.md) e `.cursor/rules/documentation-maintena
 | **Transversal (mestre)** | [_transversal.md](./_transversal.md) | `BR-TRANS-001`–`005`, `TMP-001`–`002`, `INT-001`–`002` | implementado |
 | **Turnos** | [turnos.md](./turnos.md) | `BR-TURNO-001`–`004` | implementado |
 | **Offline e sync** | [offline-sync.md](./offline-sync.md) | `BR-SYNC-001`–`005`, `BR-SYNC-PULL-001` | implementado |
-| **Integração central** | [integracao-central.md](./integracao-central.md) | `BR-INTEG-001`–`005` | implementado (MVP simulador) |
+| **Integração central** | [integracao-central.md](./integracao-central.md) | `BR-INTEG-001`–`006` | implementado (MVP simulador) |
+| **Segurança** | [seguranca.md](./seguranca.md) | `BR-SEGURANCA-001`–`004` | parcial |
 | **Acesso e perfis** | [acesso-perfis.md](./acesso-perfis.md) | `BR-ACESSO-001`–`005` | implementado |
 | **Colheita** | [colheita.md](./colheita.md) | `BR-COLHEITA-001`–`003` | implementado (consulta) |
 | **Qualidade** | [qualidade.md](./qualidade.md) | `BR-QUALIDADE-001`–`003` | implementado (consulta) |
-| **Performance** | [performance.md](./performance.md) | `BR-PERFORMANCE-001`–`003` | parcial |
+| **Performance** | [performance.md](./performance.md) | `BR-PERFORMANCE-001`–`003` | implementado |
 | **Supervisão** | [supervisao.md](./supervisao.md) | `BR-SUPERVISAO-001`–`002` | implementado |
 
 ---

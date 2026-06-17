@@ -56,7 +56,8 @@ Permitir que o **técnico de qualidade** registre no turno aberto as avaliaçõe
 - **Páginas/rotas**: `/qualidade` — formulários dos 2 tipos de avaliação; lista de registros do turno por talhão
 - **Componentes**: `QualidadePage` (novo), `validation.ts` (novo); remoção do placeholder na home
 - **Roteamento**: adicionar rota `/qualidade` em `App.tsx`
-- **Menu**: atualizar `AREA_MENUS.qualidade` em `HomePage.tsx` para link `/qualidade`
+- **Atalhos (home)**: em `AREA_ATALHOS.qualidade` (`HomePage.tsx`), definir `to: "/qualidade"` no item do card **Atalhos** (hoje hint sem rota)
+- **Shell UI**: `QualidadePage` usa `PageHeader` + `PageFooter` conforme padrão em `systemPatterns.md`
 - **INT-001 local**: mensagem de fechamento na home espelhando colheita/transporte («registre ao menos uma avaliação de qualidade»)
 
 ### O que NÃO mexer
@@ -126,6 +127,11 @@ Permitir que o **técnico de qualidade** registre no turno aberto as avaliaçõe
 
 - Backend: `TiposQualidadeFechamento` + `HasAnyTipoForTurno`
 - Frontend: `OBRIGATORIOS_QUALIDADE` + `turnoTemAlgumRegistro` na home
+
+### Frontend — navegação
+
+- Home: card **Atalhos** (`AREA_ATALHOS.qualidade`); consulta em `/qualidade` com shell `PageHeader` / `PageFooter`
+- Ver padrão completo em [`memory-bank/systemPatterns.md`](../../memory-bank/systemPatterns.md) (seção Shell de UI)
 
 ### Seed / E2E
 

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
+import { PageFooter } from "@/components/PageFooter";
+import { PageHeader } from "@/components/PageHeader";
 import { getDeviceId, getUsuario, isSessionValid } from "@/lib/auth/session";
 import {
   COLHEITA_TIPOS,
@@ -176,13 +178,14 @@ export function ColheitaPage() {
   }
 
   return (
-    <main className="page">
+    <main className="page page-has-footer">
       <SyncStatusBar />
-      <p>
-        <Link to="/">← Voltar</Link>
-      </p>
-      <h1>Colheita</h1>
-      <p className="subtitle">Turno aberto — {usuario.nome}</p>
+      <PageHeader
+        title="Colheita"
+        subtitle={`Turno aberto — ${usuario.nome}`}
+        backTo="/"
+        backLabel="Voltar ao início"
+      />
 
       {erro && <p className="error">{erro}</p>}
       {sucesso && <p className="success">{sucesso}</p>}
@@ -287,6 +290,7 @@ export function ColheitaPage() {
           </button>
         </form>
       </section>
+      <PageFooter backTo="/" backLabel="Voltar ao início" />
     </main>
   );
 }

@@ -38,6 +38,8 @@ func mapErrorStatus(code string) int {
 		return http.StatusForbidden
 	case domain.ErrTMP001, domain.ErrTMP002, domain.ErrInvalidRequest:
 		return http.StatusUnprocessableEntity
+	case domain.ErrNotFound:
+		return http.StatusNotFound
 	case domain.ErrUnauthorized:
 		return http.StatusUnauthorized
 	default:

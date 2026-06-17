@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { PageFooter } from "@/components/PageFooter";
 import { PageHeader } from "@/components/PageHeader";
 import { api } from "@/lib/api/client";
 import { getDeviceId, getUsuario, getValidAccessToken, isSessionValid } from "@/lib/auth/session";
@@ -23,6 +24,7 @@ import {
 } from "@/lib/qualidade/validation";
 import { buildIdempotencyKey } from "@/lib/db/schema";
 import { SyncStatusBar } from "@/features/sync/SyncStatusBar";
+import { SimuladorPainelTab } from "@/features/simulador/SimuladorPainelTab";
 import type { TurnoComUsuario } from "@/types/indicadores";
 import type { Usuario } from "@/types/domain";
 
@@ -46,6 +48,7 @@ export function SimuladorPage() {
   const [impMin, setImpMin] = useState("2");
   const [impVeg, setImpVeg] = useState("3");
   const [qualidadePendente, setQualidadePendente] = useState(true);
+  const [aba, setAba] = useState<"turno" | "painel">("turno");
 
   async function carregarTurnos(u: Usuario, activeFrenteId: string) {
     const token = await getValidAccessToken();
@@ -205,14 +208,40 @@ export function SimuladorPage() {
   }
 
   return (
-    <main className="page" data-testid="simulador-page">
+    <main className="page page-has-footer" data-testid="simulador-page">
       <SyncStatusBar />
       <p className="banner-simulador">Modo simulação — ingestão como sistema central</p>
       <PageHeader
         title="Simulador central"
         subtitle={frenteNome ? `Frente: ${frenteNome}` : undefined}
         breadcrumbs={[{ label: "Início", to: "/" }, { label: "Simulador" }]}
+        backTo="/"
+        backLabel="Voltar ao início"
       />
+      <div className="tab-bar" role="tablist">
+        <button
+          type="button"
+          role="tab"
+          className={aba === "turno" ? "tab active" : "tab"}
+          aria-selected={aba === "turno"}
+          onClick={() => setAba("turno")}
+        >
+          Turno (colheita/qualidade)
+        </button>
+        <button
+          type="button"
+          role="tab"
+          className={aba === "painel" ? "tab active" : "tab"}
+          aria-selected={aba === "painel"}
+          onClick={() => setAba("painel")}
+        >
+          Painel Gestão à Vista
+        </button>
+      </div>
+      {aba === "painel" ? (
+        <SimuladorPainelTab />
+      ) : (
+        <>
       {frentes.length > 1 && (
         <section className="card">
           <label>
@@ -303,7 +332,9 @@ export function SimuladorPage() {
           Liberar qualidade (disponível)
         </button>
       </section>
-      <Link to="/">Voltar</Link>
+        </>
+      )}
+      <PageFooter backTo="/" backLabel="Voltar ao início" />
     </main>
   );
 }

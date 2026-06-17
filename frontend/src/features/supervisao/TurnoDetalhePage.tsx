@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { IndicadorCard } from "@/components/IndicadorCard";
+import { PageFooter } from "@/components/PageFooter";
 import { PageHeader } from "@/components/PageHeader";
 import { api } from "@/lib/api/client";
 import { getValidAccessToken, getUsuario, isSessionValid } from "@/lib/auth/session";
@@ -55,7 +56,7 @@ export function TurnoDetalhePage() {
   const painelLink = frenteQuery ? `/supervisao?frente=${frenteQuery}` : "/supervisao";
 
   return (
-    <main className="page" data-testid="turno-detalhe">
+    <main className="page page-has-footer" data-testid="turno-detalhe">
       <SyncStatusBar />
       <PageHeader
         title={`Turno — ${turno?.usuario_nome ?? "..."}`}
@@ -65,6 +66,8 @@ export function TurnoDetalhePage() {
           { label: "Painel da frente", to: painelLink },
           { label: turno?.usuario_nome ?? "Detalhe" },
         ]}
+        backTo={painelLink}
+        backLabel="Voltar ao painel"
       />
       {snap && (
         <>
@@ -116,7 +119,7 @@ export function TurnoDetalhePage() {
         </>
       )}
       {!snap && <p className="subtitle">Aguardando dados do sistema central.</p>}
-      <Link to={painelLink}>Voltar ao painel</Link>
+      <PageFooter backTo={painelLink} backLabel="Voltar ao painel" />
     </main>
   );
 }

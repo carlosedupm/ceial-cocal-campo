@@ -91,6 +91,7 @@ Qualquer outra URL redireciona para `/`.
 **Lógica de entrada na tela:**
 
 - Sem token → volta para `/login`
+- Perfil **supervisor** → redireciona para `/supervisao` (não usa esta tela)
 - Turno aberto local ou remoto → pula direto para `/` (catálogo é atualizado em segundo plano no login)
 - Caso contrário → carrega unidades da API (online) ou do **cache IndexedDB** (offline)
 - Após fechar turno offline, unidade/frente do último turno são pré-selecionados
@@ -121,34 +122,41 @@ Qualquer outra URL redireciona para `/`.
 **Cabeçalho do usuário:**
 
 - Saudação: `Olá, {nome}`
-- Subtítulo: `Perfil: {perfil} · Área: {area}`
+- Subtítulo: rótulos amigáveis de perfil e área (`labelPerfil` · `labelArea`)
 
-**Card "Turno {status}":**
+**Card "Turno {status}"** — somente **operadores** (não supervisor nem simulador):
 
 - Status: `aberto` ou `fechado`
 - Início formatado (`pt-BR`)
 - Se **aberto**:
-  - Botão **Registrar placeholder** → cria registro local tipo `placeholder` na fila de sync
+  - Botão **Registrar placeholder** → transporte, qualidade e segurança (colheita não exibe — consulta via atalho)
   - Botão **Fechar turno** → `POST .../turnos/{id}/fechar` (online) ou fecha local (offline) → volta a `/contexto`
+- Ações operacionais ficam aqui; **links de navegação ficam no card Atalhos**
 
-**Card "Menu ({area})":**
+**Card "Atalhos"** (`data-testid="home-atalhos"`):
 
-- Lista estática por área — **somente texto, sem navegação** (definida em `HomePage.tsx`):
+- Destinos por perfil/área via `getHomeAtalhos()` em [`HomePage.tsx`](../../frontend/src/features/home/HomePage.tsx)
+- Item com `to` → botão-link; sem `to` → texto hint (rota ainda não implementada)
+- Operadores: atalhos só com turno **aberto**
 
-| Área | Itens do menu |
-|------|---------------|
-| colheita | Registrar placeholder, Consultar turno |
-| transporte | Registrar placeholder, Consultar turno |
-| qualidade | Registrar placeholder |
-| seguranca | Registrar placeholder |
-| supervisao | Painel frente, Consultar turno |
+| Perfil / área | Itens | Navegação |
+|---------------|-------|-----------|
+| `supervisor_frente` | Abrir painel da frente, Gestão à vista | `/supervisao`, `/gestao-a-vista` |
+| `simulador_central` | Simular ingestão do sistema central, Gestão à vista | `/simulador`, `/gestao-a-vista` |
+| colheita | Consultar desempenho do turno | `/colheita` |
+| transporte | Consultar turno | hint (sem rota) |
+| qualidade | Consultar avaliações | hint (sem rota) |
+| seguranca | Consultar segurança | hint (sem rota) |
 
-- Para perfil colheita, há indicação de que menu de transporte fica oculto (`BR-ACESSO-001`)
+- Não há card **Menu** separado — evita duplicar os mesmos destinos
+- `BR-ACESSO-001`: atalhos filtrados por `usuario.perfil` / `usuario.area`
 
 **Card "Registros locais":**
 
+- Operadores de **transporte, qualidade e segurança** (colheita consulta indicadores centralizados; supervisor/simulador não exibem)
 - Lista da fila IndexedDB (`db.registros`), mais recentes primeiro
 - Cada item: `{tipo} — {sync_status}` e código de erro se houver (`last_error_code`)
+- Conflito permanente (`ERR-SYNC-CONFLICT`): botão **Aceitar versão do servidor**
 
 **Botão "Sair":**
 
@@ -156,7 +164,7 @@ Qualquer outra URL redireciona para `/`.
 - `POST /api/v1/auth/logout` se online
 - Redireciona para `/login`
 
-**Guard de rota:** sem sessão → `/login`; sem turno → `/contexto`.
+**Guard de rota:** sem sessão → `/login`; operador sem turno → `/contexto`. Supervisor e simulador após login vão direto para `/supervisao` ou `/simulador` ([`postLoginPath`](../../frontend/src/lib/auth/routes.ts)); podem acessar `/` via breadcrumb «Início».
 
 ---
 
@@ -231,7 +239,7 @@ Estados de sync: `pendente` → `sincronizado` | `erro` (`BR-SYNC-*`).
 | `BR-TURNO-002` | Um turno aberto por usuário (409 na API) |
 | `BR-TURNO-003` | Turno fechado: sem botões de registro/fechar |
 | `BR-SYNC-003` | Barra de status com online/pendências/última sync |
-| `BR-ACESSO-001` | Menu filtrado por `usuario.area` |
+| `BR-ACESSO-001` | Atalhos filtrados por perfil/área (`getHomeAtalhos`) |
 | `TMP-002` | Registro placeholder só com turno `aberto` |
 
 ---
@@ -239,7 +247,7 @@ Estados de sync: `pendente` → `sincronizado` | `erro` (`BR-SYNC-*`).
 ## O que ainda NÃO existe (fora do escopo BRF-001)
 
 - Integração real com sistema central (Fase 3)
-- Consulta transporte/qualidade/segurança para operadores (menus placeholder)
+- Consulta transporte/qualidade/segurança para operadores (atalhos hint na home, sem rota)
 - Gestão à Vista / metas planejadas completas
 
 Consulta colheita, painel supervisor e simulador: ver [`fluxo-usuario-visualizacao.md`](./fluxo-usuario-visualizacao.md).
@@ -248,13 +256,21 @@ Consulta colheita, painel supervisor e simulador: ver [`fluxo-usuario-visualizac
 
 ## Roteiro sugerido para explorar no browser
 
+### Fundação turno + sync (transporte)
+
 1. Abrir `http://localhost:5173/login`
-2. Entrar com `colheita@cocal.dev` / `campo123`
-3. Selecionar **Paraguacu Paulista** + **Frente Colheita 01** → Abrir turno
-4. Na home: observar perfil/área, status do turno, barra de sync
-5. Clicar **Registrar placeholder** → ver item na lista com `pendente`, depois `sincronizado`
+2. Entrar com `transporte@cocal.dev` / `campo123`
+3. Selecionar **Paraguacu Paulista** + **Frente Transporte 01** → Abrir turno
+4. Na home: observar perfil/área, card turno, card **Atalhos**, barra de sync
+5. Clicar **Registrar placeholder** → ver item em **Registros locais** com `pendente`, depois `sincronizado`
 6. **Fechar turno** → volta ao contexto
 7. (Opcional) Desligar rede no DevTools → abrir turno offline → registrar → reconectar → observar sync
+
+### Consulta colheita (BRF-005)
+
+1. Login `colheita@cocal.dev` / `campo123` → abrir turno
+2. Card **Atalhos** → **Consultar desempenho do turno** → `/colheita`
+3. Voltar via **Voltar ao início** (topo ou rodapé)
 
 Para inspecionar dados locais: DevTools → Application → IndexedDB → `cocal-campo`.
 

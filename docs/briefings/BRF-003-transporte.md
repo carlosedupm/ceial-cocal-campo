@@ -53,7 +53,8 @@ Permitir que o **operador de transporte** registre no turno aberto os indicadore
 - **Páginas/rotas**: `/transporte` — formulários dos 2 indicadores; link na home do operador transporte
 - **Componentes**: `TransportePage` (novo), `validation.ts` compartilhado (novo); remoção do placeholder para área transporte
 - **Roteamento**: adicionar rota `/transporte` em `App.tsx`
-- **Menu**: atualizar `AREA_MENUS.transporte` em `HomePage.tsx` para link `/transporte`
+- **Atalhos (home)**: em `AREA_ATALHOS.transporte` (`HomePage.tsx`), definir `to: "/transporte"` no item do card **Atalhos** (hoje hint sem rota)
+- **Shell UI**: `TransportePage` usa `PageHeader` + `PageFooter` conforme padrão em `systemPatterns.md`
 
 ### O que NÃO mexer
 
@@ -118,6 +119,7 @@ Permitir que o **operador de transporte** registre no turno aberto os indicadore
 ### Frontend — padrão `ColheitaPage`
 
 - `TransportePage.tsx` espelha estrutura: 2 forms (consumo + cargas/viagens), status sync por indicador, bloqueio pós-sync (`BR-TRANS-004`), validação local + envio via `enqueueRegistroTurno`
+- Navegação: card **Atalhos** na home (`getHomeAtalhos` / `AREA_ATALHOS`); subpágina com `PageHeader` + `PageFooter`
 - Novo arquivo `frontend/src/lib/transporte/validation.ts` com constantes, validadores e `OBRIGATORIOS_TRANSPORTE = [consumoTransbordo]`
 
 ### Backend — padrão `colheita.go`
